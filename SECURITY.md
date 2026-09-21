@@ -21,6 +21,10 @@ Do not put any of the following in Git, issues, PRs, chat, screenshots, or paste
 
 Menu **23** / `admin-login SHOW` prints the panel login **once on a TTY**. That password is **not** written to `/var/log/remnawave-manager.log`. Telegram tokens are not printed in the log.
 
+## Who may change this repository
+
+Official branches, tags and GitHub Releases are written only by **Corgi Lusi (`booarkz-cpu`)** and by the Cursor agent using that account. GitHub rulesets block everyone else from creating, updating, force-pushing or deleting branches and tags. Do not merge pull requests from people you do not know. A public repository can still be forked; forks cannot write back here. Wiki editing is off. GitHub Actions may use GitHub-owned actions only, with a read-only default token.
+
 ## How the installer stores configuration
 
 `/opt/remnawave/manager.env` is **not** `source`d. Passwords may contain `$`, `&`, backticks and backslashes; a naive `source` would abort the rest of the file (domains never load) or spawn jobs. The installer parses `KEY=VALUE` lines and **refuses** to overwrite shell/installer keys: `VERSION`, `PATH`, `HOME`, `IFS`, `LD_PRELOAD`, `DRY_RUN`, `AUTO_YES`, and similar. CLI `KEY=VALUE` arguments use the same denylist.

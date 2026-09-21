@@ -420,6 +420,10 @@ grep -Fq 'is_protected_kv_key()' "$SCRIPT"
 grep -Fq 'list|create NAME' /tmp/rw-help-en.txt
 test -f SECURITY.md
 test -f SECURITY.ru.md
+test -f .github/CODEOWNERS
+grep -Fq '@booarkz-cpu' .github/CODEOWNERS
+grep -Fq 'Who may change this repository' SECURITY.md
+grep -Fq 'Кто может менять репозиторий' SECURITY.ru.md
 test -f CHANGELOG.md
 test -f CHANGELOG.ru.md
 test -f RELEASE_NOTES_1.5.4.md
