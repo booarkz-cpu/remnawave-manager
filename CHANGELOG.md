@@ -1,5 +1,12 @@
 # Changelog
 
+## 25.2.7-prod
+
+Хосты Reality (VLESS TCP, gRPC, xHTTP) создаются с uTLS-отпечатком **firefox**, не chrome. Hysteria2 отпечаток не ставит. На уже установленной панели: пункт 4 / `bash remnawave-manager.sh protocols`.
+
+SHA256:
+`14704ad33250669ac1d9d95d5677cc53fb007dc87932d655843a68be4a2ac875`
+
 ## 25.2.6-prod
 
 Запуск без `sudo` в команде: `bash remnawave-manager.sh`. Если нет root, скрипт сам перезапускается через sudo. `--help` пароль не спрашивает.

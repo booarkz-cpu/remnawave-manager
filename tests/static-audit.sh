@@ -3,11 +3,12 @@ set -Eeuo pipefail
 
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
-SCRIPT=remnawave-manager-v25.2.6-prod.sh
+SCRIPT=remnawave-manager-v25.2.7-prod.sh
 
 echo "[1/18] bash -n current + historical"
 bash -n "$SCRIPT"
 bash -n remnawave-manager.sh
+bash -n remnawave-manager-v25.2.6-prod.sh
 bash -n remnawave-manager-v25.2.5-prod.sh
 bash -n remnawave-manager-v25.2.4-prod.sh
 bash -n remnawave-manager-v25.2.3-prod.sh
@@ -118,6 +119,11 @@ grep -Fq 'ensure_internal_squad()' "$SCRIPT"
 grep -Fq 'PATCH /nodes/' "$SCRIPT"
 grep -Fq 'PATCH /config-profiles/' "$SCRIPT"
 grep -Fq 'PATCH /hosts/' "$SCRIPT"
+grep -Fq "fp='firefox'" "$SCRIPT"
+if grep -n 'fingerprint:"chrome"' "$SCRIPT"; then
+  echo 'FAIL: Reality host fingerprint must be firefox, not chrome' >&2
+  exit 1
+fi
 grep -Fq '/internal-squads/' "$SCRIPT"
 grep -Fq 'create_auto_user()' "$SCRIPT"
 grep -Fq 'CorgiLusi' "$SCRIPT"
@@ -184,7 +190,7 @@ echo "[14/18] current script copies match"
 cmp -s remnawave-manager.sh "$SCRIPT"
 
 echo "[15/18] VERSION string"
-grep -Fq "VERSION='25.2.6-prod'" "$SCRIPT"
+grep -Fq "VERSION='25.2.7-prod'" "$SCRIPT"
 
 echo "[16/18] SHA256SUMS covers every versioned script"
 missing=0

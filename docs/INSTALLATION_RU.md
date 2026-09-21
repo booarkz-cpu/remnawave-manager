@@ -1,4 +1,4 @@
-# Установка Remnawave Manager 25.2.6-prod
+# Установка Remnawave Manager 25.2.7-prod
 
 ## 1. Подготовка
 
@@ -14,7 +14,7 @@ chmod +x remnawave-manager.sh
 sha256sum remnawave-manager.sh
 ```
 
-Сверьте сумму с файлом `SHA256SUMS`. Актуальный файл также называется `remnawave-manager-v25.2.6-prod.sh`. Скачивайте через jsDelivr `@v25.2.6-prod`, не с `raw.githubusercontent.com/main`.
+Сверьте сумму с файлом `SHA256SUMS`. Актуальный файл также называется `remnawave-manager-v25.2.7-prod.sh`. Скачивайте через jsDelivr `@v25.2.7-prod`, не с `raw.githubusercontent.com/main`.
 
 Без аргументов скрипт открывает меню с описанием всех функций и предлагает язык (English / русский). Профиль, ноды, хосты и сквад привязываются через API — панель и конвертер править не нужно. Префикс `sudo` в команде не нужен: скрипт сам поднимает root.
 
@@ -202,3 +202,17 @@ bash remnawave-manager.sh --lang ru
 ```
 
 `sudo` в команде писать не нужно. Если вы не root, скрипт сам вызовет sudo. Справка: `bash remnawave-manager.sh --help`.
+
+## 17. Обновление до 25.2.7-prod (отпечаток firefox)
+
+```bash
+curl -fL --retry 5 --retry-all-errors \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v25.2.7-prod/remnawave-manager.sh \
+  -o remnawave-manager.sh
+chmod +x remnawave-manager.sh
+sha256sum remnawave-manager.sh
+# нужно: 14704ad33250669ac1d9d95d5677cc53fb007dc87932d655843a68be4a2ac875
+bash remnawave-manager.sh --lang ru
+```
+
+Пункт **4** или `bash remnawave-manager.sh protocols`: Reality / gRPC / xHTTP хосты получают fingerprint **firefox**. Hysteria2 отпечаток не использует.
