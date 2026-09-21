@@ -207,6 +207,20 @@ test -f README.md
 test -f README.ru.md
 test -f docs/GUIDE.en.md
 test -f docs/GUIDE.ru.md
+test -f docs/MENU.en.md
+test -f docs/MENU.ru.md
+test -f LICENSE
+grep -Fq 'MIT License' LICENSE
+grep -Fq 'Copyright (c) 2026' LICENSE
+grep -Fq '[LICENSE](LICENSE)' README.md README.ru.md
+grep -Fq 'docs/MENU.en.md' README.md docs/GUIDE.en.md
+grep -Fq 'docs/MENU.ru.md' README.ru.md docs/GUIDE.ru.md
+grep -Fq '### 1. Full install' README.md
+grep -Fq '### 1. Полная установка' README.ru.md
+grep -Fq '### 25. Node transports' README.md
+grep -Fq '### 25. Транспорты ноды' README.ru.md
+grep -Fq '## License' README.md
+grep -Fq '## Лицензия' README.ru.md
 grep -Fq '[English](README.md)' README.md
 grep -Fq '[Русский](README.ru.md)' README.md
 grep -Fq '[English](README.md)' README.ru.md
@@ -215,11 +229,11 @@ grep -Fq 'docs/GUIDE.ru.md' README.ru.md
 grep -Fq 'check-update --apply' README.md README.ru.md docs/GUIDE.en.md docs/GUIDE.ru.md
 grep -Fq 'self-update' README.md README.ru.md docs/GUIDE.en.md docs/GUIDE.ru.md
 grep -Fq 'releases/latest/download/remnawave-manager.sh' README.md README.ru.md docs/GUIDE.en.md docs/GUIDE.ru.md
-if grep -nE '^sudo bash remnawave-manager.sh' README.md README.ru.md docs/GUIDE.en.md docs/GUIDE.ru.md; then
+if grep -nE '^sudo bash remnawave-manager.sh' README.md README.ru.md docs/GUIDE.en.md docs/GUIDE.ru.md docs/MENU.en.md docs/MENU.ru.md; then
   echo 'FAIL: docs must invoke the script without a sudo prefix' >&2
   exit 1
 fi
-if grep -nE 'remawve-manager' README.md README.ru.md docs/GUIDE.en.md docs/GUIDE.ru.md; then
+if grep -nE 'remawve-manager' README.md README.ru.md docs/GUIDE.en.md docs/GUIDE.ru.md docs/MENU.en.md docs/MENU.ru.md; then
   echo 'FAIL: typo remawve-manager in docs' >&2
   exit 1
 fi

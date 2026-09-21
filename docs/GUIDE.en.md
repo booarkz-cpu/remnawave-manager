@@ -4,7 +4,7 @@
 
 Installer and day-to-day manager for [Remnawave](https://docs.rw) on Debian/Ubuntu. Author: **Corgi Lusi (Корги Люси)**. Current script version: **1.4.4**.
 
-This page is the full instruction. The GitHub README is the short version. Historical per-release notes: [INSTALLATION_RU.md](INSTALLATION_RU.md) (bilingual changelog lives in [CHANGELOG.md](../CHANGELOG.md)).
+This page is the full instruction. The GitHub README describes **every menu item** in English and Russian. Historical per-release notes: [INSTALLATION_RU.md](INSTALLATION_RU.md) (bilingual changelog lives in [CHANGELOG.md](../CHANGELOG.md)). License: [MIT](../LICENSE).
 
 Two different “updates” exist. Do not mix them:
 
@@ -24,7 +24,7 @@ Two different “updates” exist. Do not mix them:
 5. [Install: one VPS](#5-install-one-vps)
 6. [Install: panel and node on two servers](#6-install-panel-and-node-on-two-servers)
 7. [After install](#7-after-install)
-8. [Menu](#8-menu)
+8. [Menu](#8-menu) — full catalog: [MENU.en.md](MENU.en.md)
 9. [Transports (Reality, gRPC, xHTTP, Hysteria2)](#9-transports-reality-grpc-xhttp-hysteria2)
 10. [How to update this script to Latest](#10-how-to-update-this-script-to-latest)
 11. [How to update Remnawave images](#11-how-to-update-remnawave-images)
@@ -215,6 +215,8 @@ The panel backend requires reverse-proxy headers (`X-Forwarded-For` and `X-Forwa
 ---
 
 ## 8. Menu
+
+Numbers **1–27** are fixed. **Full functionality of every item:** [MENU.en.md](MENU.en.md) · [Русский](MENU.ru.md) · also in the GitHub [README](../README.md#menu).
 
 | # | Function | What it does |
 | --- | --- | --- |

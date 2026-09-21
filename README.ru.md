@@ -8,6 +8,8 @@ Production-установщик [Remnawave](https://docs.rw) на Debian/Ubuntu.
 
 **Текущая версия:** `1.4.4`
 
+**Лицензия:** [MIT](LICENSE) — можно использовать, копировать, менять и распространять с сохранением копирайта. Оригиналы, которые качает пункт **24**, остаются на условиях их авторов — [CREDITS.md](CREDITS.md).
+
 Автор: **Корги Люси (Corgi Lusi)**. В скрипт добавлены функции из [Rezzosoft KVN](https://github.com/Rrezzak09VPN/remnanode-VLESS-Reality-Hysteria2), [eGamesAPI](https://github.com/eGamesAPI/remnawave-reverse-proxy) и [DigneZzZ](https://github.com/DigneZzZ/remnawave-scripts). Авторство исходников сохранено — [CREDITS.md](CREDITS.md).
 
 Профиль Xray, inbound’ы, ноды, хосты, сквад **CorgiLusi** и пользователь CorgiLusi создаются через API. У каждой ноды свой config-профиль. **Default-Profile** удаляется после установки. Панель для привязки протоколов править не нужно.
@@ -25,11 +27,12 @@ Production-установщик [Remnawave](https://docs.rw) на Debian/Ubuntu.
 
 - [Быстрый старт](#быстрый-старт)
 - [Обновить этот скрипт до Latest](#обновить-этот-скрипт-до-latest)
-- [Меню](#меню)
+- [Меню](#меню) — [полный разбор пунктов](#1-полная-установка) · [docs/MENU.ru.md](docs/MENU.ru.md)
 - [Режимы установки](#режимы-установки)
 - [Протоколы](#протоколы)
 - [Обслуживание](#обслуживание)
 - [Документация](#документация)
+- [Лицензия](#лицензия)
 
 ---
 
@@ -124,36 +127,176 @@ Remnawave обычно **переустанавливать не нужно**.
 
 ## Меню
 
-| № | Функция | Что делает |
+Номера **1–27** совпадают со скриптом и не съезжают. Без аргументов открывается это меню (`bash remnawave-manager.sh`). `sudo` не пишите.
+
+Отдельные страницы (тот же текст): [docs/MENU.ru.md](docs/MENU.ru.md) · [English](docs/MENU.en.md).
+
+| № | Функция | CLI |
 | --- | --- | --- |
-| 1 | Полная установка | Панель + нода на одном VDS, nginx SNI, Corgi, сертификаты, API |
-| 2 | Только панель | Панель + подписка HTTPS; `EDGE_ADDRESS` сразу регистрирует ноду |
-| 3 | Только нода | remnanode в host-сети, SNI Reality; `SECRET_KEY` из `credentials.txt` панели |
-| 4 | Автопривязка протоколов | Отдельный профиль CorgiLusi на ноду, сквад CorgiLusi, без Default-Profile |
-| 5 | Состояние | Контейнеры, nginx/fail2ban, systemd-таймеры |
-| 6 | Диагностика | API панели, страница подписки, сертификаты, порты, Connected нод, UFW |
-| 7 | Repair | Переписывает proxy-заголовки и SelfSteal без удаления Docker/БД |
-| 8 | Логи | Журнал remnawave / remnanode / subscription-page |
-| 9 | Up | `docker compose up` всех стеков |
-| 10 | Down | `docker compose down` (данные сохраняются) |
-| 11 | Перезапуск | Перезапуск всех compose-стеков Remnawave |
-| 12 | Backup | Архив в `/var/backups/remnawave` |
-| 13 | Restore | Восстановление из `.tgz` или `.age` |
-| 14 | Обновление | Backup, pull **образов Remnawave**, проверка API |
-| 15 | Удаление | Снимает сервисы и nginx vhost; backup’ы остаются |
-| 16 | Ядро Xray | Свой бинарник или штатный из образа |
-| 17 | Модули | CLI DigneZzZ, SelfSteal, WARP/Tor, NetBird, eGames |
-| 18 | Скрытый вход | Cookie/query-затвор для `/auth/login` |
-| 19 | Команда CLI | Копирует скрипт в `/usr/local/bin/remnawave-manager` |
-| 20 | Конвертер | Необязательный JSON Rezzosoft (для привязки не нужен) |
-| 21 | Авторство / справка | Авторы и полная справка CLI |
-| 22 | Язык | Русский или English |
-| 23 | Адреса | Панель / подписка / SNI и ссылка CorgiLusi |
-| 24 | Обновления авторов | Свежие модули авторов (этот скрипт: пункт **26**) |
-| 25 | Транспорты ноды | Добавить или снять xHTTP, gRPC, Hysteria2 на уже установленной ноде |
-| 26 | Этот скрипт | Проверить / поставить GitHub Latest этого установщика |
-| 27 | Добавить ноду | Зарегистрировать ещё одну ноду через API — без обновления ОС и без пункта 1 |
-| 0 | Выход | — |
+| [1](#1-полная-установка) | Полная установка | `install single` |
+| [2](#2-только-панель) | Только панель | `install panel` |
+| [3](#3-только-нода) | Только нода | `install node` |
+| [4](#4-автопривязка-протоколов) | Автопривязка протоколов | `protocols` / `bind` |
+| [5](#5-состояние) | Состояние | `status` |
+| [6](#6-диагностика) | Диагностика | `doctor` |
+| [7](#7-repair) | Repair | `repair` |
+| [8](#8-логи) | Логи | `logs [контейнер]` |
+| [9](#9-запуск-up) | Запуск (up) | `up` |
+| [10](#10-стоп-down) | Стоп (down) | `down` |
+| [11](#11-перезапуск) | Перезапуск | `restart` |
+| [12](#12-backup) | Backup | `backup` |
+| [13](#13-restore) | Restore | `restore ФАЙЛ` |
+| [14](#14-обновление-образы-remnawave) | Обновление образов | `update` |
+| [15](#15-удаление) | Удаление | `uninstall` |
+| [16](#16-ядро-xray) | Ядро Xray | `core-update` |
+| [17](#17-модули) | Модули | `addon …` |
+| [18](#18-скрытый-вход) | Скрытый вход | `stealth` |
+| [19](#19-команда-cli) | Команда CLI | `install-script` |
+| [20](#20-конвертер) | Конвертер | (URL) |
+| [21](#21-авторство--справка) | Авторство / справка | `--help` |
+| [22](#22-язык) | Язык | `--lang ru\|en` |
+| [23](#23-адреса) | Адреса | `urls` / `health` |
+| [24](#24-обновления-авторов) | Обновления авторов | `community-update` |
+| [25](#25-транспорты-ноды) | Транспорты ноды | `node-transports …` |
+| [26](#26-этот-скрипт) | Этот скрипт | `self-update` / `check-update` |
+| [27](#27-добавить-ноду) | Добавить ноду | `add-node` |
+| [0](#0-выход) | Выход | — |
+
+Два разных обновления: пункт **26** меняет этот файл установщика; пункт **14** тянет Docker-образы Remnawave.
+
+### 1. Полная установка
+
+Ставит **панель + ноду на одном VDS**.
+
+Спрашивает домены панели, подписки и Reality и email администратора, затем какие транспорты включить (по умолчанию: Reality + Hysteria2 + gRPC + xHTTP). Предпроверка: Ubuntu/Debian, DNS, свободны TCP 80/443, диск, Docker. Пакеты, `apt-get full-upgrade` (сам VDS не перезагружает), fail2ban, BBR, стеки Docker Compose, nginx SNI, Let’s Encrypt, пользователь CorgiLusi, отдельный config-профиль на ноду, inbound’ы, хосты, сквад **CorgiLusi**, удаление **Default-Profile**. Нода в `network_mode: host`; в карточке Node — gateway сети `remnawave-network`, не `127.0.0.1`. Пишет `/opt/remnawave/credentials.txt` и systemd-таймеры (backup, сертификаты, health).
+
+Если Remnawave уже стоит, пункты 1–3 предлагают **repair**, **повторную привязку** или полную переустановку и не гоняют `apt full-upgrade` без нужды.
+
+**Не** заменяет этот скрипт с GitHub (пункт **26**) и **не** тянет новые образы панели позже (пункт **14**).
+
+### 2. Только панель
+
+Панель + подписка HTTPS на этом VDS. remnanode здесь не ставится. `EDGE_ADDRESS` (публичный IP ноды) сразу создаёт карточку Node через API. **Node secret** из `/opt/remnawave/credentials.txt` перенесите на второй VDS и там пункт **3**.
+
+### 3. Только нода
+
+remnanode в host-сети + SNI Reality на втором VDS. Нужны `PANEL_IP`, домен Reality, email и `NODE_SECRET_KEY` из `credentials.txt` панели. UFW к IP панели (в том числе порт ноды 2222). Порты и сертификаты в `/dev/shm` под выбранные транспорты.
+
+### 4. Автопривязка протоколов
+
+**Полная пересборка** CorgiLusi: профили на каждую ноду, inbound’ы, хосты, сквад. Default-Profile удаляется. Хосты Reality — отпечаток uTLS **firefox**. Без флага протокола включает **все** транспорты. Точечно добавить/снять один транспорт — пункт **25**.
+
+### 5. Состояние
+
+Живое локальное здоровье: контейнеры Docker, nginx, fail2ban, systemd-таймеры. В шапке меню уже точки панели / `:3010` / remnanode; здесь полный вывод.
+
+### 6. Диагностика
+
+Только чтение: версия скрипта и GitHub Latest; ОС; Docker; `nginx -t`; API панели `/auth/status`; контейнер подписки и HTTP `:3010`; публичный HTTPS; срок Let’s Encrypt (предупреждение, если меньше 21 дня); слушатели TCP 80/443, UDP 443/8443 при Hysteria2, TCP 8443 при gRPC, TCP 4443 при xHTTP; `ss`; Connected нод через API; `docker ps`; таймеры; UFW.
+
+### 7. Repair
+
+Чинит **HTTP 502** панели или подписки **без** удаления Docker и PostgreSQL. Переписывает nginx (`X-Forwarded-For`, `X-Forwarded-Proto: https`), compose подписки, SelfSteal. Домены поднимает с диска, даже если в `manager.env` остался только язык.
+
+### 8. Логи
+
+`docker compose logs -f` для `remnawave`, `remnanode` или `remnawave-subscription-page` (имя спрашивает).
+
+### 9. Запуск (up)
+
+`docker compose up` всех найденных стеков Remnawave. Недостающие стеки не ставит.
+
+### 10. Стоп (down)
+
+`docker compose down`. **Тома и `/opt/remnawave` остаются.** Это не удаление.
+
+### 11. Перезапуск
+
+Перезапуск compose-стеков Remnawave. Образы не тянет.
+
+### 12. Backup
+
+Архив в `/var/backups/remnawave` (compose, env, nginx, credentials). Шифрование age — `/opt/remnawave/backup-age.key`.
+
+### 13. Restore
+
+Восстановление из `.tgz` или `.age`. Для age нужен ключ на диске. После сбоя пункта **14** скрипт сам может накатить последний снимок.
+
+### 14. Обновление (образы Remnawave)
+
+**Только Docker-образы**, не этот файл `.sh`. Порядок: backup → pull панели → ноды → подписки → Hysteria2 → проверка API → reload nginx. При сбое — попытка restore.
+
+### 15. Удаление
+
+Подтверждение `DELETE`. Останавливает compose, отключает таймеры remnawave, снимает nginx vhost. **Архивы в `/var/backups/remnawave` остаются.** Сам `rm -rf /opt/remnawave` не делает.
+
+### 16. Ядро Xray
+
+Свой/официальный бинарник Xray на ноде или штатный из образа.
+
+### 17. Модули
+
+Оригинальные помощники (авторство сохранено):
+
+| Клавиша | Что |
+| --- | --- |
+| **a** | DigneZzZ remnawave CLI — помощник панели |
+| **b** | DigneZzZ remnanode CLI — помощник ноды |
+| **c** | Шаблоны SelfSteal |
+| **d** | WARP / Tor (`wtm`) |
+| **e** | NetBird |
+| **f** | Установщик eGames reverse-proxy |
+
+Привязка inbound’ов — этим менеджером (пункты **4** / **25**), не конвертером.
+
+### 18. Скрытый вход
+
+Затвор в стиле eGames: `/auth/login` отдаёт 404, пока нет секрета в query или cookie. Печатает `https://ПАНЕЛЬ/auth/login?КЛЮЧ=КЛЮЧ`.
+
+### 19. Команда CLI
+
+Копирует скрипт в `/usr/local/bin/remnawave-manager`. После ручного `curl` новой версии выполните пункт снова, чтобы PATH совпал с Latest.
+
+### 20. Конвертер
+
+Необязательный JSON Rezzosoft: <https://rezzosoft.ru/converter.html>. Для установки и привязки **не нужен**.
+
+### 21. Авторство / справка
+
+Автор Корги Люси, кредиты Rezzosoft / eGames / DigneZzZ и полная справка CLI.
+
+### 22. Язык
+
+**Русский** или **English**, в `RW_LANG` файла `manager.env`.
+
+### 23. Адреса
+
+Панель, подписка, SNI Reality и ссылка CorgiLusi. **Без паролей, JWT и секрета ноды.**
+
+### 24. Обновления авторов
+
+Качает **оригиналы** Rezzosoft / eGames / DigneZzZ в `/opt/remnawave-addons`. Подменю: (1) модули, (2) этот скрипт с GitHub Latest, (3) только проверка, (0) назад.
+
+### 25. Транспорты ноды
+
+Добавить или снять **xHTTP, gRPC, Hysteria2** на уже установленной ноде (в том числе на другом VDS). Добавление одного не включает остальные. Reality остаётся.
+
+1. Нода: номер, UUID или **0** = все. **q** — главное меню.
+2. Дальше: **[1]** Hysteria2 · **[2]** gRPC · **[3]** xHTTP · **[4]** все три · **[5–7]** снять один · **[8]** только Reality · **[9]** применить на **этом** сервере · **[0]** к **списку нод** · **[q]** главное меню.
+
+На **панели** 1–8 меняют профиль и хосты через API. На VDS **ноды** — **[9]** или `node-transports apply`.
+
+### 26. Этот скрипт
+
+GitHub **Latest этого установщика**, не образы Docker. (1) проверить Latest, (2) установить сейчас (`self-update`), (0) назад. С 1.3.0 главное меню само сверяется с Latest не чаще раза в 6 часов.
+
+### 27. Добавить ноду
+
+Регистрирует **ещё одну** ноду на уже работающей **панели** через API — без `apt full-upgrade` и без пункта **1**. Затем на новом VDS пункт **3** с Node secret из `credentials.txt`. Только с сервера панели.
+
+### 0. Выход
+
+Выход из меню (`0`, `q` или `Q`). Ничего не удаляет.
 
 ---
 
@@ -226,7 +369,21 @@ CLI: `status`, `doctor`, `repair`, `backup`, `restore`, `update`, `up`, `down`, 
 | | English | Русский |
 | --- | --- | --- |
 | Полная инструкция | [docs/GUIDE.en.md](docs/GUIDE.en.md) | [docs/GUIDE.ru.md](docs/GUIDE.ru.md) |
+| Меню (каждый пункт) | [docs/MENU.en.md](docs/MENU.en.md) | [docs/MENU.ru.md](docs/MENU.ru.md) |
 | Журнал версий | [CHANGELOG.md](CHANGELOG.md) | [docs/INSTALLATION_RU.md](docs/INSTALLATION_RU.md) |
+| Лицензия | [LICENSE](LICENSE) (MIT) | то же |
 | Контрольные суммы | [SHA256SUMS](SHA256SUMS) | то же |
 | Авторство | [CREDITS.md](CREDITS.md) | то же |
 | Релизы | [GitHub Latest](https://github.com/booarkz-cpu/remnawave-manager/releases/latest) | то же |
+
+---
+
+## Лицензия
+
+**MIT.** Copyright (c) 2026 Корги Люси (Corgi Lusi). Полный текст: [LICENSE](LICENSE).
+
+Можно использовать, копировать, изменять, публиковать, распространять, сублицензировать и продавать копии этого установщика, если копирайт и текст разрешения сохраняются во всех копиях.
+
+Лицензия покрывает **этот репозиторий** (`remnawave-manager.sh` и документацию). Она совместима с MIT у [DigneZzZ/remnawave-scripts](https://github.com/DigneZzZ/remnawave-scripts) и [eGamesAPI/remnawave-reverse-proxy](https://github.com/eGamesAPI/remnawave-reverse-proxy). Пункт **24** кладёт оригиналы авторов в `/opt/remnawave-addons` — они остаются на **их** условиях. У Rezzosoft в публичном репозитории нет SPDX: мы его не перелицензируем, авторство сохраняем, конвертер — необязательная ссылка.
+
+Гарантий нет. Секреты из `credentials.txt` не публикуйте. См. [SECURITY.md](SECURITY.md).
