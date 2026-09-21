@@ -4,7 +4,7 @@
 
 Production installer for [Remnawave](https://docs.rw) on Debian/Ubuntu. Interactive menu with a description of every function. UI language: **English** or **Russian**.
 
-**Current version:** `25.2.3-prod`
+**Current version:** `25.2.4-prod`
 
 Main line: **booarkz-cpu**. Extra behaviour comes from [Rezzosoft KVN](https://github.com/Rrezzak09VPN/remnanode-VLESS-Reality-Hysteria2), [eGamesAPI](https://github.com/eGamesAPI/remnawave-reverse-proxy) and [DigneZzZ](https://github.com/DigneZzZ/remnawave-scripts). Original authorship is kept — see [CREDITS.md](CREDITS.md).
 
@@ -14,7 +14,7 @@ The Xray profile, inbounds, nodes, hosts, AUTO squad and AUTO user are created t
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v25.2.3-prod/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v25.2.4-prod/remnawave-manager.sh \
   -o remnawave-manager.sh
 chmod +x remnawave-manager.sh
 sudo bash remnawave-manager.sh

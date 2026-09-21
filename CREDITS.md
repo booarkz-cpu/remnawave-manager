@@ -2,6 +2,8 @@
 
 **Remnawave Manager** — основная линия установщика: [booarkz-cpu/remnawave-manager](https://github.com/booarkz-cpu/remnawave-manager).
 
+В `25.2.4-prod` `repair` восстанавливает домены с диска, даже если в `manager.env` остался только язык.
+
 В `25.2.3-prod` меню показывает живой статус; сертификаты Hysteria2 идут через systemd, а не crontab; страница подписки подключается к панели через HTTPS хоста.
 
 В `25.2.2-prod` интерактивное меню описывает все функции; язык интерфейса — русский или English.

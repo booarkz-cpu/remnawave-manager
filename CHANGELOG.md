@@ -1,5 +1,12 @@
 # Changelog
 
+## 25.2.4-prod
+
+`repair` больше не требует заполненный `manager.env`. Домены поднимаются из `.env` панели, `credentials.txt`, nginx и Let's Encrypt. `--lang` не создаёт пустой env, из‑за которого пункт 7 падал с «нет DOMAIN_PANEL». `manager.env` больше не `source` — пароли с `$` и `&` больше не ломают загрузку доменов.
+
+SHA256:
+`0bb8ed6ec6c46a8fc02947f3a1fe45c1a3dbc2de9555cc63e5989336e4c229da`
+
 ## 25.2.3-prod
 
 Красивое двуязычное меню с живым статусом и исправления с живого VDS: 502 подписки, `curl: (52) Empty reply`, `"-":0: bad minute` в crontab.

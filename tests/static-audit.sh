@@ -3,11 +3,12 @@ set -Eeuo pipefail
 
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
-SCRIPT=remnawave-manager-v25.2.3-prod.sh
+SCRIPT=remnawave-manager-v25.2.4-prod.sh
 
 echo "[1/18] bash -n current + historical"
 bash -n "$SCRIPT"
 bash -n remnawave-manager.sh
+bash -n remnawave-manager-v25.2.3-prod.sh
 bash -n remnawave-manager-v25.2.2-prod.sh
 bash -n remnawave-manager-v25.2.1-prod.sh
 bash -n remnawave-manager-v25.2.0-prod.sh
@@ -131,7 +132,7 @@ if grep -n 'привяжите inbound' "$SCRIPT"; then
   exit 1
 fi
 
-echo "[13/18] bilingual menu + README + 25.2.3 fixes"
+echo "[13/18] bilingual menu + README + domain hydrate"
 grep -Fq 'print_menu()' "$SCRIPT"
 grep -Fq 'choose_language()' "$SCRIPT"
 grep -Fq -- '--lang|--language' "$SCRIPT"
@@ -140,8 +141,15 @@ grep -Fq 'remnawave-hysteria-certs' "$SCRIPT"
 grep -Fq 'extra_hosts' "$SCRIPT"
 grep -Fq 'existing_install_choice' "$SCRIPT"
 grep -Fq 'host.docker.internal:host-gateway' "$SCRIPT"
+grep -Fq 'hydrate_install_state()' "$SCRIPT"
+grep -Fq 'load_kv_file()' "$SCRIPT"
+grep -Fq 'ensure_repair_domains()' "$SCRIPT"
 if grep -nE '\(crontab -l .*; echo' "$SCRIPT"; then
   echo 'FAIL: user crontab pipe under set -e installs an empty crontab' >&2
+  exit 1
+fi
+if grep -nE 'source "\$ENV_FILE"' "$SCRIPT"; then
+  echo 'FAIL: manager.env must not be sourced (passwords can contain $ and &)' >&2
   exit 1
 fi
 test -f README.md
@@ -158,7 +166,7 @@ echo "[14/18] current script copies match"
 cmp -s remnawave-manager.sh "$SCRIPT"
 
 echo "[15/18] VERSION string"
-grep -Fq "VERSION='25.2.3-prod'" "$SCRIPT"
+grep -Fq "VERSION='25.2.4-prod'" "$SCRIPT"
 
 echo "[16/18] SHA256SUMS covers every versioned script"
 missing=0
