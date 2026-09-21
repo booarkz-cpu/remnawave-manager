@@ -3,11 +3,12 @@ set -Eeuo pipefail
 
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
-SCRIPT=remnawave-manager-v1.0.0.sh
+SCRIPT=remnawave-manager-v1.1.0.sh
 
 echo "[1/18] bash -n current + historical"
 bash -n "$SCRIPT"
 bash -n remnawave-manager.sh
+bash -n remnawave-manager-v1.0.0.sh
 bash -n remnawave-manager-v25.2.7-prod.sh
 bash -n remnawave-manager-v25.2.6-prod.sh
 bash -n remnawave-manager-v25.2.5-prod.sh
@@ -128,6 +129,11 @@ fi
 grep -Fq '/internal-squads/' "$SCRIPT"
 grep -Fq 'create_auto_user()' "$SCRIPT"
 grep -Fq 'CorgiLusi' "$SCRIPT"
+grep -Fq 'Корги Люси' "$SCRIPT"
+grep -Fq 'Corgi Lusi' "$SCRIPT"
+grep -Fq 'refresh_community_modules()' "$SCRIPT"
+grep -Fq 'self_update()' "$SCRIPT"
+grep -Fq 'community-update' "$SCRIPT"
 grep -Fq 'remove_default_profile_and_squads()' "$SCRIPT"
 grep -Fq 'Default-Profile' "$SCRIPT"
 grep -Fq 'profile_name_for_node()' "$SCRIPT"
@@ -186,12 +192,14 @@ grep -Fq 'interactive menu with descriptions' /tmp/rw-help-en.txt
 grep -Fq -- '--lang en|ru' /tmp/rw-help-en.txt
 grep -Fq 'urls | health' /tmp/rw-help-en.txt
 grep -Fq 'Do not prefix the command with sudo' /tmp/rw-help-en.txt
+grep -Fq 'community-update' /tmp/rw-help-en.txt
+grep -Fq 'Corgi Lusi' /tmp/rw-help-en.txt
 
 echo "[14/18] current script copies match"
 cmp -s remnawave-manager.sh "$SCRIPT"
 
 echo "[15/18] VERSION string"
-grep -Fq "VERSION='1.0.0'" "$SCRIPT"
+grep -Fq "VERSION='1.1.0'" "$SCRIPT"
 if grep -nE "^VERSION='[^']*-prod'" remnawave-manager.sh; then
   echo 'FAIL: current VERSION must not use a -prod suffix' >&2
   exit 1

@@ -4,9 +4,9 @@
 
 Production installer for [Remnawave](https://docs.rw) on Debian/Ubuntu. Interactive menu with a description of every function. UI language: **English** or **Russian**.
 
-**Current version:** `1.0.0`
+**Current version:** `1.1.0`
 
-Main line: **booarkz-cpu**. Extra behaviour comes from [Rezzosoft KVN](https://github.com/Rrezzak09VPN/remnanode-VLESS-Reality-Hysteria2), [eGamesAPI](https://github.com/eGamesAPI/remnawave-reverse-proxy) and [DigneZzZ](https://github.com/DigneZzZ/remnawave-scripts). Original authorship is kept — see [CREDITS.md](CREDITS.md).
+Author: **Corgi Lusi (Корги Люси)**. Extra behaviour comes from [Rezzosoft KVN](https://github.com/Rrezzak09VPN/remnanode-VLESS-Reality-Hysteria2), [eGamesAPI](https://github.com/eGamesAPI/remnawave-reverse-proxy) and [DigneZzZ](https://github.com/DigneZzZ/remnawave-scripts). Original authorship is kept — see [CREDITS.md](CREDITS.md). Menu item **24** refreshes those authors’ modules.
 
 The Xray profile, inbounds, nodes, hosts, **CorgiLusi** squad and CorgiLusi user are created through the Remnawave API. Each node gets its own config profile. **Default-Profile** is removed from internal squads after install.
 
@@ -14,7 +14,7 @@ The Xray profile, inbounds, nodes, hosts, **CorgiLusi** squad and CorgiLusi user
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.0.0/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.1.0/remnawave-manager.sh \
   -o remnawave-manager.sh
 chmod +x remnawave-manager.sh
 bash remnawave-manager.sh
@@ -56,6 +56,7 @@ By default every transport is enabled: Reality, Hysteria2, gRPC and xHTTP.
 | 21 | Credits / help | Authorship and full CLI help |
 | 22 | Language | English or Русский |
 | 23 | URLs | Panel / subscription / SNI and CorgiLusi user link (passwords stay in `credentials.txt`) |
+| 24 | Author updates | Refresh Rezzosoft / eGames / DigneZzZ modules; update this script from GitHub |
 | 0 | Exit | — |
 
 ## Install modes

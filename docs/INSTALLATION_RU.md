@@ -1,4 +1,4 @@
-# Установка Remnawave Manager 1.0.0
+# Установка Remnawave Manager 1.1.0
 
 ## 1. Подготовка
 
@@ -14,7 +14,7 @@ chmod +x remnawave-manager.sh
 sha256sum remnawave-manager.sh
 ```
 
-Сверьте сумму с файлом `SHA256SUMS`. Актуальный файл также называется `remnawave-manager-v1.0.0.sh`. Скачивайте через jsDelivr `@v1.0.0`, не с `raw.githubusercontent.com/main`.
+Сверьте сумму с файлом `SHA256SUMS`. Актуальный файл также называется `remnawave-manager-v1.1.0.sh`. Скачивайте через jsDelivr `@v1.1.0`, не с `raw.githubusercontent.com/main`.
 
 Без аргументов скрипт открывает меню с описанием всех функций и предлагает язык (English / русский). Профиль, ноды, хосты и сквад привязываются через API — панель и конвертер править не нужно. Префикс `sudo` в команде не нужен: скрипт сам поднимает root.
 
@@ -230,3 +230,17 @@ bash remnawave-manager.sh --lang ru
 ```
 
 Стабильный релиз без суффикса `-prod`. Тег: `v1.0.0`.
+
+## 19. Обновление до 1.1.0 (Корги Люси, синее меню, модули авторов)
+
+```bash
+curl -fL --retry 5 --retry-all-errors \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.1.0/remnawave-manager.sh \
+  -o remnawave-manager.sh
+chmod +x remnawave-manager.sh
+sha256sum remnawave-manager.sh
+# нужно: 82f4c523ef22167c83b841c7631bc7fd82ff798a7ef2f0681f0515406ca7817f
+bash remnawave-manager.sh --lang ru
+```
+
+Автор — Корги Люси. Пункт **24** или `bash remnawave-manager.sh community-update` скачивает оригиналы Rezzosoft / eGames / DigneZzZ. `self-update` обновляет этот скрипт с GitHub Latest.

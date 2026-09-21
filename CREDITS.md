@@ -1,6 +1,8 @@
 # Авторство
 
-**Remnawave Manager** — основная линия установщика: [booarkz-cpu/remnawave-manager](https://github.com/booarkz-cpu/remnawave-manager).
+**Корги Люси (Corgi Lusi)** — автор объединённого установщика Remnawave Manager: [booarkz-cpu/remnawave-manager](https://github.com/booarkz-cpu/remnawave-manager).
+
+В `1.1.0` весь функционал в одном скрипте, меню в синих тонах, пункт **24** обновляет модули оригинальных авторов (авторство сохранено).
 
 В `1.0.0` первый стабильный релиз без суффикса `-prod`.
 

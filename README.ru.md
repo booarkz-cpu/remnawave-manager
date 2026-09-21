@@ -4,9 +4,9 @@
 
 Production-установщик [Remnawave](https://docs.rw) на Debian/Ubuntu. Интерактивное меню с описанием каждой функции. Язык интерфейса: **русский** или **English**.
 
-**Текущая версия:** `1.0.0`
+**Текущая версия:** `1.1.0`
 
-Автор основной линии: **booarkz-cpu**. В скрипт добавлены функции из [Rezzosoft KVN](https://github.com/Rrezzak09VPN/remnanode-VLESS-Reality-Hysteria2), [eGamesAPI](https://github.com/eGamesAPI/remnawave-reverse-proxy) и [DigneZzZ](https://github.com/DigneZzZ/remnawave-scripts). Авторство исходных проектов сохранено — см. [CREDITS.md](CREDITS.md).
+Автор: **Корги Люси (Corgi Lusi)**. В скрипт добавлены функции из [Rezzosoft KVN](https://github.com/Rrezzak09VPN/remnanode-VLESS-Reality-Hysteria2), [eGamesAPI](https://github.com/eGamesAPI/remnawave-reverse-proxy) и [DigneZzZ](https://github.com/DigneZzZ/remnawave-scripts). Авторство исходных проектов сохранено — см. [CREDITS.md](CREDITS.md). Пункт **24** обновляет модули этих авторов.
 
 Профиль Xray, inbound’ы, ноды, хосты, сквад **CorgiLusi** и пользователь CorgiLusi создаются через API. У каждой ноды свой config-профиль. **Default-Profile** во внутренних сквадах удаляется сразу после установки.
 
@@ -14,7 +14,7 @@ Production-установщик [Remnawave](https://docs.rw) на Debian/Ubuntu.
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.0.0/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.1.0/remnawave-manager.sh \
   -o remnawave-manager.sh
 chmod +x remnawave-manager.sh
 bash remnawave-manager.sh
@@ -56,6 +56,7 @@ bash remnawave-manager.sh --lang en
 | 21 | Авторство / справка | Авторы и полная справка CLI |
 | 22 | Язык | Русский или English |
 | 23 | Адреса | Панель / подписка / SNI и ссылка CorgiLusi (пароли остаются в `credentials.txt`) |
+| 24 | Обновления авторов | Свежие модули Rezzosoft / eGames / DigneZzZ; обновление этого скрипта с GitHub |
 | 0 | Выход | — |
 
 ## Режимы установки
