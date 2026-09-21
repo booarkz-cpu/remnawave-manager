@@ -2,41 +2,133 @@
 
 [English](README.md) · [Русский](README.ru.md)
 
-Production installer for [Remnawave](https://docs.rw) on Debian/Ubuntu. Interactive menu with a description of every function. UI language: **English** or **Russian**.
+**Full instruction:** [English guide](docs/GUIDE.en.md) · [Русская инструкция](docs/GUIDE.ru.md)
+
+Production installer for [Remnawave](https://docs.rw) on Debian/Ubuntu. Interactive menu with a description of every function. UI: **English** or **Russian**.
 
 **Current version:** `1.3.0`
 
-Author: **Corgi Lusi (Корги Люси)**. Extra behaviour comes from [Rezzosoft KVN](https://github.com/Rrezzak09VPN/remnanode-VLESS-Reality-Hysteria2), [eGamesAPI](https://github.com/eGamesAPI/remnawave-reverse-proxy) and [DigneZzZ](https://github.com/DigneZzZ/remnawave-scripts). Original authorship is kept — see [CREDITS.md](CREDITS.md). Menu item **24** refreshes those authors’ modules. Menu item **25** adds or removes xHTTP, gRPC and Hysteria2 on a node that is already installed (including on another VPS). Opening the menu checks GitHub Latest for a newer script (optional install).
+Author: **Corgi Lusi (Корги Люси)**. Extra behaviour comes from [Rezzosoft KVN](https://github.com/Rrezzak09VPN/remnanode-VLESS-Reality-Hysteria2), [eGamesAPI](https://github.com/eGamesAPI/remnawave-reverse-proxy) and [DigneZzZ](https://github.com/DigneZzZ/remnawave-scripts). Original authorship is kept — [CREDITS.md](CREDITS.md).
 
-The Xray profile, inbounds, nodes, hosts, **CorgiLusi** squad and CorgiLusi user are created through the Remnawave API. Each node gets its own config profile. **Default-Profile** is removed from internal squads after install.
+The Xray profile, inbounds, nodes, hosts, **CorgiLusi** squad and CorgiLusi user are created through the Remnawave API. Each node gets its own config profile. **Default-Profile** is removed after install. You do not edit the panel UI to bind protocols.
+
+Two different updates:
+
+| | Script file | Remnawave images |
+| --- | --- | --- |
+| What | `remnawave-manager.sh` | panel / node / subscription containers |
+| How | [Update this script](#update-this-script-to-latest) | menu **14** / `update` |
+
+---
+
+## Contents
+
+- [Quick start](#quick-start)
+- [Update this script to Latest](#update-this-script-to-latest)
+- [Menu](#menu)
+- [Install modes](#install-modes)
+- [Protocols](#protocols)
+- [Maintenance](#maintenance)
+- [Documentation](#documentation)
+
+---
 
 ## Quick start
+
+Download **GitHub Latest** (not `raw.githubusercontent.com/main`) and check the hash:
+
+```bash
+curl -fL --retry 5 --retry-all-errors \
+  https://github.com/booarkz-cpu/remnawave-manager/releases/latest/download/remnawave-manager.sh \
+  -o remnawave-manager.sh
+chmod +x remnawave-manager.sh
+
+curl -fL --retry 5 --retry-all-errors \
+  https://github.com/booarkz-cpu/remnawave-manager/releases/latest/download/SHA256SUMS \
+  -o SHA256SUMS
+sha256sum remnawave-manager.sh
+grep ' remnawave-manager.sh$' SHA256SUMS
+```
+
+The two hashes must match. Then:
+
+```bash
+bash remnawave-manager.sh
+```
+
+No arguments opens the menu. Do not type `sudo` — the script raises root itself. On first run it asks for **English** or **Русский** (saved in `/opt/remnawave/manager.env`). Switch later with menu item 22 or `--lang en|ru`.
+
+Pinned 1.3.0 via jsDelivr (optional):
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
   https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.3.0/remnawave-manager.sh \
   -o remnawave-manager.sh
-chmod +x remnawave-manager.sh
-bash remnawave-manager.sh
-```
-
-No arguments opens the menu. Do not type `sudo` — the script raises root itself. On first run it asks for **English** or **Русский** (saved in `/opt/remnawave/manager.env`). Switch later with menu item 22 or:
-
-```bash
-bash remnawave-manager.sh --lang en
-bash remnawave-manager.sh --lang ru
+# sha256: dd7ece932c3dd26a93dacc0c24249dfa1b15bb8f7bd475b5b846a6d6a933c152
 ```
 
 By default every transport is enabled: Reality, Hysteria2, gRPC and xHTTP.
 
-## Menu (all functions)
+Step-by-step (one VPS, two VPS, DNS, files on disk): **[docs/GUIDE.en.md](docs/GUIDE.en.md)**.
+
+---
+
+## Update this script to Latest
+
+This replaces **only** the installer file. It does not pull Docker images and does not wipe the panel database. Image updates are menu **14**.
+
+### Already on 1.3.0 or newer
+
+The menu checks GitHub Latest (at most every 6 hours) and asks to install. Or:
+
+```bash
+bash remnawave-manager.sh check-update
+bash remnawave-manager.sh check-update --apply
+```
+
+Same thing: menu **24** → **2**, or `bash remnawave-manager.sh self-update`.
+
+Skip the query: `--no-update-check`. Check only (no download): menu **24** → **3**.
+
+`self-update` downloads Latest, runs `bash -n`, overwrites this file and `/usr/local/bin/remnawave-manager` if that CLI copy exists, then restarts.
+
+### Older script (1.2.x, 1.1.x, 25.2.x, …)
+
+Those builds have no `check-update`. Use Latest + SHA256 as in [Quick start](#quick-start). If the hashes differ, do not run the file.
+
+Then, if you had used menu **19**:
+
+```bash
+bash remnawave-manager.sh install-script
+```
+
+Do this on **both** the panel VPS and the node VPS.
+
+### After the file is updated
+
+You usually do **not** reinstall Remnawave.
+
+| Goal | Next step |
+| --- | --- |
+| HTTP 502 | menu **7** / `repair` |
+| Rebuild CorgiLusi bind | menu **4** / `protocols` (panel) |
+| Add/remove gRPC, xHTTP, Hysteria2 | menu **25** (panel), then `node-transports apply` on the node |
+| New Remnawave images | menu **14** / `update` |
+
+Do **not**: download from `raw.githubusercontent.com/main`; run item **1** “to get a new script”; treat item **14** as a script update; paste PowerShell onto Linux.
+
+Full text: [docs/GUIDE.en.md §10](docs/GUIDE.en.md#10-how-to-update-this-script-to-latest).
+
+---
+
+## Menu
 
 | # | Function | What it does |
 | --- | --- | --- |
-| 1 | Full install | Panel + node on one VPS, nginx SNI, Corgi SelfSteal, certificates, API bind |
-| 2 | Panel only | Panel + subscription page + HTTPS; `EDGE_ADDRESS` registers the node now |
-| 3 | Node only | Host-network remnanode, Reality SNI site; `SECRET_KEY` from panel `credentials.txt` |
-| 4 | Auto-bind protocols | Per-node CorgiLusi profile, CorgiLusi squad, delete Default-Profile |
+| 1 | Full install | Panel + node on one VPS, nginx SNI, Corgi, certs, API bind |
+| 2 | Panel only | Panel + subscription HTTPS; `EDGE_ADDRESS` registers the node |
+| 3 | Node only | Host-network remnanode, Reality SNI; `SECRET_KEY` from panel `credentials.txt` |
+| 4 | Auto-bind protocols | Per-node CorgiLusi profile, CorgiLusi squad, drop Default-Profile |
 | 5 | Status | Containers, nginx/fail2ban, systemd timers |
 | 6 | Doctor | Panel API, subscription page, ports, UFW |
 | 7 | Repair | Rewrite proxy headers and SelfSteal without wiping Docker/DB |
@@ -46,19 +138,21 @@ By default every transport is enabled: Reality, Hysteria2, gRPC and xHTTP.
 | 11 | Restart | Restart every Remnawave compose stack |
 | 12 | Backup | Archive under `/var/backups/remnawave` |
 | 13 | Restore | Restore a `.tgz` or `.age` archive |
-| 14 | Update | Backup, pull images (panel → node → subscription), verify API |
+| 14 | Update | Backup, pull **Remnawave images**, verify API |
 | 15 | Uninstall | Remove services and nginx vhosts; backups stay |
 | 16 | Xray core | Custom binary or restore the image builtin |
-| 17 | Add-ons | DigneZzZ CLI, SelfSteal, WARP/Tor, NetBird, eGames reverse-proxy |
-| 18 | Stealth login | Cookie/query gate for `/auth/login` (eGames idea) |
+| 17 | Add-ons | DigneZzZ CLI, SelfSteal, WARP/Tor, NetBird, eGames |
+| 18 | Stealth login | Cookie/query gate for `/auth/login` |
 | 19 | Install CLI | Copy to `/usr/local/bin/remnawave-manager` |
 | 20 | Converter | Optional Rezzosoft JSON helper (not required to bind) |
 | 21 | Credits / help | Authorship and full CLI help |
 | 22 | Language | English or Русский |
-| 23 | URLs | Panel / subscription / SNI and CorgiLusi user link (passwords stay in `credentials.txt`) |
-| 24 | Author updates | Refresh Rezzosoft / eGames / DigneZzZ modules; update this script from GitHub |
-| 25 | Node transports | Add or remove xHTTP, gRPC, Hysteria2 on an already-installed node (other VPS too) |
+| 23 | URLs | Panel / subscription / SNI and CorgiLusi user link |
+| 24 | Author updates | Refresh upstream modules; **update this script** |
+| 25 | Node transports | Add or remove xHTTP, gRPC, Hysteria2 on an already-installed node |
 | 0 | Exit | — |
+
+---
 
 ## Install modes
 
@@ -83,44 +177,53 @@ bash remnawave-manager.sh --lang en install node --yes \
   ADMIN_EMAIL=admin@example.com NODE_SECRET_KEY='secret_from_credentials.txt'
 ```
 
+Details: [docs/GUIDE.en.md](docs/GUIDE.en.md#6-install-panel-and-node-on-two-servers).
+
+---
+
 ## Protocols
 
 All on by default. Binding is automatic.
 
-- Reality (VLESS TCP, SNI on 443)
+- Reality (VLESS TCP, SNI on 443, host fingerprint **firefox**)
 - Hysteria2 UDP/443 in the Xray profile + sing-box UDP/8443
 - VLESS gRPC + Reality TCP/8443
 - VLESS xHTTP + Reality TCP/4443
 
 Flags: `--all-protocols` (same as default), `--reality-only`, `--hysteria2`, `--grpc`, `--xhttp`.
 
-On an existing system: `bash remnawave-manager.sh protocols` (alias: `bind`) or menu item 4 — rebuilds every CorgiLusi profile.
+On an existing system, **full** re-bind: `bash remnawave-manager.sh protocols` (alias: `bind`) or menu item **4**.
 
-To **add or remove** xHTTP, gRPC or Hysteria2 on a node that is already up (panel and node may be on different VPS), use a **separate** item — menu **25** — so you do not mix it with a full re-bind:
+To **add or remove** extras on a node that is already up (panel and node may be on different VPS), use a **separate** item — menu **25**:
 
 ```bash
-# On the panel (updates profile, inbounds, hosts, squad; leftover extra hosts are deleted)
-bash remnawave-manager.sh node-transports add grpc
-bash remnawave-manager.sh node-transports add xhttp
-bash remnawave-manager.sh node-transports add hysteria2
-bash remnawave-manager.sh node-transports add all
-bash remnawave-manager.sh node-transports remove grpc
-bash remnawave-manager.sh node-transports remove xhttp
-bash remnawave-manager.sh node-transports remove hysteria2
+# Panel
+bash remnawave-manager.sh node-transports add grpc|xhttp|hysteria2|all
+bash remnawave-manager.sh node-transports remove grpc|xhttp|hysteria2|all
 bash remnawave-manager.sh node-transports reality-only
 
-# On the node VPS (UFW ports, /dev/shm certs, sing-box Hysteria2 stack)
+# Node VPS
 bash remnawave-manager.sh node-transports apply
 ```
 
-Adding one transport keeps the others as they are in `manager.env`. Item 4 / `protocols` is still the full auto-bind (all transports unless you pass `--reality-only` / `--grpc` / …).
+---
 
-## Maintenance CLI
+## Maintenance
 
-The header of the menu shows live local health (panel API, subscription `:3010`, remnanode). Opening the menu also checks GitHub Latest (cached for 6 hours). If a newer script exists, you are asked to install it. Skip with `--no-update-check`. Manual: `bash remnawave-manager.sh check-update` or `check-update --apply`.
+The menu header shows live local health (panel API, subscription `:3010`, remnanode) and, after a GitHub check, whether the script itself is up to date.
 
-On HTTP 502 for the subscription page: menu **7 (repair)** or `bash remnawave-manager.sh repair`. Do not paste PowerShell scripts onto the Linux VPS.
+On HTTP 502: menu **7** or `bash remnawave-manager.sh repair`. Do not paste PowerShell onto the Linux VPS.
 
-`status`, `doctor`, `repair`, `backup`, `restore`, `update`, `up`, `down`, `restart`, `logs`, `urls`, `health`, `core-update`, `stealth`, `addon remnawave|remnanode|selfsteal|wtm|netbird|egames`, `node-transports add|remove|apply|reality-only`, `check-update`, `self-update`.
+CLI: `status`, `doctor`, `repair`, `backup`, `restore`, `update`, `up`, `down`, `restart`, `logs`, `urls`, `health`, `core-update`, `stealth`, `addon …`, `node-transports …`, `check-update`, `self-update`.
 
-Details: [docs/INSTALLATION_RU.md](docs/INSTALLATION_RU.md), [CHANGELOG.md](CHANGELOG.md), [SHA256SUMS](SHA256SUMS).
+---
+
+## Documentation
+
+| | English | Русский |
+| --- | --- | --- |
+| Full guide | [docs/GUIDE.en.md](docs/GUIDE.en.md) | [docs/GUIDE.ru.md](docs/GUIDE.ru.md) |
+| Version journal | [CHANGELOG.md](CHANGELOG.md) | [docs/INSTALLATION_RU.md](docs/INSTALLATION_RU.md) |
+| Checksums | [SHA256SUMS](SHA256SUMS) | same |
+| Credits | [CREDITS.md](CREDITS.md) | same |
+| Releases | [GitHub Latest](https://github.com/booarkz-cpu/remnawave-manager/releases/latest) | same |

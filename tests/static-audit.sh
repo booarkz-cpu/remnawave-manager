@@ -199,9 +199,24 @@ if grep -nE 'source "\$ENV_FILE"' "$SCRIPT"; then
 fi
 test -f README.md
 test -f README.ru.md
+test -f docs/GUIDE.en.md
+test -f docs/GUIDE.ru.md
 grep -Fq '[English](README.md)' README.md
 grep -Fq '[Русский](README.ru.md)' README.md
 grep -Fq '[English](README.md)' README.ru.md
+grep -Fq 'docs/GUIDE.en.md' README.md
+grep -Fq 'docs/GUIDE.ru.md' README.ru.md
+grep -Fq 'check-update --apply' README.md README.ru.md docs/GUIDE.en.md docs/GUIDE.ru.md
+grep -Fq 'self-update' README.md README.ru.md docs/GUIDE.en.md docs/GUIDE.ru.md
+grep -Fq 'releases/latest/download/remnawave-manager.sh' README.md README.ru.md docs/GUIDE.en.md docs/GUIDE.ru.md
+if grep -nE '^sudo bash remnawave-manager.sh' README.md README.ru.md docs/GUIDE.en.md docs/GUIDE.ru.md; then
+  echo 'FAIL: docs must invoke the script without a sudo prefix' >&2
+  exit 1
+fi
+if grep -nE 'remawve-manager' README.md README.ru.md docs/GUIDE.en.md docs/GUIDE.ru.md; then
+  echo 'FAIL: typo remawve-manager in docs' >&2
+  exit 1
+fi
 bash "$SCRIPT" --lang en --help >/tmp/rw-help-en.txt
 grep -Fq 'interactive menu with descriptions' /tmp/rw-help-en.txt
 grep -Fq -- '--lang en|ru' /tmp/rw-help-en.txt
