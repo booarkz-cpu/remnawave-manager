@@ -1,5 +1,16 @@
 # Changelog
 
+## 25.2.2-prod
+
+Интерактивное меню с описанием каждой функции и выбор языка интерфейса (английский / русский). На GitHub два README: [English](README.md) и [Русский](README.ru.md).
+
+- пункт 22 меню, `--lang en|ru` и `RW_LANG` в `manager.env`;
+- меню покрывает установку, bind, status/doctor/repair, up/down/restart, backup/restore, update, uninstall, ядро Xray, модули, stealth, CLI и конвертер;
+- справка `--help` печатается на выбранном языке.
+
+SHA256:
+`989c56497e2fbf8877b5e43deb3c771bfa78a402d79b9548791cd13b6299f7c9`
+
 ## 25.2.1-prod
 
 Полностью автоматическая привязка без правок в панели и без конвертера.

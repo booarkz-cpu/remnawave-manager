@@ -1,63 +1,100 @@
 # Remnawave Manager
 
-Production-установщик Remnawave на Debian/Ubuntu. Интерфейс и документация на русском.
+[English](README.md) · [Русский](README.ru.md)
 
-**Текущая версия:** `25.2.1-prod`
+Production installer for [Remnawave](https://docs.rw) on Debian/Ubuntu. Interactive menu with a description of every function. UI language: **English** or **Russian**.
 
-Автор основной линии: **booarkz-cpu**. В эту версию добавлены функции из скриптов [Rezzosoft KVN](https://github.com/Rrezzak09VPN/remnanode-VLESS-Reality-Hysteria2), [eGamesAPI](https://github.com/eGamesAPI/remnawave-reverse-proxy) и [DigneZzZ](https://github.com/DigneZzZ/remnawave-scripts). Авторство исходных проектов сохранено — см. [CREDITS.md](CREDITS.md).
+**Current version:** `25.2.2-prod`
 
-Профиль Xray, inbound’ы, ноды, хосты, сквад AUTO и пользователь AUTO создаются через API. Панель и конвертер править не нужно.
+Main line: **booarkz-cpu**. Extra behaviour comes from [Rezzosoft KVN](https://github.com/Rrezzak09VPN/remnanode-VLESS-Reality-Hysteria2), [eGamesAPI](https://github.com/eGamesAPI/remnawave-reverse-proxy) and [DigneZzZ](https://github.com/DigneZzZ/remnawave-scripts). Original authorship is kept — see [CREDITS.md](CREDITS.md).
 
-## Быстрый старт
+The Xray profile, inbounds, nodes, hosts, AUTO squad and AUTO user are created through the Remnawave API. You do not edit the panel UI or the converter to bind protocols.
+
+## Quick start
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v25.2.1-prod/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v25.2.2-prod/remnawave-manager.sh \
   -o remnawave-manager.sh
 chmod +x remnawave-manager.sh
 sudo bash remnawave-manager.sh
 ```
 
-Без аргументов открывается русское меню. По умолчанию ставятся все транспорты: Reality, Hysteria2, gRPC и xHTTP.
-
-## Режимы установки
-
-| Режим | Что ставится |
-| --- | --- |
-| `install single` | Панель + нода на одном VDS |
-| `install panel` | Только панель; к ней потом подключаются ноды |
-| `install node` | Только нода на отдельном сервере (`SECRET_KEY` из `/opt/remnawave/credentials.txt` на панели) |
-
-Два сервера:
+No arguments opens the menu. On first run it asks for **English** or **Русский** (saved in `/opt/remnawave/manager.env`). Switch later with menu item 22 or:
 
 ```bash
-# Панель (EDGE_ADDRESS — IP ноды, чтобы карточка Node создалась сразу)
-sudo bash remnawave-manager.sh install panel --yes \
+sudo bash remnawave-manager.sh --lang en
+sudo bash remnawave-manager.sh --lang ru
+```
+
+By default every transport is enabled: Reality, Hysteria2, gRPC and xHTTP.
+
+## Menu (all functions)
+
+| # | Function | What it does |
+| --- | --- | --- |
+| 1 | Full install | Panel + node on one VPS, nginx SNI, Corgi SelfSteal, certificates, API bind |
+| 2 | Panel only | Panel + subscription page + HTTPS; `EDGE_ADDRESS` registers the node now |
+| 3 | Node only | Host-network remnanode, Reality SNI site; `SECRET_KEY` from panel `credentials.txt` |
+| 4 | Auto-bind protocols | Refresh AUTO-PROFILE, attach inbounds, create hosts and AUTO squad (no panel UI) |
+| 5 | Status | Containers, nginx/fail2ban, systemd timers |
+| 6 | Doctor | Panel API, subscription page, ports, UFW |
+| 7 | Repair | Rewrite proxy headers and SelfSteal without wiping Docker/DB |
+| 8 | Logs | Follow remnawave / remnanode / subscription-page |
+| 9 | Up | `docker compose up` for every stack |
+| 10 | Down | `docker compose down` (data kept) |
+| 11 | Restart | Restart every Remnawave compose stack |
+| 12 | Backup | Archive under `/var/backups/remnawave` |
+| 13 | Restore | Restore a `.tgz` or `.age` archive |
+| 14 | Update | Backup, pull images (panel → node → subscription), verify API |
+| 15 | Uninstall | Remove services and nginx vhosts; backups stay |
+| 16 | Xray core | Custom binary or restore the image builtin |
+| 17 | Add-ons | DigneZzZ CLI, SelfSteal, WARP/Tor, NetBird, eGames reverse-proxy |
+| 18 | Stealth login | Cookie/query gate for `/auth/login` (eGames idea) |
+| 19 | Install CLI | Copy to `/usr/local/bin/remnawave-manager` |
+| 20 | Converter | Optional Rezzosoft JSON helper (not required to bind) |
+| 21 | Credits / help | Authorship and full CLI help |
+| 22 | Language | English or Русский |
+| 0 | Exit | — |
+
+## Install modes
+
+| Command | What is installed |
+| --- | --- |
+| `install single` | Panel + node on one VPS |
+| `install panel` | Panel only; nodes connect later |
+| `install node` | Node on a separate server (`SECRET_KEY` from `/opt/remnawave/credentials.txt` on the panel) |
+
+Two servers:
+
+```bash
+# Panel (EDGE_ADDRESS is the node IP so the Node card is created immediately)
+sudo bash remnawave-manager.sh --lang en install panel --yes \
   DOMAIN_PANEL=pst.example.com DOMAIN_SUB=sb.example.com \
   DOMAIN_REALITY=blog.example.com ADMIN_EMAIL=admin@example.com \
   EDGE_ADDRESS=203.0.113.20
 
-# Нода (другой VDS)
-sudo bash remnawave-manager.sh install node --yes \
+# Node (other VPS)
+sudo bash remnawave-manager.sh --lang en install node --yes \
   PANEL_IP=203.0.113.10 DOMAIN_REALITY=blog.example.com \
-  ADMIN_EMAIL=admin@example.com NODE_SECRET_KEY='секрет_из_credentials.txt'
+  ADMIN_EMAIL=admin@example.com NODE_SECRET_KEY='secret_from_credentials.txt'
 ```
 
-## Протоколы
+## Protocols
 
-По умолчанию включаются все. Привязка к панели — автоматически.
+All on by default. Binding is automatic.
 
-- Reality (VLESS TCP, SNI на 443)
-- Hysteria2 UDP/443 в профиле Xray + sing-box UDP/8443
+- Reality (VLESS TCP, SNI on 443)
+- Hysteria2 UDP/443 in the Xray profile + sing-box UDP/8443
 - VLESS gRPC + Reality TCP/8443
 - VLESS xHTTP + Reality TCP/4443
 
-Флаги: `--all-protocols` (то же, что по умолчанию), `--reality-only`, `--hysteria2`, `--grpc`, `--xhttp`.
+Flags: `--all-protocols` (same as default), `--reality-only`, `--hysteria2`, `--grpc`, `--xhttp`.
 
-На уже установленной системе: `sudo bash remnawave-manager.sh protocols` (синоним: `bind`) или пункт 4 меню. Команда обновляет AUTO-PROFILE, вешает все inbound’ы на ноды, создаёт хосты с path/host/ALPN и сквад AUTO.
+On an existing system: `sudo bash remnawave-manager.sh protocols` (alias: `bind`) or menu item 4.
 
-## Обслуживание
+## Maintenance CLI
 
 `status`, `doctor`, `repair`, `backup`, `restore`, `update`, `up`, `down`, `restart`, `logs`, `core-update`, `stealth`, `addon remnawave|remnanode|selfsteal|wtm|netbird|egames`.
 
-Подробности: [docs/INSTALLATION_RU.md](docs/INSTALLATION_RU.md), [CHANGELOG.md](CHANGELOG.md), [SHA256SUMS](SHA256SUMS).
+Details: [docs/INSTALLATION_RU.md](docs/INSTALLATION_RU.md), [CHANGELOG.md](CHANGELOG.md), [SHA256SUMS](SHA256SUMS).

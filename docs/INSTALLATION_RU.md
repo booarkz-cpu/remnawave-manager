@@ -1,4 +1,4 @@
-# Установка Remnawave Manager 25.2.1-prod
+# Установка Remnawave Manager 25.2.2-prod
 
 ## 1. Подготовка
 
@@ -14,9 +14,14 @@ chmod +x remnawave-manager.sh
 sha256sum remnawave-manager.sh
 ```
 
-Сверьте сумму с файлом `SHA256SUMS`. Актуальный файл также называется `remnawave-manager-v25.2.1-prod.sh`. Скачивайте через jsDelivr `@v25.2.1-prod`, не с `raw.githubusercontent.com/main`.
+Сверьте сумму с файлом `SHA256SUMS`. Актуальный файл также называется `remnawave-manager-v25.2.2-prod.sh`. Скачивайте через jsDelivr `@v25.2.2-prod`, не с `raw.githubusercontent.com/main`.
 
-Без аргументов скрипт открывает русское меню. Профиль, ноды, хосты и сквад привязываются через API — панель и конвертер править не нужно.
+Без аргументов скрипт открывает меню с описанием всех функций и предлагает язык (English / русский). Профиль, ноды, хосты и сквад привязываются через API — панель и конвертер править не нужно.
+
+```bash
+sudo bash remnawave-manager.sh --lang ru   # русский интерфейс
+sudo bash remnawave-manager.sh --lang en   # English UI
+```
 
 Во время `install` скрипт выполняет `apt-get full-upgrade`. Автоматически VDS не перезагружается; если появится `/var/run/reboot-required`, перезагрузите сервер после завершения установки.
 
@@ -127,3 +132,17 @@ sudo bash remnawave-manager.sh protocols
 ```
 
 Команда `protocols` (синоним `bind`) обновляет AUTO-PROFILE, вешает все inbound’ы на ноды, создаёт хосты и сквад AUTO. UI панели для этого не открывайте.
+
+## 12. Обновление до 25.2.2-prod (меню и язык)
+
+```bash
+curl -fL --retry 5 --retry-all-errors \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v25.2.2-prod/remnawave-manager.sh \
+  -o remnawave-manager.sh
+chmod +x remnawave-manager.sh
+sha256sum remnawave-manager.sh
+# нужно: 989c56497e2fbf8877b5e43deb3c771bfa78a402d79b9548791cd13b6299f7c9
+sudo bash remnawave-manager.sh --lang ru
+```
+
+Меню описывает все функции. Язык: пункт 22 или `--lang en|ru`.
