@@ -3,11 +3,12 @@ set -Eeuo pipefail
 
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
-SCRIPT=remnawave-manager-v1.5.2.sh
+SCRIPT=remnawave-manager-v1.5.3.sh
 
 echo "[1/18] bash -n current + historical"
 bash -n "$SCRIPT"
 bash -n remnawave-manager.sh
+bash -n remnawave-manager-v1.5.3.sh
 bash -n remnawave-manager-v1.5.2.sh
 bash -n remnawave-manager-v1.5.1.sh
 bash -n remnawave-manager-v1.5.0.sh
@@ -264,7 +265,7 @@ grep -Fq -- '--version' /tmp/rw-help-en.txt
 grep -Fq 'add-node' /tmp/rw-help-en.txt
 grep -Fq 'users list' /tmp/rw-help-en.txt
 grep -Fq 'admin-login' /tmp/rw-help-en.txt
-bash "$SCRIPT" --version | grep -Fq '1.5.2'
+bash "$SCRIPT" --version | grep -Fq '1.5.3'
 set +e
 bash "$SCRIPT" --lang en nosuchcmd >/tmp/rw-unk.txt 2>&1
 unk_rc=$?
@@ -277,7 +278,7 @@ if grep -Fq 'panel + node on one server' /tmp/rw-unk.txt; then
 fi
 # 1.4.0 self-update restart glued `--lang ru` into one argv because IFS has no space.
 bash "$SCRIPT" '--lang ru' --no-update-check --version >/tmp/rw-lang-glue.txt 2>&1
-grep -Fq '1.5.2' /tmp/rw-lang-glue.txt
+grep -Fq '1.5.3' /tmp/rw-lang-glue.txt
 if grep -Fq 'Unknown command' /tmp/rw-lang-glue.txt; then
   echo 'FAIL: glued --lang ru treated as unknown command' >&2
   exit 1
@@ -366,12 +367,24 @@ fi
 awk '/^ask_protocols\(\)/,/^nginx_apply\(\)/' "$SCRIPT" | grep -Fq 'HYSTERIA2=0; ENABLE_GRPC=1; ENABLE_XHTTP=0'
 awk '/^ask_protocols\(\)/,/^nginx_apply\(\)/' "$SCRIPT" | grep -Fq 'HYSTERIA2=0; ENABLE_GRPC=0; ENABLE_XHTTP=1'
 grep -Fq '[[:space:]]${ip}[[:space:]]' "$SCRIPT"
+grep -Fq 'coerce_01()' "$SCRIPT"
+grep -Fq 'normalize_runtime_flags()' "$SCRIPT"
+grep -Fq 'menu_call(){ ( "$@" ) || true; }' "$SCRIPT"
+grep -Fq '(( 10#$p >= 1 && 10#$p <= 65535 ))' "$SCRIPT"
+grep -Fq '^[1-9][0-9]*$' "$SCRIPT"
+grep -Fq "printf '\\n000'" "$SCRIPT"
+awk '/^interactive_menu\(\)/,/^main\(\)/' "$SCRIPT" | grep -Fq 'menu_call restore'
+awk '/^script_update_menu\(\)/,/^show_result\(\)/' "$SCRIPT" | grep -Fq self_update
+if awk '/^script_update_menu\(\)/,/^show_result\(\)/' "$SCRIPT" | grep -q 'menu_call self_update'; then
+  echo 'FAIL: self_update must not run in a subshell (exec would not replace the menu)' >&2
+  exit 1
+fi
 
 echo "[14/18] current script copies match"
 cmp -s remnawave-manager.sh "$SCRIPT"
 
 echo "[15/18] VERSION string"
-grep -Fq "VERSION='1.5.2'" "$SCRIPT"
+grep -Fq "VERSION='1.5.3'" "$SCRIPT"
 if grep -nE "^VERSION='[^']*-prod'" remnawave-manager.sh; then
   echo 'FAIL: current VERSION must not use a -prod suffix' >&2
   exit 1
@@ -403,12 +416,14 @@ set -Eeuo pipefail
 # shellcheck disable=SC1091
 . ./kv.inc
 . ./up.inc
-VERSION='1.5.2'
+VERSION='1.5.3'
 PATH_SAVE="$PATH"
-printf '%s\n' 'VERSION=9.9.9' 'PATH=/evil' 'ADMIN_PASSWORD=ab\cd$ef' > env.test
+DRY_RUN=0
+printf '%s\n' 'VERSION=9.9.9' 'PATH=/evil' 'DRY_RUN=1' 'ADMIN_PASSWORD=ab\cd$ef' > env.test
 load_kv_file env.test
-[[ "$VERSION" == 1.5.2 ]]
+[[ "$VERSION" == 1.5.3 ]]
 [[ "$PATH" == "$PATH_SAVE" ]]
+[[ "$DRY_RUN" == 0 ]]
 [[ "$ADMIN_PASSWORD" == 'ab\cd$ef' ]]
 upsert_kv out.env SECRET 'x\y&z'
 grep -Fx 'SECRET=x\y&z' out.env >/dev/null
