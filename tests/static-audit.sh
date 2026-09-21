@@ -393,7 +393,7 @@ grep -Fq 'users_payload()' "$SCRIPT"
 grep -Fq 'hwidDeviceLimit' "$SCRIPT"
 grep -Fq 'trafficLimitStrategy' "$SCRIPT"
 grep -Fq 'is_protected_kv_key()' "$SCRIPT"
-grep -Fq 'users create NAME' /tmp/rw-help-en.txt
+grep -Fq 'list|create NAME' /tmp/rw-help-en.txt
 test -f SECURITY.md
 test -f SECURITY.ru.md
 test -f CHANGELOG.md
