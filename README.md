@@ -1,10 +1,10 @@
 # Remnawave Manager
 
-Production-РѕСЂРёРµРЅС‚РёСЂРѕРІР°РЅРЅС‹Р№ Bash-РјРµРЅРµРґР¶РµСЂ РґР»СЏ СЂР°Р·РІС‘СЂС‚С‹РІР°РЅРёСЏ Рё РѕР±СЃР»СѓР¶РёРІР°РЅРёСЏ Remnawave РЅР° Debian/Ubuntu.
+Production-ориентированный Bash-менеджер для развёртывания и обслуживания Remnawave на Debian/Ubuntu.
 
-**РўРµРєСѓС‰Р°СЏ РІРµСЂСЃРёСЏ:** `25.1.6-prod`
+**Текущая версия:** `25.1.6-prod`
 
-## Р‘С‹СЃС‚СЂС‹Р№ СЃС‚Р°СЂС‚
+## Быстрый старт
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/booarkz-cpu/remnawave-manager/main/remnawave-manager-v25.1.6-prod.sh -o remnawave-manager.sh
@@ -14,17 +14,18 @@ bash remnawave-manager.sh --dry-run
 sudo bash remnawave-manager.sh install single
 ```
 
-## 25.1.6
+## 25.1.6-prod
 
-Hotfix bootstrap/API РґР»СЏ Р°РєС‚СѓР°Р»СЊРЅРѕРіРѕ Remnawave Panel 3.x:
+Hotfix bootstrap/API для актуального Remnawave Panel 3.x:
 
-- РґРѕР±Р°РІР»РµРЅ `X-Remnawave-Client-Type: browser` РІРѕ РІРЅСѓС‚СЂРµРЅРЅРёРµ API-Р·Р°РїСЂРѕСЃС‹ Manager;
-- СЌС‚Рѕ СЂР°Р·СЂРµС€Р°РµС‚ admin JWT РІС‹РїРѕР»РЅСЏС‚СЊ API-РІС‹Р·РѕРІС‹, РІРєР»СЋС‡Р°СЏ СЃРѕР·РґР°РЅРёРµ API token, СЃРѕРіР»Р°СЃРЅРѕ С‚РµРєСѓС‰РµРјСѓ `JwtDefaultGuard` backend;
-- РєРѕРјР°РЅРґР° `backup` С‚РµРїРµСЂСЊ СЃРѕРѕР±С‰Р°РµС‚ РїРѕРЅСЏС‚РЅСѓСЋ РѕС€РёР±РєСѓ, РµСЃР»Рё backup helper РµС‰С‘ РЅРµ Р±С‹Р» СѓСЃС‚Р°РЅРѕРІР»РµРЅ.
+- добавлен `X-Remnawave-Client-Type: browser` во внутренние API-запросы Manager;
+- это позволяет admin JWT выполнять API-вызовы, включая создание API token, согласно текущему `JwtDefaultGuard` backend;
+- команда `backup` теперь сообщает понятную ошибку, если backup helper ещё не установлен;
+- отключены ANSI escape-последовательности в консоли и `/var/log/remnawave-manager.log`.
 
 ## Runtime
 
-`25.1.6+` РёСЃРїРѕР»СЊР·СѓРµС‚ proxy-aware РІРЅСѓС‚СЂРµРЅРЅРёРµ API-Р·Р°РїСЂРѕСЃС‹:
+`25.1.6+` использует proxy-aware внутренние API-запросы:
 
 ```text
 X-Forwarded-For: 127.0.0.1
@@ -36,7 +37,9 @@ X-Remnawave-Client-Type: browser
 
 ## Production status
 
-Static audit: green. Р РµР°Р»СЊРЅС‹Р№ VDS runtime test РѕР±СЏР·Р°С‚РµР»РµРЅ.
+**Static audit:** green.
+
+**Реальный VDS runtime test:** в процессе; production-ready статус не считается завершённым до успешного runtime-теста.
 
 ## SHA256
 
@@ -44,5 +47,4 @@ Static audit: green. Р РµР°Р»СЊРЅС‹Р№ VDS runtime test РѕР�
 e890d9cbbc92b7dad020a3bfb25662979f1fa1f453f62563db28bda1b92b2780  remnawave-manager-v25.1.6-prod.sh
 ```
 
-РџРѕРґСЂРѕР±РЅРѕСЃС‚Рё: [CHANGELOG.md](CHANGELOG.md).
-
+Подробности: [CHANGELOG.md](CHANGELOG.md).
