@@ -13,8 +13,9 @@ for f in remnawave-manager-v25.1.{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16}-prod
 done
 
 echo "[2/16] help"
-bash "$SCRIPT" --help >/dev/null
-bash "$SCRIPT" --help | grep -Fq 'rezzosoft.ru/converter.html'
+bash "$SCRIPT" --help >/tmp/rw-help.txt
+grep -Fq 'rezzosoft.ru/converter.html' /tmp/rw-help.txt
+grep -Fq repair /tmp/rw-help.txt
 
 echo "[3/16] dry-run single"
 sudo bash "$SCRIPT" install single --dry-run --yes \
@@ -123,7 +124,7 @@ echo "[15/16] verify checksums"
 sha256sum -c SHA256SUMS
 
 echo "[16/16] dry-run repair help text"
-bash "$SCRIPT" --help | grep -Fq repair
-bash "$SCRIPT" --help | grep -Fq 'install node'
+grep -Fq repair /tmp/rw-help.txt
+grep -Fq 'install node' /tmp/rw-help.txt
 
 echo "STATIC AUDIT OK"
