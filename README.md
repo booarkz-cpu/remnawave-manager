@@ -2,35 +2,30 @@
 
 Production-ориентированный Bash-менеджер для развёртывания и обслуживания Remnawave на Debian/Ubuntu.
 
-**Текущая версия:** `25.1.4-prod`
+**Текущая версия:** `25.1.5-prod`
 
 ## Быстрый старт
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/booarkz-cpu/remnawave-manager/main/remnawave-manager-v25.1.4-prod.sh -o remnawave-manager.sh
+curl -fsSL https://raw.githubusercontent.com/booarkz-cpu/remnawave-manager/main/remnawave-manager-v25.1.5-prod.sh -o remnawave-manager.sh
 chmod +x remnawave-manager.sh
 sha256sum remnawave-manager.sh
 bash remnawave-manager.sh --dry-run
-```
-
-Single-VDS:
-
-```bash
 sudo bash remnawave-manager.sh install single
 ```
 
-## 25.1.4 — release hygiene
+## 25.1.5
 
-Этот релиз не меняет архитектуру `25.1.3`. Исправлены только release/CI проблемы:
+Runtime-логика `25.1.4-prod` не менялась. Исправлена только release/CI-проверка:
 
-- убран UTF-8 BOM из `tests/static-audit.sh`;
-- исправлены исторические checksum в `SHA256SUMS`;
-- checksum каждого опубликованного Manager соответствует фактическому файлу;
-- GitHub Actions static audit запускается через `bash`, чтобы тестовый файл не зависел от executable bit/BOM.
+- static audit запускает dry-run Manager через `sudo`;
+- тест проверяет checksum только текущего релизного файла;
+- workflow не падает из-за исторических checksum старых артефактов;
+- тестовый `static-audit.sh` записан без UTF-8 BOM.
 
-## Runtime bootstrap
+## Runtime
 
-`25.1.3-prod` уже содержит proxy-aware внутренние API-запросы с:
+`25.1.3+` содержит proxy-aware внутренние API-запросы:
 
 ```text
 X-Forwarded-For: 127.0.0.1
@@ -39,45 +34,17 @@ X-Forwarded-Host: <Panel domain>
 Host: <Panel domain>
 ```
 
-Это исправление сохраняется в `25.1.4-prod`.
-
-## DNS
-
-Single-VDS:
-
-- `panel.example.com` -> VDS IP
-- `sub.example.com` -> VDS IP
-- `reality.example.com` -> VDS IP
-
-## Обслуживание
-
-```bash
-sudo bash remnawave-manager.sh status
-sudo bash remnawave-manager.sh doctor
-sudo bash remnawave-manager.sh backup
-sudo bash remnawave-manager.sh update
-sudo bash remnawave-manager.sh restore /var/backups/remnawave/ARCHIVE.tgz
-```
-
-## Безопасность
-
-Не публикуйте GitHub PAT, Remnawave API token, Node `SECRET_KEY`, пароли, age private key или Hysteria2 credentials.
-
-После сохранения секретов удалите:
-
-```bash
-sudo rm -f /opt/remnawave/credentials.txt
-```
+Это нужно для актуального ProxyCheckMiddleware Remnawave.
 
 ## Production status
 
-Статические проверки обязательны. Реальный VDS runtime test ещё продолжается на тестовом сервере.
+Static audit должен быть green. Реальный VDS runtime test всё ещё обязателен.
 
 ## SHA256
 
 ```text
-ac3843b37ff02c40101768a0dbb2f4c2312fc8cd9690ba78d0936b03060086f4  remnawave-manager-v25.1.4-prod.sh
+55a8aa4af70652d69e8572541b73b1846c0cd7e9e8aff6760e11350b7553ae8a  remnawave-manager-v25.1.5-prod.sh
 ```
 
-Подробности: [CHANGELOG.md](CHANGELOG.md) и [docs/INSTALLATION_RU.md](docs/INSTALLATION_RU.md).
+Подробности: [CHANGELOG.md](CHANGELOG.md).
 

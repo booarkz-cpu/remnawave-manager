@@ -1,27 +1,24 @@
 ﻿# Changelog
 
+## 25.1.5-prod
+
+Release/CI hygiene.
+
+- static audit запускает Manager через `sudo`;
+- checksum проверяется только для текущего релизного файла;
+- убран BOM из `tests/static-audit.sh`;
+- runtime-код 25.1.4 сохранён без изменений.
+
+SHA256:
+`55a8aa4af70652d69e8572541b73b1846c0cd7e9e8aff6760e11350b7553ae8a`
+
 ## 25.1.4-prod
 
-Release hygiene после CI-проверки `25.1.3-prod`.
-
-### Исправления
-
-- удалён UTF-8 BOM из `tests/static-audit.sh`;
-- workflow запускает audit через `bash tests/static-audit.sh`;
-- исправлена неверная историческая checksum `remnawave-manager-v25.1.2-prod.sh`;
-- `SHA256SUMS` теперь содержит проверенные SHA256 для всех опубликованных версий;
-- `25.1.3` proxy-aware API bootstrap сохранён без изменений.
-
-### Проверки
-
-- GitHub Actions static audit: должен быть green после публикации;
-- локальный `bash -n`: OK;
-- `--help`: OK;
-- dry-run Single/Panel/Edge: OK.
+Исправлена release-инфраструктура и исторические checksum.
 
 ## 25.1.3-prod
 
-Исправлен ProxyCheckMiddleware bootstrap: внутренние API-запросы передают reverse-proxy headers.
+Исправлен ProxyCheckMiddleware bootstrap.
 
 ## 25.1.2-prod
 
@@ -29,9 +26,5 @@ Release hygiene после CI-проверки `25.1.3-prod`.
 
 ## 25.1.1-prod
 
-Исправлены `FRONT_END_DOMAIN`, `TRUST_PROXY`, PostgreSQL secret defaults и healthcheck.
-
-## 25.1.0-prod
-
-Первая опубликованная production revision.
+Исправлены `FRONT_END_DOMAIN`, `TRUST_PROXY` и другие статические проблемы.
 
