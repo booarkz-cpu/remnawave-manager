@@ -2,7 +2,7 @@
 
 Production-oriented Bash manager for deploying and maintaining Remnawave on Debian/Ubuntu.
 
-**Current version:** `25.1.11-prod`
+**Current version:** `25.1.12-prod`
 
 ## Quick start
 
@@ -22,20 +22,25 @@ sudo bash remnawave-manager.sh install single --yes \
   ADMIN_EMAIL=admin@example.com
 ```
 
-`remnawave-manager.sh` is a copy of `remnawave-manager-v25.1.11-prod.sh`.
+`remnawave-manager.sh` is a copy of `remnawave-manager-v25.1.12-prod.sh`.
 
-## 25.1.11-prod
+## 25.1.12-prod
 
-Installer bugfixes on top of the 25.1.10 OS-upgrade release:
+Fixes a live single-VDS install where the panel and subscription page returned HTTP 502 and the Reality SNI site was a generic stub.
 
-- same-server Node is registered via the `remnawave-network` Docker gateway, not `127.0.0.1`;
-- `install panel` publishes HTTPS on TCP/443 through the SNI router;
-- Hysteria2 starts as `sing-box run -c`;
-- Prometheus scrapes host-network node-exporter at `host.docker.internal:9100`;
-- nginx `ssl_reject_handshake` has a fallback for 1.18;
-- panel `.env` sets `REDIS_SOCKET` for Valkey;
-- `manager.env` is updated with upsert, so reruns keep tokens;
-- OS `apt-get full-upgrade` from 25.1.10 is unchanged (no automatic reboot).
+- nginx no longer uses Ubuntu `proxy_params`; it sends the official Remnawave reverse-proxy headers (`Host`, `X-Real-IP`, `X-Forwarded-For`, `X-Forwarded-Proto: https`, `X-Forwarded-Host`) plus HTTP/1.1 so ProxyCheckMiddleware does not destroy the upstream socket;
+- SSL snippets live in `/etc/nginx/snippets/` so Ubuntu does not auto-include them twice from `conf.d/`;
+- default SelfSteal camouflage is a Corgi Lusi kennel site (`--selfsteal-template corgi|simple|business|nothing`);
+- `repair` rewrites nginx and the masking site on an already installed VDS without touching Docker/DB;
+- SSH port detection no longer trips `set -o pipefail` via `head` SIGPIPE.
+
+If you already installed `25.1.11-prod`:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/booarkz-cpu/remnawave-manager/main/remnawave-manager.sh -o remnawave-manager.sh
+chmod +x remnawave-manager.sh
+sudo bash remnawave-manager.sh repair
+```
 
 ## Runtime
 
@@ -53,12 +58,12 @@ X-Remnawave-Client-Type: browser
 
 **Static audit:** green.
 
-**Real VDS runtime test:** required on the target server after 25.1.11.
+**Real VDS runtime test:** `repair` is the supported fix for 25.1.11 502s.
 
 ## SHA256
 
 ```text
-e10193fd771c386af76697b0bc42c1eddb831b21cf1d60341f6f6fe43269d239  remnawave-manager-v25.1.11-prod.sh
+45e5029aa29f21b587a2726bdf191305ab4fd855e85548b73e010e8982bec3bb  remnawave-manager-v25.1.12-prod.sh
 ```
 
 Details: [CHANGELOG.md](CHANGELOG.md), [docs/INSTALLATION_RU.md](docs/INSTALLATION_RU.md).

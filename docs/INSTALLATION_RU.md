@@ -1,4 +1,4 @@
-# Установка Remnawave Manager 25.1.11-prod
+# Установка Remnawave Manager 25.1.12-prod
 
 ## 1. Подготовка
 
@@ -14,7 +14,7 @@ chmod +x remnawave-manager.sh
 sha256sum remnawave-manager.sh
 ```
 
-Сверьте сумму с файлом `SHA256SUMS`. Актуальный файл также называется `remnawave-manager-v25.1.11-prod.sh`.
+Сверьте сумму с файлом `SHA256SUMS`. Актуальный файл также называется `remnawave-manager-v25.1.12-prod.sh`.
 
 Во время `install` скрипт выполняет `apt-get full-upgrade`. Автоматически VDS не перезагружается; если появится `/var/run/reboot-required`, перезагрузите сервер после завершения установки.
 
@@ -80,6 +80,16 @@ sudo bash remnawave-manager.sh restore /var/backups/remnawave/ARCHIVE.tgz
 
 Для `.age` архива нужен ключ `/opt/remnawave/backup-age.key`.
 
-## 9. Production test
+## 9. HTTP 502 после 25.1.11
 
-После bootstrap проверить Panel URL, Subscription URL, сертификаты, Node (status Connected), Reality SNI, UFW, timers и backup/restore.
+Панель и subscription-page требуют `X-Forwarded-For` и `X-Forwarded-Proto: https`. Без них backend рвёт сокет, nginx отвечает 502. На уже установленном VDS:
+
+```bash
+sudo bash remnawave-manager.sh repair
+```
+
+Команда переписывает nginx vhosts, proxy-заголовки и маскировочный сайт Reality (по умолчанию — Corgi Lusi). Docker и база не трогаются.
+
+## 10. Production test
+
+После bootstrap проверить Panel URL, Subscription URL, сертификаты, Node (status Connected), Reality SNI (сайт о корги), UFW, timers и backup/restore.

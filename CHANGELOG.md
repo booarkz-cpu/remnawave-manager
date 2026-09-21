@@ -1,5 +1,20 @@
 # Changelog
 
+## 25.1.12-prod
+
+Исправление HTTP 502 на панели и странице подписки, маскировка Reality SNI под сайт о корги.
+
+- nginx больше не использует Ubuntu `proxy_params`: в upstream уходят официальные заголовки Remnawave (`Host`, `X-Real-IP`, `X-Forwarded-For`, `X-Forwarded-Proto: https`, `X-Forwarded-Host`) и `proxy_http_version 1.1`, иначе ProxyCheckMiddleware панели и subscription-page рвёт сокет → nginx 502;
+- TLS-параметры вынесены в `/etc/nginx/snippets/`, чтобы Ubuntu не подключала их дважды из `conf.d/` (duplicate TLSv1.2/1.3 и раздутый `proxy_headers_hash`);
+- шаблон SelfSteal по умолчанию — сайт питомника **Corgi Lusi** (`corgi|simple|business|nothing`);
+- команда `repair` переписывает nginx и маскировочный сайт на уже установленном VDS без Docker/БД;
+- `ssh_ports | head` больше не роняет install через SIGPIPE/`set -o pipefail`.
+
+На уже установленном `25.1.11-prod`: `sudo bash remnawave-manager.sh repair`.
+
+SHA256:
+`45e5029aa29f21b587a2726bdf191305ab4fd855e85548b73e010e8982bec3bb`
+
 ## 25.1.11-prod
 
 Исправления установщика поверх `25.1.10-prod` (автообновление ОС сохранено).
