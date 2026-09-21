@@ -1,5 +1,16 @@
 # Changelog
 
+## 25.1.7-prod
+
+Bootstrap persistence hotfix.
+
+- `ADMIN_PASSWORD` теперь сохраняется в `/opt/remnawave/manager.env` до API login/register;
+- повторный запуск после частичного сбоя bootstrap использует тот же пароль;
+- добавлено более понятное сообщение при ошибке login.
+
+SHA256:
+`6d7920b94652dce6b8ef17a9cbbbfcacaf975a3280294998ce756b73a15d6f4a`
+
 ## 25.1.6-prod
 
 Bootstrap/API hotfix.
