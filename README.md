@@ -2,34 +2,35 @@
 
 Production-ориентированный Bash-менеджер для развёртывания и обслуживания Remnawave на Debian/Ubuntu.
 
-**Текущая версия:** `25.1.8-prod`
+**Текущая версия:** `25.1.9-prod`
 
 ## Быстрый старт
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/booarkz-cpu/remnawave-manager/v25.1.8-prod/remnawave-manager-v25.1.8-prod.sh -o remnawave-manager.sh
+curl -fsSL https://raw.githubusercontent.com/booarkz-cpu/remnawave-manager/v25.1.9-prod/remnawave-manager-v25.1.9-prod.sh -o remnawave-manager.sh
 chmod +x remnawave-manager.sh
 sha256sum remnawave-manager.sh
 bash remnawave-manager.sh --dry-run
 sudo bash remnawave-manager.sh install single
 ```
 
+## 25.1.9-prod
+
+Firewall/SSH bootstrap hotfix:
+
+- исправлено определение SSH-порта на системах, где `sshd -T` не возвращает `port`;
+- добавлены fallback на `sshd_config`, systemd socket activation и безопасный default `22`;
+- UFW открывает все найденные SSH-порты перед включением firewall;
+- предыдущий bootstrap/API token hotfix 25.1.8 сохранён.
+
 ## 25.1.8-prod
 
 Bootstrap/API token compatibility hotfix:
 
-- автоматические имена API token сокращены до безопасной длины для текущего ограничения backend `name <= 30`;
-- добавлена внутренняя проверка длины имени перед запросом создания token;
-- имя token больше не зависит от строки версии релиза;
-- базовая логика сохранения `ADMIN_PASSWORD` из 25.1.7 сохранена.
-
-## 25.1.7-prod
-
-Bootstrap persistence hotfix:
-
-- `ADMIN_PASSWORD` сохраняется в `/opt/remnawave/manager.env` до первого API login/register;
-- повторный запуск после частично неуспешного bootstrap больше не генерирует новый пароль;
-- bootstrap сообщает понятную ошибку при неверном сохранённом пароле.
+- автоматическое имя API token укладывается в ограничение backend `name <= 30`;
+- добавлена проверка длины имени перед отправкой token;
+- исправлен bootstrap минимального API token для Subscription Page;
+- bootstrap persistence исправления 25.1.7 сохранены.
 
 ## Runtime
 
@@ -52,7 +53,7 @@ X-Remnawave-Client-Type: browser
 ## SHA256
 
 ```text
-1271774b70e4f4c0b4f8574e25248b665547bc90aac2b6e59ce5d8e2824b46aa  remnawave-manager-v25.1.8-prod.sh
+04edbee57c6fb0250d6d6c1e8e967553ebc37462a11460e95038068921603086  remnawave-manager-v25.1.9-prod.sh
 ```
 
 Подробности: [CHANGELOG.md](CHANGELOG.md).
