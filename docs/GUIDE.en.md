@@ -2,7 +2,7 @@
 
 [English](GUIDE.en.md) · [Русский](GUIDE.ru.md) · [README](../README.md)
 
-Installer and day-to-day manager for [Remnawave](https://docs.rw) on Debian/Ubuntu. Author: **Corgi Lusi (Корги Люси)**. Current script version: **1.4.3**.
+Installer and day-to-day manager for [Remnawave](https://docs.rw) on Debian/Ubuntu. Author: **Corgi Lusi (Корги Люси)**. Current script version: **1.4.4**.
 
 This page is the full instruction. The GitHub README is the short version. Historical per-release notes: [INSTALLATION_RU.md](INSTALLATION_RU.md) (bilingual changelog lives in [CHANGELOG.md](../CHANGELOG.md)).
 
@@ -92,14 +92,14 @@ grep ' remnawave-manager.sh$' SHA256SUMS
 
 The two hashes must match. Latest release: <https://github.com/booarkz-cpu/remnawave-manager/releases/latest>
 
-Pinned copy (example for 1.4.3):
+Pinned copy (example for 1.4.4):
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.4.3/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.4.4/remnawave-manager.sh \
   -o remnawave-manager.sh
 sha256sum remnawave-manager.sh
-# 1.4.3: 90dfaf451da9ec826cef431162ce3f6f59658c7aa7727b563e07a101eef89922
+# 1.4.4: c94a44bf4c9e5930593bfe2227b14fed1e495efd72d300ba857aa10778d37a0d
 ```
 
 See [SHA256SUMS](../SHA256SUMS) in the repo for every versioned file.
@@ -264,7 +264,7 @@ Install-time flags: `--all-protocols` (default), `--reality-only`, `--hysteria2`
 
 **Full re-bind** of every profile (menu **4** / `protocols` / `bind`): use after install or when you want CorgiLusi profiles rebuilt. If you do not pass a protocol flag, this command turns **all** transports on.
 
-**Add or remove extras on a node that is already up** — including a node on another VPS — is a **separate** item (**25**). Adding one transport does not reset the others. If several nodes exist, pick a UUID (`0` = all).
+**Add or remove extras on a node that is already up** — including a node on another VPS — is a **separate** item (**25**). Adding one transport does not reset the others. Pick a node (number, UUID, or `0` = all). After a node, `[0]` returns to that list; `q` leaves for the main menu.
 
 On the **panel**:
 

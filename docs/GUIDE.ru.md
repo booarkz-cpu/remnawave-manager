@@ -2,7 +2,7 @@
 
 [English](GUIDE.en.md) · [Русский](GUIDE.ru.md) · [README](../README.ru.md)
 
-Установщик и повседневный менеджер [Remnawave](https://docs.rw) на Debian/Ubuntu. Автор: **Корги Люси (Corgi Lusi)**. Текущая версия скрипта: **1.4.3**.
+Установщик и повседневный менеджер [Remnawave](https://docs.rw) на Debian/Ubuntu. Автор: **Корги Люси (Corgi Lusi)**. Текущая версия скрипта: **1.4.4**.
 
 Это полная инструкция. На GitHub короткий вариант — в [README.ru.md](../README.ru.md). Журнал обновлений по версиям: [INSTALLATION_RU.md](INSTALLATION_RU.md), [CHANGELOG.md](../CHANGELOG.md).
 
@@ -92,14 +92,14 @@ grep ' remnawave-manager.sh$' SHA256SUMS
 
 Две суммы должны совпасть. Latest: <https://github.com/booarkz-cpu/remnawave-manager/releases/latest>
 
-Фиксированная копия (пример для 1.4.3):
+Фиксированная копия (пример для 1.4.4):
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.4.3/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.4.4/remnawave-manager.sh \
   -o remnawave-manager.sh
 sha256sum remnawave-manager.sh
-# 1.4.3: 90dfaf451da9ec826cef431162ce3f6f59658c7aa7727b563e07a101eef89922
+# 1.4.4: c94a44bf4c9e5930593bfe2227b14fed1e495efd72d300ba857aa10778d37a0d
 ```
 
 Все суммы версий — в [SHA256SUMS](../SHA256SUMS).
@@ -264,7 +264,7 @@ Backend панели требует заголовки reverse-proxy (`X-Forward
 
 **Полная перепривязка** всех профилей (пункт **4** / `protocols` / `bind`) — после установки или когда нужно заново собрать CorgiLusi. Без флага протокола эта команда включает **все** транспорты.
 
-**Добавить или снять** доп. протоколы на уже установленной ноде, в том числе на другом VDS — **отдельный** пункт **25**. Добавление одного транспорта не сбрасывает остальные. Если нод несколько, меню спрашивает UUID (`0` = все).
+**Добавить или снять** доп. протоколы на уже установленной ноде, в том числе на другом VDS — **отдельный** пункт **25**. Добавление одного транспорта не сбрасывает остальные. Нода: номер, UUID или `0` = все. После выбора `[0]` — снова список нод, `q` — главное меню.
 
 На **панели**:
 

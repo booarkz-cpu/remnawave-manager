@@ -6,7 +6,7 @@
 
 Production installer for [Remnawave](https://docs.rw) on Debian/Ubuntu. Interactive menu with a description of every function. UI: **English** or **Russian**.
 
-**Current version:** `1.4.3`
+**Current version:** `1.4.4`
 
 Author: **Corgi Lusi (Корги Люси)**. Extra behaviour comes from [Rezzosoft KVN](https://github.com/Rrezzak09VPN/remnanode-VLESS-Reality-Hysteria2), [eGamesAPI](https://github.com/eGamesAPI/remnawave-reverse-proxy) and [DigneZzZ](https://github.com/DigneZzZ/remnawave-scripts). Original authorship is kept — [CREDITS.md](CREDITS.md).
 
@@ -58,13 +58,13 @@ bash remnawave-manager.sh
 
 No arguments opens the menu. Do not type `sudo` — the script raises root itself. On first run it asks for **English** or **Русский** (saved in `/opt/remnawave/manager.env`). Switch later with menu item 22 or `--lang en|ru`.
 
-Pinned 1.4.3 via jsDelivr (optional):
+Pinned 1.4.4 via jsDelivr (optional):
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.4.3/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.4.4/remnawave-manager.sh \
   -o remnawave-manager.sh
-# sha256: 90dfaf451da9ec826cef431162ce3f6f59658c7aa7727b563e07a101eef89922
+# sha256: c94a44bf4c9e5930593bfe2227b14fed1e495efd72d300ba857aa10778d37a0d
 ```
 
 By default every transport is enabled: Reality, Hysteria2, gRPC and xHTTP.
