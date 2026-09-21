@@ -3,11 +3,12 @@ set -Eeuo pipefail
 
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
-SCRIPT=remnawave-manager-v1.4.2.sh
+SCRIPT=remnawave-manager-v1.4.3.sh
 
 echo "[1/18] bash -n current + historical"
 bash -n "$SCRIPT"
 bash -n remnawave-manager.sh
+bash -n remnawave-manager-v1.4.3.sh
 bash -n remnawave-manager-v1.4.2.sh
 bash -n remnawave-manager-v1.4.1.sh
 bash -n remnawave-manager-v1.4.0.sh
@@ -234,7 +235,7 @@ grep -Fq 'check-update' /tmp/rw-help-en.txt
 grep -Fq -- '--no-update-check' /tmp/rw-help-en.txt
 grep -Fq -- '--version' /tmp/rw-help-en.txt
 grep -Fq 'add-node' /tmp/rw-help-en.txt
-bash "$SCRIPT" --version | grep -Fq '1.4.2'
+bash "$SCRIPT" --version | grep -Fq '1.4.3'
 set +e
 bash "$SCRIPT" --lang en nosuchcmd >/tmp/rw-unk.txt 2>&1
 unk_rc=$?
@@ -247,7 +248,7 @@ if grep -Fq 'panel + node on one server' /tmp/rw-unk.txt; then
 fi
 # 1.4.0 self-update restart glued `--lang ru` into one argv because IFS has no space.
 bash "$SCRIPT" '--lang ru' --no-update-check --version >/tmp/rw-lang-glue.txt 2>&1
-grep -Fq '1.4.2' /tmp/rw-lang-glue.txt
+grep -Fq '1.4.3' /tmp/rw-lang-glue.txt
 if grep -Fq 'Unknown command' /tmp/rw-lang-glue.txt; then
   echo 'FAIL: glued --lang ru treated as unknown command' >&2
   exit 1
@@ -261,6 +262,9 @@ grep -Fq 'snapshot_protocol_flags()' "$SCRIPT"
 grep -Fq 'restore_protocol_flags()' "$SCRIPT"
 awk '/^set_transport\(\)/,/^snapshot_protocol_flags\(\)/' "$SCRIPT" | grep -Fq persist_protocol_flags
 awk '/^sync_node_transports\(\)/,/^apply_protocols\(\)/' "$SCRIPT" | grep -Fq restore_protocol_flags
+grep -Fq 'nt_pick_none' "$SCRIPT"
+grep -Fq 'version_is_newer "$LAST_REMOTE_VERSION" "$VERSION"' "$SCRIPT"
+awk '/^probe_http_code\(\)/,/^subscription_panel_url\(\)/' "$SCRIPT" | grep -Fq '^[0-9]{3}$'
 grep -Fq 'preflight()' "$SCRIPT"
 grep -Fq 'pick_target_node()' "$SCRIPT"
 grep -Fq 'add_node_menu()' "$SCRIPT"
@@ -276,7 +280,7 @@ echo "[14/18] current script copies match"
 cmp -s remnawave-manager.sh "$SCRIPT"
 
 echo "[15/18] VERSION string"
-grep -Fq "VERSION='1.4.2'" "$SCRIPT"
+grep -Fq "VERSION='1.4.3'" "$SCRIPT"
 if grep -nE "^VERSION='[^']*-prod'" remnawave-manager.sh; then
   echo 'FAIL: current VERSION must not use a -prod suffix' >&2
   exit 1
