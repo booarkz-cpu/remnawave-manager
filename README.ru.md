@@ -4,7 +4,7 @@
 
 Production-установщик [Remnawave](https://docs.rw) на Debian/Ubuntu. Интерактивное меню с описанием каждой функции. Язык интерфейса: **русский** или **English**.
 
-**Текущая версия:** `25.2.5-prod`
+**Текущая версия:** `25.2.6-prod`
 
 Автор основной линии: **booarkz-cpu**. В скрипт добавлены функции из [Rezzosoft KVN](https://github.com/Rrezzak09VPN/remnanode-VLESS-Reality-Hysteria2), [eGamesAPI](https://github.com/eGamesAPI/remnawave-reverse-proxy) и [DigneZzZ](https://github.com/DigneZzZ/remnawave-scripts). Авторство исходных проектов сохранено — см. [CREDITS.md](CREDITS.md).
 
@@ -14,17 +14,17 @@ Production-установщик [Remnawave](https://docs.rw) на Debian/Ubuntu.
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v25.2.5-prod/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v25.2.6-prod/remnawave-manager.sh \
   -o remnawave-manager.sh
 chmod +x remnawave-manager.sh
-sudo bash remnawave-manager.sh
+bash remnawave-manager.sh
 ```
 
-Без аргументов открывается меню. При первом запуске спрашивает **English** или **Русский** (сохраняется в `/opt/remnawave/manager.env`). Позже — пункт 22 меню или:
+Без аргументов открывается меню. `sudo` в команде писать не нужно — скрипт сам поднимает root. При первом запуске спрашивает **English** или **Русский** (сохраняется в `/opt/remnawave/manager.env`). Позже — пункт 22 меню или:
 
 ```bash
-sudo bash remnawave-manager.sh --lang ru
-sudo bash remnawave-manager.sh --lang en
+bash remnawave-manager.sh --lang ru
+bash remnawave-manager.sh --lang en
 ```
 
 По умолчанию включаются все транспорты: Reality, Hysteria2, gRPC и xHTTP.
@@ -70,13 +70,13 @@ sudo bash remnawave-manager.sh --lang en
 
 ```bash
 # Панель (EDGE_ADDRESS — IP ноды, чтобы карточка Node создалась сразу)
-sudo bash remnawave-manager.sh --lang ru install panel --yes \
+bash remnawave-manager.sh --lang ru install panel --yes \
   DOMAIN_PANEL=pst.example.com DOMAIN_SUB=sb.example.com \
   DOMAIN_REALITY=blog.example.com ADMIN_EMAIL=admin@example.com \
   EDGE_ADDRESS=203.0.113.20
 
 # Нода (другой VDS)
-sudo bash remnawave-manager.sh --lang ru install node --yes \
+bash remnawave-manager.sh --lang ru install node --yes \
   PANEL_IP=203.0.113.10 DOMAIN_REALITY=blog.example.com \
   ADMIN_EMAIL=admin@example.com NODE_SECRET_KEY='секрет_из_credentials.txt'
 ```
@@ -92,13 +92,13 @@ sudo bash remnawave-manager.sh --lang ru install node --yes \
 
 Флаги: `--all-protocols` (то же, что по умолчанию), `--reality-only`, `--hysteria2`, `--grpc`, `--xhttp`.
 
-На уже установленной системе: `sudo bash remnawave-manager.sh protocols` (синоним: `bind`) или пункт 4 меню.
+На уже установленной системе: `bash remnawave-manager.sh protocols` (синоним: `bind`) или пункт 4 меню.
 
 ## Обслуживание
 
 В шапке меню — живое состояние панели, подписки (`:3010`) и remnanode. Если Remnawave уже стоит, пункты 1–3 предлагают **repair**, **повторную привязку** или полную переустановку и больше не гоняют `apt full-upgrade` без нужды.
 
-При HTTP 502 на странице подписки: пункт **7 (repair)** или `sudo bash remnawave-manager.sh repair`. Скрипты PowerShell на Linux VDS не запускайте.
+При HTTP 502 на странице подписки: пункт **7 (repair)** или `bash remnawave-manager.sh repair`. Скрипты PowerShell на Linux VDS не запускайте.
 
 `status`, `doctor`, `repair`, `backup`, `restore`, `update`, `up`, `down`, `restart`, `logs`, `urls`, `health`, `core-update`, `stealth`, `addon remnawave|remnanode|selfsteal|wtm|netbird|egames`.
 

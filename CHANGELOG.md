@@ -1,5 +1,12 @@
 # Changelog
 
+## 25.2.6-prod
+
+Запуск без `sudo` в команде: `bash remnawave-manager.sh`. Если нет root, скрипт сам перезапускается через sudo. `--help` пароль не спрашивает.
+
+SHA256:
+`5116f5be95419515f63d9546ce626ad425c3a216648a99964d5244a86ee4cedd`
+
 ## 25.2.5-prod
 
 Сквад и профили называются **CorgiLusi**, не AUTO. У каждой ноды свой config-профиль. Сразу после установки **Default-Profile** (и сквад с таким именем) удаляется. Старый AUTO-PROFILE переименовывается в CorgiLusi при `protocols` / пункте 4.

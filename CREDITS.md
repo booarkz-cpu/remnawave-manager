@@ -2,6 +2,8 @@
 
 **Remnawave Manager** — основная линия установщика: [booarkz-cpu/remnawave-manager](https://github.com/booarkz-cpu/remnawave-manager).
 
+В `25.2.6-prod` скрипт запускается без `sudo` в команде: права root поднимаются сами.
+
 В `25.2.5-prod` сквад и профили — CorgiLusi; Default-Profile удаляется после установки; у каждой ноды свой профиль.
 
 В `25.2.4-prod` `repair` восстанавливает домены с диска, даже если в `manager.env` остался только язык.

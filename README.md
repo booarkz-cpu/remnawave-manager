@@ -4,7 +4,7 @@
 
 Production installer for [Remnawave](https://docs.rw) on Debian/Ubuntu. Interactive menu with a description of every function. UI language: **English** or **Russian**.
 
-**Current version:** `25.2.5-prod`
+**Current version:** `25.2.6-prod`
 
 Main line: **booarkz-cpu**. Extra behaviour comes from [Rezzosoft KVN](https://github.com/Rrezzak09VPN/remnanode-VLESS-Reality-Hysteria2), [eGamesAPI](https://github.com/eGamesAPI/remnawave-reverse-proxy) and [DigneZzZ](https://github.com/DigneZzZ/remnawave-scripts). Original authorship is kept — see [CREDITS.md](CREDITS.md).
 
@@ -14,17 +14,17 @@ The Xray profile, inbounds, nodes, hosts, **CorgiLusi** squad and CorgiLusi user
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v25.2.5-prod/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v25.2.6-prod/remnawave-manager.sh \
   -o remnawave-manager.sh
 chmod +x remnawave-manager.sh
-sudo bash remnawave-manager.sh
+bash remnawave-manager.sh
 ```
 
-No arguments opens the menu. On first run it asks for **English** or **Русский** (saved in `/opt/remnawave/manager.env`). Switch later with menu item 22 or:
+No arguments opens the menu. Do not type `sudo` — the script raises root itself. On first run it asks for **English** or **Русский** (saved in `/opt/remnawave/manager.env`). Switch later with menu item 22 or:
 
 ```bash
-sudo bash remnawave-manager.sh --lang en
-sudo bash remnawave-manager.sh --lang ru
+bash remnawave-manager.sh --lang en
+bash remnawave-manager.sh --lang ru
 ```
 
 By default every transport is enabled: Reality, Hysteria2, gRPC and xHTTP.
@@ -70,13 +70,13 @@ Two servers:
 
 ```bash
 # Panel (EDGE_ADDRESS is the node IP so the Node card is created immediately)
-sudo bash remnawave-manager.sh --lang en install panel --yes \
+bash remnawave-manager.sh --lang en install panel --yes \
   DOMAIN_PANEL=pst.example.com DOMAIN_SUB=sb.example.com \
   DOMAIN_REALITY=blog.example.com ADMIN_EMAIL=admin@example.com \
   EDGE_ADDRESS=203.0.113.20
 
 # Node (other VPS)
-sudo bash remnawave-manager.sh --lang en install node --yes \
+bash remnawave-manager.sh --lang en install node --yes \
   PANEL_IP=203.0.113.10 DOMAIN_REALITY=blog.example.com \
   ADMIN_EMAIL=admin@example.com NODE_SECRET_KEY='secret_from_credentials.txt'
 ```
@@ -92,13 +92,13 @@ All on by default. Binding is automatic.
 
 Flags: `--all-protocols` (same as default), `--reality-only`, `--hysteria2`, `--grpc`, `--xhttp`.
 
-On an existing system: `sudo bash remnawave-manager.sh protocols` (alias: `bind`) or menu item 4.
+On an existing system: `bash remnawave-manager.sh protocols` (alias: `bind`) or menu item 4.
 
 ## Maintenance CLI
 
 The header of the menu shows live local health (panel API, subscription `:3010`, remnanode). If the VPS already has Remnawave, items 1–3 offer **repair**, **re-bind**, or full reinstall instead of blindly running `apt full-upgrade` again.
 
-On HTTP 502 for the subscription page: menu **7 (repair)** or `sudo bash remnawave-manager.sh repair`. Do not paste PowerShell scripts onto the Linux VPS.
+On HTTP 502 for the subscription page: menu **7 (repair)** or `bash remnawave-manager.sh repair`. Do not paste PowerShell scripts onto the Linux VPS.
 
 `status`, `doctor`, `repair`, `backup`, `restore`, `update`, `up`, `down`, `restart`, `logs`, `urls`, `health`, `core-update`, `stealth`, `addon remnawave|remnanode|selfsteal|wtm|netbird|egames`.
 

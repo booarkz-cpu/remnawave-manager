@@ -1,4 +1,4 @@
-# Установка Remnawave Manager 25.2.5-prod
+# Установка Remnawave Manager 25.2.6-prod
 
 ## 1. Подготовка
 
@@ -14,13 +14,13 @@ chmod +x remnawave-manager.sh
 sha256sum remnawave-manager.sh
 ```
 
-Сверьте сумму с файлом `SHA256SUMS`. Актуальный файл также называется `remnawave-manager-v25.2.5-prod.sh`. Скачивайте через jsDelivr `@v25.2.5-prod`, не с `raw.githubusercontent.com/main`.
+Сверьте сумму с файлом `SHA256SUMS`. Актуальный файл также называется `remnawave-manager-v25.2.6-prod.sh`. Скачивайте через jsDelivr `@v25.2.6-prod`, не с `raw.githubusercontent.com/main`.
 
-Без аргументов скрипт открывает меню с описанием всех функций и предлагает язык (English / русский). Профиль, ноды, хосты и сквад привязываются через API — панель и конвертер править не нужно.
+Без аргументов скрипт открывает меню с описанием всех функций и предлагает язык (English / русский). Профиль, ноды, хосты и сквад привязываются через API — панель и конвертер править не нужно. Префикс `sudo` в команде не нужен: скрипт сам поднимает root.
 
 ```bash
-sudo bash remnawave-manager.sh --lang ru   # русский интерфейс
-sudo bash remnawave-manager.sh --lang en   # English UI
+bash remnawave-manager.sh --lang ru   # русский интерфейс
+bash remnawave-manager.sh --lang en   # English UI
 ```
 
 Во время `install` скрипт выполняет `apt-get full-upgrade`. Автоматически VDS не перезагружается; если появится `/var/run/reboot-required`, перезагрузите сервер после завершения установки.
@@ -28,7 +28,7 @@ sudo bash remnawave-manager.sh --lang en   # English UI
 ## 3. Dry-run
 
 ```bash
-sudo bash remnawave-manager.sh install single --dry-run --yes \
+bash remnawave-manager.sh install single --dry-run --yes \
   DOMAIN_PANEL=panel.example.com \
   DOMAIN_SUB=sub.example.com \
   DOMAIN_REALITY=reality.example.com \
@@ -38,7 +38,7 @@ sudo bash remnawave-manager.sh install single --dry-run --yes \
 ## 4. Single-VDS
 
 ```bash
-sudo bash remnawave-manager.sh install single --yes \
+bash remnawave-manager.sh install single --yes \
   DOMAIN_PANEL=panel.example.com \
   DOMAIN_SUB=sub.example.com \
   DOMAIN_REALITY=reality.example.com \
@@ -52,7 +52,7 @@ sudo bash remnawave-manager.sh install single --yes \
 Сначала панель:
 
 ```bash
-sudo bash remnawave-manager.sh install panel --yes \
+bash remnawave-manager.sh install panel --yes \
   DOMAIN_PANEL=panel.example.com \
   DOMAIN_SUB=sub.example.com \
   DOMAIN_REALITY=reality.example.com \
@@ -62,16 +62,16 @@ sudo bash remnawave-manager.sh install panel --yes \
 Скопируйте SECRET_KEY из `/opt/remnawave/credentials.txt` на сервере панели. На втором VDS:
 
 ```bash
-sudo bash remnawave-manager.sh install node --yes \
+bash remnawave-manager.sh install node --yes \
   PANEL_IP=203.0.113.10 \
   DOMAIN_REALITY=reality.example.com \
   ADMIN_EMAIL=admin@example.com \
   NODE_SECRET_KEY='секрет_из_credentials.txt'
 ```
 
-`install node` — синоним `install edge`. По умолчанию ставятся все транспорты: Reality (SNI TCP/443), Hysteria2 UDP/443, gRPC TCP/8443, xHTTP TCP/4443. На панели вызовите `install panel` с `EDGE_ADDRESS=<IP ноды>` или затем `sudo bash remnawave-manager.sh protocols` — inbound’ы, хосты и сквад CorgiLusi привяжутся через API. Default-Profile будет удалён.
+`install node` — синоним `install edge`. По умолчанию ставятся все транспорты: Reality (SNI TCP/443), Hysteria2 UDP/443, gRPC TCP/8443, xHTTP TCP/4443. На панели вызовите `install panel` с `EDGE_ADDRESS=<IP ноды>` или затем `bash remnawave-manager.sh protocols` — inbound’ы, хосты и сквад CorgiLusi привяжутся через API. Default-Profile будет удалён.
 
-Повторная автопривязка на уже стоящей системе: `sudo bash remnawave-manager.sh bind` (то же, что `protocols`) или пункт 4 меню.
+Повторная автопривязка на уже стоящей системе: `bash remnawave-manager.sh bind` (то же, что `protocols`) или пункт 4 меню.
 
 ## 6. ProxyCheckMiddleware
 
@@ -82,14 +82,14 @@ Panel нельзя корректно использовать без reverse pr
 ```bash
 sudo tail -100 /var/log/remnawave-manager.log
 sudo docker logs --tail=100 remnawave
-sudo bash remnawave-manager.sh doctor
+bash remnawave-manager.sh doctor
 ```
 
 ## 8. Backup / Restore
 
 ```bash
-sudo bash remnawave-manager.sh backup
-sudo bash remnawave-manager.sh restore /var/backups/remnawave/ARCHIVE.tgz
+bash remnawave-manager.sh backup
+bash remnawave-manager.sh restore /var/backups/remnawave/ARCHIVE.tgz
 ```
 
 Для `.age` архива нужен ключ `/opt/remnawave/backup-age.key`.
@@ -110,7 +110,7 @@ sha256sum remnawave-manager.sh
 # нужно: b3d8293bb4735f48b21e456860585a80e9c9a8102f33c5b8917b8bac259197b8
 grep VERSION= remnawave-manager.sh | head -1
 # нужно: VERSION='25.1.16-prod'
-sudo bash remnawave-manager.sh repair
+bash remnawave-manager.sh repair
 ```
 
 В логе должно быть `repair: Remnawave Manager 25.1.16-prod`. Корень домена подписки должен отвечать HTTP 200.
@@ -128,7 +128,7 @@ curl -fL --retry 5 --retry-all-errors \
 chmod +x remnawave-manager.sh
 sha256sum remnawave-manager.sh
 # нужно: 534353340dc8987375f5bc45242f01a97327c8d8713bfc5628f1884f891e7e60
-sudo bash remnawave-manager.sh protocols
+bash remnawave-manager.sh protocols
 ```
 
 Команда `protocols` (синоним `bind`) обновляет профили CorgiLusi (по одному на ноду), вешает inbound’ы, создаёт хосты и сквад CorgiLusi, удаляет Default-Profile. UI панели для этого не открывайте.
@@ -142,7 +142,7 @@ curl -fL --retry 5 --retry-all-errors \
 chmod +x remnawave-manager.sh
 sha256sum remnawave-manager.sh
 # нужно: 989c56497e2fbf8877b5e43deb3c771bfa78a402d79b9548791cd13b6299f7c9
-sudo bash remnawave-manager.sh --lang ru
+bash remnawave-manager.sh --lang ru
 ```
 
 Меню описывает все функции. Язык: пункт 22 или `--lang en|ru`.
@@ -156,7 +156,7 @@ curl -fL --retry 5 --retry-all-errors \
 chmod +x remnawave-manager.sh
 sha256sum remnawave-manager.sh
 # нужно: 728536ee926faba23dbb642383e9320c7d37a2e3c3eb275081edce2c55cef8a8
-sudo bash remnawave-manager.sh --lang ru
+bash remnawave-manager.sh --lang ru
 ```
 
 Если панель уже стоит: в пункте 1 выберите **1) Repair** (для 502 на `sb.*`) или **2) привязка протоколов**. Не запускайте полную установку повторно без нужды. PowerShell-скрипты на этот Linux VDS не относятся.
@@ -170,7 +170,7 @@ curl -fL --retry 5 --retry-all-errors \
 chmod +x remnawave-manager.sh
 sha256sum remnawave-manager.sh
 # нужно: 0bb8ed6ec6c46a8fc02947f3a1fe45c1a3dbc2de9555cc63e5989336e4c229da
-sudo bash remnawave-manager.sh --lang ru
+bash remnawave-manager.sh --lang ru
 ```
 
 Пункт **7 Repair**. Если `manager.env` содержит только язык, домены берутся из `.env` панели, `credentials.txt` и nginx. Если скрипт всё же спросит домены — укажите panel / sub / reality (например pst / sb / blog).
@@ -184,7 +184,21 @@ curl -fL --retry 5 --retry-all-errors \
 chmod +x remnawave-manager.sh
 sha256sum remnawave-manager.sh
 # нужно: d428f8fac02c9904a8dec07b585fc8f0ecafd561482b1a72c8be756c101e65e2
-sudo bash remnawave-manager.sh --lang ru
+bash remnawave-manager.sh --lang ru
 ```
 
-Пункт **4** (автопривязка) или `sudo bash remnawave-manager.sh protocols`: сквад CorgiLusi, отдельный профиль на ноду, Default-Profile удаляется.
+Пункт **4** (автопривязка) или `bash remnawave-manager.sh protocols`: сквад CorgiLusi, отдельный профиль на ноду, Default-Profile удаляется.
+
+## 16. Обновление до 25.2.6-prod (запуск без sudo)
+
+```bash
+curl -fL --retry 5 --retry-all-errors \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v25.2.6-prod/remnawave-manager.sh \
+  -o remnawave-manager.sh
+chmod +x remnawave-manager.sh
+sha256sum remnawave-manager.sh
+# нужно: 5116f5be95419515f63d9546ce626ad425c3a216648a99964d5244a86ee4cedd
+bash remnawave-manager.sh --lang ru
+```
+
+`sudo` в команде писать не нужно. Если вы не root, скрипт сам вызовет sudo. Справка: `bash remnawave-manager.sh --help`.

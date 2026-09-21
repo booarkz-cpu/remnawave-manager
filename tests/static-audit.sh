@@ -3,11 +3,12 @@ set -Eeuo pipefail
 
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
-SCRIPT=remnawave-manager-v25.2.5-prod.sh
+SCRIPT=remnawave-manager-v25.2.6-prod.sh
 
 echo "[1/18] bash -n current + historical"
 bash -n "$SCRIPT"
 bash -n remnawave-manager.sh
+bash -n remnawave-manager-v25.2.5-prod.sh
 bash -n remnawave-manager-v25.2.4-prod.sh
 bash -n remnawave-manager-v25.2.3-prod.sh
 bash -n remnawave-manager-v25.2.2-prod.sh
@@ -24,17 +25,17 @@ grep -Fq repair /tmp/rw-help.txt
 grep -Fq bind /tmp/rw-help.txt
 grep -Fq -- '--all-protocols' /tmp/rw-help.txt
 
-echo "[3/18] dry-run single"
-sudo bash "$SCRIPT" install single --dry-run --yes \
+echo "[3/18] dry-run single (no sudo prefix — script elevates itself)"
+bash "$SCRIPT" install single --dry-run --yes \
   DOMAIN_PANEL=panel.example.com DOMAIN_SUB=sub.example.com \
   DOMAIN_REALITY=reality.example.com ADMIN_EMAIL=admin@example.com >/dev/null
 
 echo "[4/18] dry-run panel + node"
-sudo bash "$SCRIPT" install panel --dry-run --yes \
+bash "$SCRIPT" install panel --dry-run --yes \
   DOMAIN_PANEL=panel.example.com DOMAIN_SUB=sub.example.com \
   DOMAIN_REALITY=reality.example.com EDGE_ADDRESS=203.0.113.20 \
   ADMIN_EMAIL=admin@example.com >/dev/null
-sudo bash "$SCRIPT" install node --dry-run --yes \
+bash "$SCRIPT" install node --dry-run --yes \
   PANEL_IP=203.0.113.10 DOMAIN_REALITY=reality.example.com \
   ADMIN_EMAIL=admin@example.com NODE_SECRET_KEY=testsecret --grpc --xhttp --hysteria2 >/dev/null
 
@@ -154,6 +155,12 @@ grep -Fq 'host.docker.internal:host-gateway' "$SCRIPT"
 grep -Fq 'hydrate_install_state()' "$SCRIPT"
 grep -Fq 'load_kv_file()' "$SCRIPT"
 grep -Fq 'ensure_repair_domains()' "$SCRIPT"
+grep -Fq 'elevate_if_needed()' "$SCRIPT"
+grep -Fq 'wants_help_only()' "$SCRIPT"
+if grep -nE '^sudo bash remnawave-manager.sh' README.md README.ru.md; then
+  echo 'FAIL: README must invoke the script without a sudo prefix' >&2
+  exit 1
+fi
 if grep -nE '\(crontab -l .*; echo' "$SCRIPT"; then
   echo 'FAIL: user crontab pipe under set -e installs an empty crontab' >&2
   exit 1
@@ -171,12 +178,13 @@ bash "$SCRIPT" --lang en --help >/tmp/rw-help-en.txt
 grep -Fq 'interactive menu with descriptions' /tmp/rw-help-en.txt
 grep -Fq -- '--lang en|ru' /tmp/rw-help-en.txt
 grep -Fq 'urls | health' /tmp/rw-help-en.txt
+grep -Fq 'Do not prefix the command with sudo' /tmp/rw-help-en.txt
 
 echo "[14/18] current script copies match"
 cmp -s remnawave-manager.sh "$SCRIPT"
 
 echo "[15/18] VERSION string"
-grep -Fq "VERSION='25.2.5-prod'" "$SCRIPT"
+grep -Fq "VERSION='25.2.6-prod'" "$SCRIPT"
 
 echo "[16/18] SHA256SUMS covers every versioned script"
 missing=0
