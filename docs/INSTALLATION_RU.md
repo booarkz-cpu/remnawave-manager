@@ -1,4 +1,4 @@
-# Установка Remnawave Manager 1.2.0
+# Установка Remnawave Manager 1.3.0
 
 ## 1. Подготовка
 
@@ -14,7 +14,7 @@ chmod +x remnawave-manager.sh
 sha256sum remnawave-manager.sh
 ```
 
-Сверьте сумму с файлом `SHA256SUMS`. Актуальный файл также называется `remnawave-manager-v1.2.0.sh`. Скачивайте через jsDelivr `@v1.2.0`, не с `raw.githubusercontent.com/main`.
+Сверьте сумму с файлом `SHA256SUMS`. Актуальный файл также называется `remnawave-manager-v1.3.0.sh`. Скачивайте через jsDelivr `@v1.3.0`, не с `raw.githubusercontent.com/main`.
 
 Без аргументов скрипт открывает меню с описанием всех функций и предлагает язык (English / русский). Профиль, ноды, хосты и сквад привязываются через API — панель и конвертер править не нужно. Префикс `sudo` в команде не нужен: скрипт сам поднимает root.
 
@@ -272,3 +272,17 @@ bash remnawave-manager.sh --lang ru
 ```
 
 Пункт **25** или `bash remnawave-manager.sh node-transports add|remove grpc|xhttp|hysteria2|all`. На панели: профиль и хосты. На ноде: `node-transports apply`.
+
+## 21. Обновление до 1.3.0 (автопроверка скрипта)
+
+```bash
+curl -fL --retry 5 --retry-all-errors \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.3.0/remnawave-manager.sh \
+  -o remnawave-manager.sh
+chmod +x remnawave-manager.sh
+sha256sum remnawave-manager.sh
+# нужно: dd7ece932c3dd26a93dacc0c24249dfa1b15bb8f7bd475b5b846a6d6a933c152
+bash remnawave-manager.sh --lang ru
+```
+
+При открытии меню скрипт сравнивает свою версию с GitHub Latest (не чаще раза в 6 часов). Если доступна новая — предлагает установить. Без меню: `bash remnawave-manager.sh check-update`. Установить сразу: `check-update --apply`. Отключить запрос: `--no-update-check`. Пункт 24, подпункт 3 — только проверка.

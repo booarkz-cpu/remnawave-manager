@@ -4,9 +4,9 @@
 
 Production-установщик [Remnawave](https://docs.rw) на Debian/Ubuntu. Интерактивное меню с описанием каждой функции. Язык интерфейса: **русский** или **English**.
 
-**Текущая версия:** `1.2.0`
+**Текущая версия:** `1.3.0`
 
-Автор: **Корги Люси (Corgi Lusi)**. В скрипт добавлены функции из [Rezzosoft KVN](https://github.com/Rrezzak09VPN/remnanode-VLESS-Reality-Hysteria2), [eGamesAPI](https://github.com/eGamesAPI/remnawave-reverse-proxy) и [DigneZzZ](https://github.com/DigneZzZ/remnawave-scripts). Авторство исходных проектов сохранено — см. [CREDITS.md](CREDITS.md). Пункт **24** обновляет модули этих авторов. Пункт **25** добавляет или снимает xHTTP, gRPC и Hysteria2 на уже установленной ноде (в том числе на другом VDS).
+Автор: **Корги Люси (Corgi Lusi)**. В скрипт добавлены функции из [Rezzosoft KVN](https://github.com/Rrezzak09VPN/remnanode-VLESS-Reality-Hysteria2), [eGamesAPI](https://github.com/eGamesAPI/remnawave-reverse-proxy) и [DigneZzZ](https://github.com/DigneZzZ/remnawave-scripts). Авторство исходных проектов сохранено — см. [CREDITS.md](CREDITS.md). Пункт **24** обновляет модули этих авторов. Пункт **25** добавляет или снимает xHTTP, gRPC и Hysteria2 на уже установленной ноде (в том числе на другом VDS). При открытии меню скрипт сам проверяет GitHub Latest.
 
 Профиль Xray, inbound’ы, ноды, хосты, сквад **CorgiLusi** и пользователь CorgiLusi создаются через API. У каждой ноды свой config-профиль. **Default-Profile** во внутренних сквадах удаляется сразу после установки.
 
@@ -14,7 +14,7 @@ Production-установщик [Remnawave](https://docs.rw) на Debian/Ubuntu.
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.2.0/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.3.0/remnawave-manager.sh \
   -o remnawave-manager.sh
 chmod +x remnawave-manager.sh
 bash remnawave-manager.sh
@@ -117,10 +117,10 @@ bash remnawave-manager.sh node-transports apply
 
 ## Обслуживание
 
-В шапке меню — живое состояние панели, подписки (`:3010`) и remnanode. Если Remnawave уже стоит, пункты 1–3 предлагают **repair**, **повторную привязку** или полную переустановку и больше не гоняют `apt full-upgrade` без нужды.
+В шапке меню — живое состояние панели, подписки (`:3010`) и remnanode. При открытии меню скрипт проверяет GitHub Latest (повторный запрос не чаще чем раз в 6 часов). Если есть новая версия — предлагает установить. Отключить: `--no-update-check`. Вручную: `bash remnawave-manager.sh check-update` или `check-update --apply`.
 
 При HTTP 502 на странице подписки: пункт **7 (repair)** или `bash remnawave-manager.sh repair`. Скрипты PowerShell на Linux VDS не запускайте.
 
-`status`, `doctor`, `repair`, `backup`, `restore`, `update`, `up`, `down`, `restart`, `logs`, `urls`, `health`, `core-update`, `stealth`, `addon remnawave|remnanode|selfsteal|wtm|netbird|egames`, `node-transports add|remove|apply|reality-only`.
+`status`, `doctor`, `repair`, `backup`, `restore`, `update`, `up`, `down`, `restart`, `logs`, `urls`, `health`, `core-update`, `stealth`, `addon remnawave|remnanode|selfsteal|wtm|netbird|egames`, `node-transports add|remove|apply|reality-only`, `check-update`, `self-update`.
 
 Подробности: [docs/INSTALLATION_RU.md](docs/INSTALLATION_RU.md), [CHANGELOG.md](CHANGELOG.md), [SHA256SUMS](SHA256SUMS).

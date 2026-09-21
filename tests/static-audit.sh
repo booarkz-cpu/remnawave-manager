@@ -3,11 +3,12 @@ set -Eeuo pipefail
 
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
-SCRIPT=remnawave-manager-v1.2.0.sh
+SCRIPT=remnawave-manager-v1.3.0.sh
 
 echo "[1/18] bash -n current + historical"
 bash -n "$SCRIPT"
 bash -n remnawave-manager.sh
+bash -n remnawave-manager-v1.2.0.sh
 bash -n remnawave-manager-v1.1.0.sh
 bash -n remnawave-manager-v1.0.0.sh
 bash -n remnawave-manager-v25.2.7-prod.sh
@@ -146,7 +147,12 @@ grep -Fq 'apply_local_node_transports()' "$SCRIPT"
 grep -Fq 'sync_node_transports()' "$SCRIPT"
 grep -Fq 'node_transports_menu()' "$SCRIPT"
 grep -Fq 'node_transports_cli()' "$SCRIPT"
-grep -Fq 'node-transports' "$SCRIPT"
+grep -Fq 'check_self_update()' "$SCRIPT"
+grep -Fq 'fetch_latest_tag()' "$SCRIPT"
+grep -Fq 'version_is_newer()' "$SCRIPT"
+grep -Fq 'maybe_prompt_self_update()' "$SCRIPT"
+grep -Fq 'check-update' "$SCRIPT"
+grep -Fq -- '--no-update-check' "$SCRIPT"
 grep -Fq 'ufw_toggle()' "$SCRIPT"
 if grep -nE 'Default Profile\)' "$SCRIPT"; then
   echo 'FAIL: unquoted space in case pattern breaks bash -n' >&2
@@ -205,12 +211,14 @@ grep -Fq 'community-update' /tmp/rw-help-en.txt
 grep -Fq 'Corgi Lusi' /tmp/rw-help-en.txt
 grep -Fq 'node-transports' /tmp/rw-help-en.txt
 grep -Fq 'grpc|xhttp|hysteria2|all' /tmp/rw-help-en.txt
+grep -Fq 'check-update' /tmp/rw-help-en.txt
+grep -Fq -- '--no-update-check' /tmp/rw-help-en.txt
 
 echo "[14/18] current script copies match"
 cmp -s remnawave-manager.sh "$SCRIPT"
 
 echo "[15/18] VERSION string"
-grep -Fq "VERSION='1.2.0'" "$SCRIPT"
+grep -Fq "VERSION='1.3.0'" "$SCRIPT"
 if grep -nE "^VERSION='[^']*-prod'" remnawave-manager.sh; then
   echo 'FAIL: current VERSION must not use a -prod suffix' >&2
   exit 1

@@ -4,9 +4,9 @@
 
 Production installer for [Remnawave](https://docs.rw) on Debian/Ubuntu. Interactive menu with a description of every function. UI language: **English** or **Russian**.
 
-**Current version:** `1.2.0`
+**Current version:** `1.3.0`
 
-Author: **Corgi Lusi (Корги Люси)**. Extra behaviour comes from [Rezzosoft KVN](https://github.com/Rrezzak09VPN/remnanode-VLESS-Reality-Hysteria2), [eGamesAPI](https://github.com/eGamesAPI/remnawave-reverse-proxy) and [DigneZzZ](https://github.com/DigneZzZ/remnawave-scripts). Original authorship is kept — see [CREDITS.md](CREDITS.md). Menu item **24** refreshes those authors’ modules. Menu item **25** adds or removes xHTTP, gRPC and Hysteria2 on a node that is already installed (including on another VPS).
+Author: **Corgi Lusi (Корги Люси)**. Extra behaviour comes from [Rezzosoft KVN](https://github.com/Rrezzak09VPN/remnanode-VLESS-Reality-Hysteria2), [eGamesAPI](https://github.com/eGamesAPI/remnawave-reverse-proxy) and [DigneZzZ](https://github.com/DigneZzZ/remnawave-scripts). Original authorship is kept — see [CREDITS.md](CREDITS.md). Menu item **24** refreshes those authors’ modules. Menu item **25** adds or removes xHTTP, gRPC and Hysteria2 on a node that is already installed (including on another VPS). Opening the menu checks GitHub Latest for a newer script (optional install).
 
 The Xray profile, inbounds, nodes, hosts, **CorgiLusi** squad and CorgiLusi user are created through the Remnawave API. Each node gets its own config profile. **Default-Profile** is removed from internal squads after install.
 
@@ -14,7 +14,7 @@ The Xray profile, inbounds, nodes, hosts, **CorgiLusi** squad and CorgiLusi user
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.2.0/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.3.0/remnawave-manager.sh \
   -o remnawave-manager.sh
 chmod +x remnawave-manager.sh
 bash remnawave-manager.sh
@@ -117,10 +117,10 @@ Adding one transport keeps the others as they are in `manager.env`. Item 4 / `pr
 
 ## Maintenance CLI
 
-The header of the menu shows live local health (panel API, subscription `:3010`, remnanode). If the VPS already has Remnawave, items 1–3 offer **repair**, **re-bind**, or full reinstall instead of blindly running `apt full-upgrade` again.
+The header of the menu shows live local health (panel API, subscription `:3010`, remnanode). Opening the menu also checks GitHub Latest (cached for 6 hours). If a newer script exists, you are asked to install it. Skip with `--no-update-check`. Manual: `bash remnawave-manager.sh check-update` or `check-update --apply`.
 
 On HTTP 502 for the subscription page: menu **7 (repair)** or `bash remnawave-manager.sh repair`. Do not paste PowerShell scripts onto the Linux VPS.
 
-`status`, `doctor`, `repair`, `backup`, `restore`, `update`, `up`, `down`, `restart`, `logs`, `urls`, `health`, `core-update`, `stealth`, `addon remnawave|remnanode|selfsteal|wtm|netbird|egames`, `node-transports add|remove|apply|reality-only`.
+`status`, `doctor`, `repair`, `backup`, `restore`, `update`, `up`, `down`, `restart`, `logs`, `urls`, `health`, `core-update`, `stealth`, `addon remnawave|remnanode|selfsteal|wtm|netbird|egames`, `node-transports add|remove|apply|reality-only`, `check-update`, `self-update`.
 
 Details: [docs/INSTALLATION_RU.md](docs/INSTALLATION_RU.md), [CHANGELOG.md](CHANGELOG.md), [SHA256SUMS](SHA256SUMS).
