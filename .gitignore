@@ -1,4 +1,4 @@
-*.env
+﻿*.env
 *.env.*
 credentials.txt
 bootstrap.env
@@ -8,3 +8,4 @@ bootstrap.env
 *.tar.gz
 *.age
 xray-custom
+

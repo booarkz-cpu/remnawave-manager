@@ -1,13 +1,13 @@
-# Установка Remnawave Manager 25.1.0-prod
+﻿# Установка Remnawave Manager v25.1.1-prod
 
-## Требования
+## 1. Подготовка
 
-Рекомендуется чистый Debian или Ubuntu с root-доступом, публичным IPv4 и заранее настроенными DNS A-записями.
+Нужен Debian/Ubuntu VDS с root-доступом и настроенными DNS A-записями.
 
-## Скачать и проверить
+## 2. Скачать и проверить
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/booarkz-cpu/remnawave-manager/main/remnawave-manager-v25.1.0-prod.sh -o remnawave-manager.sh
+curl -fsSL https://raw.githubusercontent.com/booarkz-cpu/remnawave-manager/main/remnawave-manager-v25.1.1-prod.sh -o remnawave-manager.sh
 chmod +x remnawave-manager.sh
 sha256sum remnawave-manager.sh
 ```
@@ -15,16 +15,16 @@ sha256sum remnawave-manager.sh
 Ожидаемый SHA-256:
 
 ```text
-31784d414e5c497ff0560a517cc7df04ab4a6ded7a515bf9925513f5480ab874
+4b2bb90bdc9418e25b59bd865219c378bc170c716fa2f21137fffa9adceb6bee
 ```
 
-Перед установкой:
+Перед изменениями:
 
 ```bash
 sudo bash remnawave-manager.sh --dry-run
 ```
 
-## Single-VDS
+## 3. Single-VDS
 
 ```bash
 sudo bash remnawave-manager.sh install single --yes \
@@ -34,9 +34,9 @@ sudo bash remnawave-manager.sh install single --yes \
   ADMIN_EMAIL=admin@example.com
 ```
 
-## Multi-VDS
+## 4. Multi-VDS
 
-Panel VDS:
+Panel:
 
 ```bash
 sudo bash remnawave-manager.sh install panel --yes \
@@ -47,7 +47,7 @@ sudo bash remnawave-manager.sh install panel --yes \
   ADMIN_EMAIL=admin@example.com
 ```
 
-Edge VDS:
+Edge:
 
 ```bash
 sudo bash remnawave-manager.sh install edge --yes \
@@ -57,50 +57,43 @@ sudo bash remnawave-manager.sh install edge --yes \
   NODE_SECRET_KEY='секрет-ноды'
 ```
 
-На Edge TCP/2222 должен быть доступен только с IP Panel.
+Официальная документация требует ограничить `NODE_PORT` только IP Panel. citeturn226976search0
 
-## TLS и Reality
-
-DNS должен уже указывать на правильный VDS, а TCP/80 должен быть доступен для ACME webroot.
-
-Менеджер создаёт Config Profile с VLESS RAW + REALITY и локальным camouflage-site на `127.0.0.1:9450`.
-
-## Проверка
+## 5. Проверки
 
 ```bash
 sudo bash remnawave-manager.sh status
 sudo bash remnawave-manager.sh doctor
 sudo nginx -t
 sudo ss -lntup
+sudo ufw status
 ```
 
-## Backup и update
+## 6. Restore
 
 ```bash
-sudo bash remnawave-manager.sh backup
-sudo bash remnawave-manager.sh update
+sudo bash remnawave-manager.sh restore /var/backups/remnawave/ARCHIVE.tgz
 ```
 
-Перед update создаётся backup; после обновления выполняется health/API check.
+В `25.1.1-prod` restore восстанавливает PostgreSQL dump из того же backup-архива.
 
-## Дополнительные сервисы
+## 7. Не забыть
 
-```bash
-sudo bash remnawave-manager.sh install single --monitoring
-sudo bash remnawave-manager.sh install single --hysteria2
-```
+После сохранения credentials в защищённом месте удалите `/opt/remnawave/credentials.txt`.
 
-Hysteria2 работает отдельно через sing-box на UDP/8443 и не является inbound Config Profile Xray.
+Не запускайте production без отдельного теста backup/restore.
 
-## Безопасность
+## 8. Производственный статус
 
-Секреты сохраняются в `/opt/remnawave`. После безопасного переноса удалите `/opt/remnawave/credentials.txt`.
+`25.1.1-prod` прошёл статические проверки:
 
-Не выполняйте restore архивов неизвестного происхождения и не публикуйте API tokens, Node SECRET_KEY, age keys или `.env`.
+- `bash -n`;
+- `--help`;
+- dry-run `single`;
+- dry-run `panel`;
+- dry-run `edge`;
+- Python assertions;
+- YAML parsing compose-фрагментов.
 
-## Известные caveats
+Реальный VDS runtime test всё ещё обязателен.
 
-- Node bootstrap автоматизируется через API и не является точной копией UI-сценария.
-- `AUTO-PROFILE` переиспользуется при rerun без полной reconciliation всех полей.
-- Upstream Compose и `.env.sample` не закреплены на конкретном commit.
-- Внешние add-ons исполняют собственные сторонние скрипты.
