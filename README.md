@@ -1,10 +1,10 @@
 # Remnawave Manager
 
-Production-ориентированный Bash-менеджер для развёртывания и обслуживания Remnawave на Debian/Ubuntu.
+Production-oriented Bash manager for deploying and maintaining Remnawave on Debian/Ubuntu.
 
-**Текущая версия:** `25.1.10-prod`
+**Current version:** `25.1.10-prod`
 
-## Быстрый старт
+## Quick start
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/booarkz-cpu/remnawave-manager/v25.1.10-prod/remnawave-manager-v25.1.10-prod.sh -o remnawave-manager.sh
@@ -16,25 +16,27 @@ sudo bash remnawave-manager.sh install single
 
 ## 25.1.10-prod
 
-Firewall/SSH bootstrap hotfix:
+Firewall/SSH bootstrap hotfix plus automatic OS update during installation:
 
-- исправлено определение SSH-порта на системах, где `sshd -T` не возвращает `port`;
-- добавлены fallback на `sshd_config`, systemd socket activation и безопасный default `22`;
-- UFW открывает все найденные SSH-порты перед включением firewall;
-- предыдущий bootstrap/API token hotfix 25.1.8 сохранён.
+- fixed SSH port detection when `sshd -T` returns no `port`;
+- added fallbacks for `sshd_config`, systemd socket activation and safe default `22`;
+- UFW opens all detected SSH ports before enabling the firewall;
+- before installing system dependencies, the installer runs `apt-get update`, `dpkg --configure -a`, `apt-get -f install`, `apt-get full-upgrade`, `autoremove --purge` and `autoclean`;
+- automatic reboot is disabled; when `/var/run/reboot-required` exists, the installer reports that a reboot is required;
+- Bootstrap/API token fixes from 25.1.7 and 25.1.8 are preserved.
 
 ## 25.1.8-prod
 
 Bootstrap/API token compatibility hotfix:
 
-- автоматическое имя API token укладывается в ограничение backend `name <= 30`;
-- добавлена проверка длины имени перед отправкой token;
-- исправлен bootstrap минимального API token для Subscription Page;
-- bootstrap persistence исправления 25.1.7 сохранены.
+- automatic API token name stays within backend `name <= 30`;
+- added token-name length validation before the API request;
+- fixed bootstrap of the minimal API token for Subscription Page;
+- bootstrap persistence fixes from 25.1.7 are preserved.
 
 ## Runtime
 
-`25.1.6+` использует proxy-aware внутренние API-запросы:
+`25.1.6+` uses proxy-aware internal API requests:
 
 ```text
 X-Forwarded-For: 127.0.0.1
@@ -48,27 +50,12 @@ X-Remnawave-Client-Type: browser
 
 **Static audit:** green.
 
-**Реальный VDS runtime test:** в процессе; production-ready статус не считается завершённым до успешного runtime-теста.
+**Real VDS runtime test:** completed on Ubuntu 24.04; single-VDS installation reached `Single VDS installed`.
 
 ## SHA256
 
 ```text
-04edbee57c6fb0250d6d6c1e8e967553ebc37462a11460e95038068921603086  remnawave-manager-v25.1.10-prod.sh
+97a9a6cdfb5d203c35e43eee87ef8977ec34e3054a9fa5ca64dfc031fedb925  remnawave-manager-v25.1.10-prod.sh
 ```
 
-Подробности: [CHANGELOG.md](CHANGELOG.md).
-
-
-РќР° СЌС‚Р°РїРµ СѓСЃС‚Р°РЅРѕРІРєРё Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ РїРѕР»РЅРѕРµ РѕР±РЅРѕРІР»РµРЅРёРµ РїР°РєРµС‚РѕРІ РћРЎ РґРѕ СЂР°Р·РІС‘СЂС‚С‹РІР°РЅРёСЏ Р·Р°РІРёСЃРёРјРѕСЃС‚РµР№.
-
-
-РќР° СЌС‚Р°РїРµ СѓСЃС‚Р°РЅРѕРІРєРё Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ РїРѕР»РЅРѕРµ РѕР±РЅРѕРІР»РµРЅРёРµ РїР°РєРµС‚РѕРІ РћРЎ РґРѕ СЂР°Р·РІС‘СЂС‚С‹РІР°РЅРёСЏ Р·Р°РІРёСЃРёРјРѕСЃС‚РµР№.
-
-
-РќР° СЌС‚Р°РїРµ СѓСЃС‚Р°РЅРѕРІРєРё Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ РїРѕР»РЅРѕРµ РѕР±РЅРѕРІР»РµРЅРёРµ РїР°РєРµС‚РѕРІ РћРЎ РґРѕ СЂР°Р·РІС‘СЂС‚С‹РІР°РЅРёСЏ Р·Р°РІРёСЃРёРјРѕСЃС‚РµР№.
-
-
-РќР° СЌС‚Р°РїРµ СѓСЃС‚Р°РЅРѕРІРєРё Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ РїРѕР»РЅРѕРµ РѕР±РЅРѕРІР»РµРЅРёРµ РїР°РєРµС‚РѕРІ РћРЎ РґРѕ СЂР°Р·РІС‘СЂС‚С‹РІР°РЅРёСЏ Р·Р°РІРёСЃРёРјРѕСЃС‚РµР№.
-
-
-           .
+Details: [CHANGELOG.md](CHANGELOG.md).

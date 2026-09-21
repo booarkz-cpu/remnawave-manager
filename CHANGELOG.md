@@ -2,56 +2,26 @@
 
 ## 25.1.10-prod
 
-      .
+Automatic full OS update during installation.
 
--     apt-get update;
--  apt-get full-upgrade -y     Ubuntu/Debian;
--    autoremove --purge  autoclean;
--   VDS  ;   /var/run/reboot-required     reboot.
-
-SHA256:
-97a9a6cdfb5d203c35e43eee87ef8977ec34e3054a9fa5ca64dfc031fedb9255
-## 25.1.10-prod
-
-РђРІС‚РѕРјР°С‚РёС‡РµСЃРєРѕРµ РїРѕР»РЅРѕРµ РѕР±РЅРѕРІР»РµРЅРёРµ РћРЎ РЅР° СЌС‚Р°РїРµ СѓСЃС‚Р°РЅРѕРІРєРё.
-
-- РїРµСЂРµРґ СѓСЃС‚Р°РЅРѕРІРєРѕР№ Р·Р°РІРёСЃРёРјРѕСЃС‚РµР№ РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ apt-get update;
-- РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ apt-get full-upgrade -y РґР»СЏ РїРѕР»РЅРѕРіРѕ РѕР±РЅРѕРІР»РµРЅРёСЏ РїР°РєРµС‚РѕРІ Ubuntu/Debian;
-- РїРѕСЃР»Рµ РѕР±РЅРѕРІР»РµРЅРёСЏ РІС‹РїРѕР»РЅСЏСЋС‚СЃСЏ autoremove --purge Рё autoclean;
-- Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєР°СЏ РїРµСЂРµР·Р°РіСЂСѓР·РєР° VDS РЅРµ РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ; РїСЂРё РЅР°Р»РёС‡РёРё /var/run/reboot-required СѓСЃС‚Р°РЅРѕРІС‰РёРє СЃРѕРѕР±С‰Р°РµС‚ Рѕ РЅРµРѕР±С…РѕРґРёРјРѕСЃС‚Рё reboot.
+- runs `apt-get update` before installing dependencies;
+- runs `dpkg --configure -a`;
+- runs `apt-get -f install -y`;
+- runs `apt-get full-upgrade -y`;
+- runs `apt-get autoremove --purge -y` and `apt-get autoclean -qq`;
+- does not reboot automatically; reports `/var/run/reboot-required` when present.
 
 SHA256:
-97a9a6cdfb5d203c35e43eee87ef8977ec34e3054a9fa5ca64dfc031fedb9255
-## 25.1.10-prod
+`97a9a6cdfb5d203c35e43eee87ef8977ec34e3054a9fa5ca64dfc031fedb925`
 
-РђРІС‚РѕРјР°С‚РёС‡РµСЃРєРѕРµ РїРѕР»РЅРѕРµ РѕР±РЅРѕРІР»РµРЅРёРµ РћРЎ РЅР° СЌС‚Р°РїРµ СѓСЃС‚Р°РЅРѕРІРєРё.
-
-- РїРµСЂРµРґ СѓСЃС‚Р°РЅРѕРІРєРѕР№ Р·Р°РІРёСЃРёРјРѕСЃС‚РµР№ РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ apt-get update;
-- РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ apt-get full-upgrade -y РґР»СЏ РїРѕР»РЅРѕРіРѕ РѕР±РЅРѕРІР»РµРЅРёСЏ РїР°РєРµС‚РѕРІ Ubuntu/Debian;
-- РїРѕСЃР»Рµ РѕР±РЅРѕРІР»РµРЅРёСЏ РІС‹РїРѕР»РЅСЏСЋС‚СЃСЏ autoremove --purge Рё autoclean;
-- Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєР°СЏ РїРµСЂРµР·Р°РіСЂСѓР·РєР° VDS РЅРµ РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ; РїСЂРё РЅР°Р»РёС‡РёРё /var/run/reboot-required СѓСЃС‚Р°РЅРѕРІС‰РёРє СЃРѕРѕР±С‰Р°РµС‚ Рѕ РЅРµРѕР±С…РѕРґРёРјРѕСЃС‚Рё reboot.
-
-SHA256:
-97a9a6cdfb5d203c35e43eee87ef8977ec34e3054a9fa5ca64dfc031fedb9255
-## 25.1.10-prod
-
-РђРІС‚РѕРјР°С‚РёС‡РµСЃРєРѕРµ РїРѕР»РЅРѕРµ РѕР±РЅРѕРІР»РµРЅРёРµ РћРЎ РЅР° СЌС‚Р°РїРµ СѓСЃС‚Р°РЅРѕРІРєРё.
-
-- РїРµСЂРµРґ СѓСЃС‚Р°РЅРѕРІРєРѕР№ Р·Р°РІРёСЃРёРјРѕСЃС‚РµР№ РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ apt-get update;
-- РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ apt-get full-upgrade -y РґР»СЏ РїРѕР»РЅРѕРіРѕ РѕР±РЅРѕРІР»РµРЅРёСЏ РїР°РєРµС‚РѕРІ Ubuntu/Debian;
-- РїРѕСЃР»Рµ РѕР±РЅРѕРІР»РµРЅРёСЏ РІС‹РїРѕР»РЅСЏСЋС‚СЃСЏ autoremove --purge Рё autoclean;
-- Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєР°СЏ РїРµСЂРµР·Р°РіСЂСѓР·РєР° VDS РЅРµ РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ; РїСЂРё РЅР°Р»РёС‡РёРё /var/run/reboot-required СѓСЃС‚Р°РЅРѕРІС‰РёРє СЃРѕРѕР±С‰Р°РµС‚ Рѕ РЅРµРѕР±С…РѕРґРёРјРѕСЃС‚Рё reboot.
-
-SHA256:
-97a9a6cdfb5d203c35e43eee87ef8977ec34e3054a9fa5ca64dfc031fedb9255
 ## 25.1.9-prod
 
 Firewall/SSH bootstrap hotfix.
 
-- исправлено определение SSH-порта, когда `sshd -T` не возвращает `port`;
-- добавлены fallback на `/etc/ssh/sshd_config` и systemd socket activation;
-- UFW теперь открывает все обнаруженные SSH-порты перед включением firewall;
-- сохранены исправления bootstrap ADMIN/API token из 25.1.7 и 25.1.8.
+- fixed SSH port detection when `sshd -T` returns no `port`;
+- added fallbacks for `/etc/ssh/sshd_config` and systemd socket activation;
+- UFW opens all detected SSH ports before enabling the firewall;
+- preserved bootstrap ADMIN/API token fixes from 25.1.7 and 25.1.8.
 
 SHA256:
 `04edbee57c6fb0250d6d6c1e8e967553ebc37462a11460e95038068921603086`
@@ -60,8 +30,8 @@ SHA256:
 
 Bootstrap/API token compatibility hotfix.
 
-- автоматическое имя API token укладывается в ограничение backend `name <= 30`;
-- исправлен bootstrap минимального API token для Subscription Page.
+- automatic API token name stays within backend `name <= 30`;
+- fixed bootstrap of the minimal API token for Subscription Page.
 
 SHA256:
 `1271774b70e4f4c0b4f8574e25248b665547bc90aac2b6e59ce5d8e2824b46aa`
@@ -70,8 +40,8 @@ SHA256:
 
 Bootstrap persistence hotfix.
 
-- `ADMIN_PASSWORD` сохраняется в `/opt/remnawave/manager.env` до API login/register;
-- повторный запуск после частичного сбоя bootstrap использует тот же пароль.
+- `ADMIN_PASSWORD` is saved to `/opt/remnawave/manager.env` before API login/register;
+- reruns after a partial bootstrap use the same password.
 
 SHA256:
 `6d7920b94652dce6b8ef17a9cbbbfcacaf975a3280294998ce756b73a15d6f4a`
