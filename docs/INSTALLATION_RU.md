@@ -1,4 +1,4 @@
-# Установка Remnawave Manager 25.1.16-prod
+# Установка Remnawave Manager 25.2.0-prod
 
 ## 1. Подготовка
 
@@ -14,7 +14,9 @@ chmod +x remnawave-manager.sh
 sha256sum remnawave-manager.sh
 ```
 
-Сверьте сумму с файлом `SHA256SUMS`. Актуальный файл также называется `remnawave-manager-v25.1.16-prod.sh`. Скачивайте через jsDelivr `@v25.1.16-prod`, не с `raw.githubusercontent.com/main`.
+Сверьте сумму с файлом `SHA256SUMS`. Актуальный файл также называется `remnawave-manager-v25.2.0-prod.sh`. Скачивайте через jsDelivr `@v25.2.0-prod`, не с `raw.githubusercontent.com/main`.
+
+Без аргументов скрипт открывает русское меню. Конвертер конфигов Rezzosoft: https://rezzosoft.ru/converter.html
 
 Во время `install` скрипт выполняет `apt-get full-upgrade`. Автоматически VDS не перезагружается; если появится `/var/run/reboot-required`, перезагрузите сервер после завершения установки.
 
@@ -40,24 +42,32 @@ sudo bash remnawave-manager.sh install single --yes \
 
 Панель работает в Docker, Node — в `network_mode: host`. Адрес Node в карточке панели — gateway сети `remnawave-network` (не `127.0.0.1`).
 
-## 5. Multi-VDS
+## 5. Панель и нода на разных серверах
+
+Сначала панель:
 
 ```bash
 sudo bash remnawave-manager.sh install panel --yes \
   DOMAIN_PANEL=panel.example.com \
   DOMAIN_SUB=sub.example.com \
   DOMAIN_REALITY=reality.example.com \
-  EDGE_ADDRESS=203.0.113.20 \
   ADMIN_EMAIL=admin@example.com
+```
 
-sudo bash remnawave-manager.sh install edge --yes \
+Скопируйте SECRET_KEY из `/opt/remnawave/credentials.txt` или карточки Node в панели. На втором VDS:
+
+```bash
+sudo bash remnawave-manager.sh install node --yes \
   PANEL_IP=203.0.113.10 \
   DOMAIN_REALITY=reality.example.com \
   ADMIN_EMAIL=admin@example.com \
-  NODE_SECRET_KEY='секрет_из_credentials_панели'
+  NODE_SECRET_KEY='секрет_из_панели' \
+  --hysteria2 --grpc --xhttp
 ```
 
-В режиме panel HTTPS слушает 443 и маршрутизирует SNI на панель и subscription page. Reality inbound живёт на edge.
+`install node` — синоним `install edge`. Reality идёт по SNI TCP/443, Hysteria2 — UDP/443, gRPC — TCP/8443, xHTTP — TCP/4443. JSON профиля можно доработать в конвертере Rezzosoft: https://rezzosoft.ru/converter.html
+
+Дополнительные транспорты на уже стоящей системе: `sudo bash remnawave-manager.sh protocols` или пункт 4 меню.
 
 ## 6. ProxyCheckMiddleware
 

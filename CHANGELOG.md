@@ -1,5 +1,17 @@
 # Changelog
 
+## 25.2.0-prod
+
+Русское меню и мультипротокол. Панель и нода ставятся на разные серверы. В установщик добавлены функции Rezzosoft KVN, eGamesAPI и DigneZzZ (авторство сохранено).
+
+- меню без аргументов; `install panel` / `install node`; Reality, Hysteria2, gRPC, xHTTP;
+- конвертер https://rezzosoft.ru/converter.html в меню и справке;
+- `/dev/shm` и Let's Encrypt в compose ноды, cron сертификатов Hysteria2;
+- `up`/`down`/`restart`/`logs`, `stealth`, `install-script`, Cloudflare DNS при `CLOUDFLARE_API_TOKEN`.
+
+SHA256:
+`86ffcb6e7ff764125ccf2f38feb9c737e9b7ae579d86519f9ce8019adad06211`
+
 ## 25.1.16-prod
 
 Панель после 25.1.15 отвечает 200, страница подписки оставалась на 502: `repair` не поднимал `remnawave-subscription-page`. Контейнер падает на старте, если API token не читает `/system/metadata` (`exit(1)`). `CUSTOM_SUB_PREFIX=sub` прятал UI с корня домена.

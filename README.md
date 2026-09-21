@@ -1,60 +1,61 @@
 # Remnawave Manager
 
-Production-oriented Bash manager for deploying and maintaining Remnawave on Debian/Ubuntu.
+Production-установщик Remnawave на Debian/Ubuntu. Интерфейс и документация на русском.
 
-**Current version:** `25.1.16-prod`
+**Текущая версия:** `25.2.0-prod`
 
-## Quick start
+Автор основной линии: **booarkz-cpu**. В эту версию добавлены функции из скриптов [Rezzosoft KVN](https://github.com/Rrezzak09VPN/remnanode-VLESS-Reality-Hysteria2), [eGamesAPI](https://github.com/eGamesAPI/remnawave-reverse-proxy) и [DigneZzZ](https://github.com/DigneZzZ/remnawave-scripts). Авторство исходных проектов сохранено — см. [CREDITS.md](CREDITS.md).
 
-Download via jsDelivr (GitHub Releases may 504 from some VDS):
+**Конвертер конфигов Rezzosoft:** https://rezzosoft.ru/converter.html
+
+## Быстрый старт
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v25.1.16-prod/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v25.2.0-prod/remnawave-manager.sh \
   -o remnawave-manager.sh
 chmod +x remnawave-manager.sh
-sha256sum remnawave-manager.sh
+sudo bash remnawave-manager.sh
 ```
 
-`remnawave-manager.sh` is a copy of `remnawave-manager-v25.1.16-prod.sh`.
+Без аргументов открывается русское меню.
 
-Expected SHA256: `b3d8293bb4735f48b21e456860585a80e9c9a8102f33c5b8917b8bac259197b8`
+## Режимы установки
 
-## 25.1.16-prod
+| Режим | Что ставится |
+| --- | --- |
+| `install single` | Панель + нода на одном VDS |
+| `install panel` | Только панель; к ней потом подключаются ноды |
+| `install node` | Только нода на отдельном сервере (`SECRET_KEY` из карточки панели) |
 
-Panel HTTP 200 after 25.1.15, subscription still 502: `repair` did not recreate `remnawave-subscription-page`. The container exits if its API token cannot read `/system/metadata`. `CUSTOM_SUB_PREFIX=sub` also hid the UI at `/`.
-
-If subscription still returns 502:
+Два сервера:
 
 ```bash
-rm -f remnawave-manager.sh
-curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v25.1.16-prod/remnawave-manager.sh \
-  -o remnawave-manager.sh
-chmod +x remnawave-manager.sh
-sha256sum remnawave-manager.sh
-# нужно: b3d8293bb4735f48b21e456860585a80e9c9a8102f33c5b8917b8bac259197b8
-grep "VERSION=" remnawave-manager.sh | head -1
-# нужно: VERSION='25.1.16-prod'
-sudo bash remnawave-manager.sh repair
+# Панель
+sudo bash remnawave-manager.sh install panel --yes \
+  DOMAIN_PANEL=pst.example.com DOMAIN_SUB=sb.example.com \
+  DOMAIN_REALITY=blog.example.com ADMIN_EMAIL=admin@example.com
+
+# Нода (другой VDS)
+sudo bash remnawave-manager.sh install node --yes \
+  PANEL_IP=203.0.113.10 DOMAIN_REALITY=blog.example.com \
+  ADMIN_EMAIL=admin@example.com NODE_SECRET_KEY='секрет_из_панели' \
+  --hysteria2 --grpc --xhttp
 ```
 
-The log must say `repair: Remnawave Manager 25.1.16-prod`. Then `curl -I https://sb.example.com` should be HTTP 200.
+## Протоколы
 
-## Runtime
+- Reality (VLESS TCP, SNI на 443) — всегда
+- `--hysteria2` — Hysteria2 UDP/443 в профиле Xray + sing-box UDP/8443
+- `--grpc` — VLESS gRPC + Reality TCP/8443
+- `--xhttp` — VLESS xHTTP + Reality TCP/4443
 
-Proxy-aware internal API requests:
+На уже установленной системе: пункт меню «Добавить протоколы» или `sudo bash remnawave-manager.sh protocols`.
 
-```text
-X-Forwarded-For: 127.0.0.1
-X-Forwarded-Proto: https
-X-Forwarded-Host: <Panel domain>
-Host: <Panel domain>
-X-Remnawave-Client-Type: browser
-```
+Готовый JSON правится в конвертере: https://rezzosoft.ru/converter.html
 
-## Production status
+## Обслуживание
 
-**Static audit:** green.
+`status`, `doctor`, `repair`, `backup`, `restore`, `update`, `up`, `down`, `restart`, `logs`, `core-update`, `stealth`, `addon remnawave|remnanode|selfsteal|wtm|netbird|egames`.
 
-Details: [CHANGELOG.md](CHANGELOG.md), [docs/INSTALLATION_RU.md](docs/INSTALLATION_RU.md), [SHA256SUMS](SHA256SUMS).
+Подробности: [docs/INSTALLATION_RU.md](docs/INSTALLATION_RU.md), [CHANGELOG.md](CHANGELOG.md), [SHA256SUMS](SHA256SUMS).
