@@ -3,11 +3,12 @@ set -Eeuo pipefail
 
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
-SCRIPT=remnawave-manager-v25.2.7-prod.sh
+SCRIPT=remnawave-manager-v1.0.0.sh
 
 echo "[1/18] bash -n current + historical"
 bash -n "$SCRIPT"
 bash -n remnawave-manager.sh
+bash -n remnawave-manager-v25.2.7-prod.sh
 bash -n remnawave-manager-v25.2.6-prod.sh
 bash -n remnawave-manager-v25.2.5-prod.sh
 bash -n remnawave-manager-v25.2.4-prod.sh
@@ -190,11 +191,15 @@ echo "[14/18] current script copies match"
 cmp -s remnawave-manager.sh "$SCRIPT"
 
 echo "[15/18] VERSION string"
-grep -Fq "VERSION='25.2.7-prod'" "$SCRIPT"
+grep -Fq "VERSION='1.0.0'" "$SCRIPT"
+if grep -nE "^VERSION='[^']*-prod'" remnawave-manager.sh; then
+  echo 'FAIL: current VERSION must not use a -prod suffix' >&2
+  exit 1
+fi
 
 echo "[16/18] SHA256SUMS covers every versioned script"
 missing=0
-for f in remnawave-manager-v25*.sh remnawave-manager.sh; do
+for f in remnawave-manager-v*.sh remnawave-manager.sh; do
   if ! grep -Fq "  $f" SHA256SUMS; then
     echo "missing checksum: $f" >&2
     missing=1

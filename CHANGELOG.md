@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.0
+
+Первый стабильный релиз без суффикса `-prod`. Тот же установщик, что 25.2.7: Reality с отпечатком firefox, сквад CorgiLusi, отдельный профиль на ноду, запуск без `sudo`.
+
+SHA256:
+`79cec67577feb666bc89a35452909457dba169540cecf909d8b2932f552fbe07`
+
 ## 25.2.7-prod
 
 Хосты Reality (VLESS TCP, gRPC, xHTTP) создаются с uTLS-отпечатком **firefox**, не chrome. Hysteria2 отпечаток не ставит. На уже установленной панели: пункт 4 / `bash remnawave-manager.sh protocols`.

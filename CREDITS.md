@@ -2,6 +2,8 @@
 
 **Remnawave Manager** — основная линия установщика: [booarkz-cpu/remnawave-manager](https://github.com/booarkz-cpu/remnawave-manager).
 
+В `1.0.0` первый стабильный релиз без суффикса `-prod`.
+
 В `25.2.7-prod` Reality-хосты получают отпечаток firefox, не chrome.
 
 В `25.2.6-prod` скрипт запускается без `sudo` в команде: права root поднимаются сами.
