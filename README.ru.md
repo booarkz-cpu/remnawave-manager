@@ -6,7 +6,7 @@
 
 Production-установщик [Remnawave](https://docs.rw) на Debian/Ubuntu. Интерактивное меню с описанием каждой функции. Язык: **русский** или **English**.
 
-**Текущая версия:** `1.5.0`
+**Текущая версия:** `1.5.1`
 
 **Лицензия:** [MIT](LICENSE) — можно использовать, копировать, менять и распространять с сохранением копирайта. Оригиналы, которые качает пункт **24**, остаются на условиях их авторов — [CREDITS.md](CREDITS.md).
 
@@ -61,13 +61,13 @@ bash remnawave-manager.sh
 
 Без аргументов открывается меню. `sudo` в команде писать не нужно — скрипт сам поднимает root. При первом запуске спрашивает **English** или **Русский** (сохраняется в `/opt/remnawave/manager.env`). Позже — пункт 22 или `--lang ru|en`.
 
-Фиксированная 1.5.0 через jsDelivr (по желанию):
+Фиксированная 1.5.1 через jsDelivr (по желанию):
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.5.0/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.5.1/remnawave-manager.sh \
   -o remnawave-manager.sh
-# sha256: 72c9cb8ca9ac35bb03b596bb32d68ff507c43f36992d1ee615962da3f44bacdb
+# sha256: 445b3fac779236d95e82ea535e7cf365a8e0356249d461f4c2d1c1c0b1d7e918
 ```
 
 По умолчанию включаются все транспорты: Reality, Hysteria2, gRPC и xHTTP.

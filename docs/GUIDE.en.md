@@ -2,7 +2,7 @@
 
 [English](GUIDE.en.md) · [Русский](GUIDE.ru.md) · [README](../README.md)
 
-Installer and day-to-day manager for [Remnawave](https://docs.rw) on Debian/Ubuntu. Author: **Corgi Lusi (Корги Люси)**. Current script version: **1.5.0**.
+Installer and day-to-day manager for [Remnawave](https://docs.rw) on Debian/Ubuntu. Author: **Corgi Lusi (Корги Люси)**. Current script version: **1.5.1**.
 
 This page is the full instruction. The GitHub README describes **every menu item** in English and Russian. Historical per-release notes: [INSTALLATION_RU.md](INSTALLATION_RU.md) (bilingual changelog lives in [CHANGELOG.md](../CHANGELOG.md)). License: [MIT](../LICENSE).
 
@@ -92,14 +92,14 @@ grep ' remnawave-manager.sh$' SHA256SUMS
 
 The two hashes must match. Latest release: <https://github.com/booarkz-cpu/remnawave-manager/releases/latest>
 
-Pinned copy (example for 1.5.0):
+Pinned copy (example for 1.5.1):
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.5.0/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.5.1/remnawave-manager.sh \
   -o remnawave-manager.sh
 sha256sum remnawave-manager.sh
-# 1.5.0: 72c9cb8ca9ac35bb03b596bb32d68ff507c43f36992d1ee615962da3f44bacdb
+# 1.5.1: 445b3fac779236d95e82ea535e7cf365a8e0356249d461f4c2d1c1c0b1d7e918
 ```
 
 See [SHA256SUMS](../SHA256SUMS) in the repo for every versioned file.

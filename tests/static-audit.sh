@@ -3,11 +3,12 @@ set -Eeuo pipefail
 
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
-SCRIPT=remnawave-manager-v1.5.0.sh
+SCRIPT=remnawave-manager-v1.5.1.sh
 
 echo "[1/18] bash -n current + historical"
 bash -n "$SCRIPT"
 bash -n remnawave-manager.sh
+bash -n remnawave-manager-v1.5.1.sh
 bash -n remnawave-manager-v1.5.0.sh
 bash -n remnawave-manager-v1.4.4.sh
 bash -n remnawave-manager-v1.4.3.sh
@@ -262,7 +263,7 @@ grep -Fq -- '--version' /tmp/rw-help-en.txt
 grep -Fq 'add-node' /tmp/rw-help-en.txt
 grep -Fq 'users list' /tmp/rw-help-en.txt
 grep -Fq 'admin-login' /tmp/rw-help-en.txt
-bash "$SCRIPT" --version | grep -Fq '1.5.0'
+bash "$SCRIPT" --version | grep -Fq '1.5.1'
 set +e
 bash "$SCRIPT" --lang en nosuchcmd >/tmp/rw-unk.txt 2>&1
 unk_rc=$?
@@ -275,7 +276,7 @@ if grep -Fq 'panel + node on one server' /tmp/rw-unk.txt; then
 fi
 # 1.4.0 self-update restart glued `--lang ru` into one argv because IFS has no space.
 bash "$SCRIPT" '--lang ru' --no-update-check --version >/tmp/rw-lang-glue.txt 2>&1
-grep -Fq '1.5.0' /tmp/rw-lang-glue.txt
+grep -Fq '1.5.1' /tmp/rw-lang-glue.txt
 if grep -Fq 'Unknown command' /tmp/rw-lang-glue.txt; then
   echo 'FAIL: glued --lang ru treated as unknown command' >&2
   exit 1
@@ -297,7 +298,18 @@ if awk '/^pick_target_node\(\)/,/^add_node_menu\(\)/' "$SCRIPT" | grep -q 'TARGE
   echo 'FAIL: pick_target_node must not skip the list when a UUID is already set' >&2
   exit 1
 fi
-grep -Fq 'version_is_newer "$LAST_REMOTE_VERSION" "$VERSION"' "$SCRIPT"
+grep -Fq 'version_is_newer()' "$SCRIPT"
+grep -Fq 'http_first_redirect()' "$SCRIPT"
+grep -Fq 'tag_from_github_url()' "$SCRIPT"
+grep -Fq 'download_self_script()' "$SCRIPT"
+grep -Fq 'JSDELIVR_LATEST_URL' "$SCRIPT"
+grep -Fq 'check_update_cli || true' "$SCRIPT"
+grep -Fq 'check_update_cli "${2:-}" || exit $?' "$SCRIPT"
+grep -Fq 'release-assets.githubusercontent.com' "$SCRIPT"
+if awk '/^fetch_latest_tag\(\)/,/^persist_update_check\(\)/' "$SCRIPT" | grep -q 'url_effective'; then
+  echo 'FAIL: fetch_latest_tag must not use the final GitHub asset CDN URL' >&2
+  exit 1
+fi
 awk '/^probe_http_code\(\)/,/^subscription_panel_url\(\)/' "$SCRIPT" | grep -Fq '^[0-9]{3}$'
 grep -Fq 'preflight()' "$SCRIPT"
 grep -Fq 'pick_target_node()' "$SCRIPT"
@@ -333,7 +345,7 @@ echo "[14/18] current script copies match"
 cmp -s remnawave-manager.sh "$SCRIPT"
 
 echo "[15/18] VERSION string"
-grep -Fq "VERSION='1.5.0'" "$SCRIPT"
+grep -Fq "VERSION='1.5.1'" "$SCRIPT"
 if grep -nE "^VERSION='[^']*-prod'" remnawave-manager.sh; then
   echo 'FAIL: current VERSION must not use a -prod suffix' >&2
   exit 1
