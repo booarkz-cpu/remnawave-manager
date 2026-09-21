@@ -1,4 +1,4 @@
-﻿name: Static audit
+name: Static audit
 
 on:
   push:
