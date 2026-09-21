@@ -1,5 +1,16 @@
 # Changelog
 
+## 25.1.16-prod
+
+Панель после 25.1.15 отвечает 200, страница подписки оставалась на 502: `repair` не поднимал `remnawave-subscription-page`. Контейнер падает на старте, если API token не читает `/system/metadata` (`exit(1)`). `CUSTOM_SUB_PREFIX=sub` прятал UI с корня домена.
+
+- `repair` проверяет token через `/system/metadata`, при необходимости создаёт новый, переписывает `.env` и `docker compose up --force-recreate --wait`;
+- `CUSTOM_SUB_PREFIX` пустой, `SUB_PUBLIC_DOMAIN` = домен подписки без `/sub` (как в официальном bundled);
+- `curl -I https://sub.example.com` должен быть HTTP 200.
+
+SHA256:
+`b3d8293bb4735f48b21e456860585a80e9c9a8102f33c5b8917b8bac259197b8`
+
 ## 25.1.15-prod
 
 Ubuntu nginx 1.24 не знает директиву `http2 on;` (она появилась в 1.25.1). Vhost снова используют `listen ... ssl http2;`.
