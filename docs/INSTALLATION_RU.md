@@ -1,13 +1,13 @@
-﻿# Установка Remnawave Manager 25.1.2-prod
+﻿# Установка Remnawave Manager 25.1.3-prod
 
-## 1. Требования
+## 1. Подготовка
 
-Debian/Ubuntu VDS, root-доступ, публичный IPv4 и заранее настроенные DNS A-записи.
+Ubuntu/Debian VDS, root-доступ, публичный IPv4 и DNS A-записи.
 
-## 2. Скачать и проверить
+## 2. Скачать
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/booarkz-cpu/remnawave-manager/main/remnawave-manager-v25.1.2-prod.sh -o remnawave-manager.sh
+curl -fsSL https://raw.githubusercontent.com/booarkz-cpu/remnawave-manager/main/remnawave-manager-v25.1.3-prod.sh -o remnawave-manager.sh
 chmod +x remnawave-manager.sh
 sha256sum remnawave-manager.sh
 ```
@@ -15,83 +15,53 @@ sha256sum remnawave-manager.sh
 Ожидаемый SHA256:
 
 ```text
-45b7039466597a34220ca3c32a0dcc1080e759611b6e8a43735fb9b2310781dd
+74274f01bd10e072ab18c474490af64de36f24777cd860fce1a457eb113d9020
 ```
 
-Перед установкой:
+## 3. Dry-run
 
 ```bash
-sudo bash remnawave-manager.sh --dry-run
+sudo bash remnawave-manager.sh install single --dry-run --yes \
+  DOMAIN_PANEL=panel.example.com \
+  DOMAIN_SUB=sub.example.com \
+  DOMAIN_REALITY=reality.example.com \
+  ADMIN_EMAIL=admin@example.com
 ```
 
-## 3. Single-VDS
+## 4. Single-VDS
 
 ```bash
-sudo bash remnawave-manager.sh install single
+sudo bash remnawave-manager.sh install single --yes \
+  DOMAIN_PANEL=panel.example.com \
+  DOMAIN_SUB=sub.example.com \
+  DOMAIN_REALITY=reality.example.com \
+  ADMIN_EMAIL=admin@example.com
 ```
 
-Неинтерактивный пример:
+## 5. ProxyCheckMiddleware
+
+Panel нельзя корректно использовать без reverse proxy/HTTPS. Официальный SDK показывает внутренний доступ через HTTP с `X-Forwarded-For` и `X-Forwarded-Proto: https`. citeturn764358search6
+
+`25.1.3-prod` добавляет эти заголовки в внутренние API health/bootstrap checks.
+
+## 6. Диагностика
 
 ```bash
-sudo bash remnawave-manager.sh install single --yes   DOMAIN_PANEL=panel.example.com   DOMAIN_SUB=sub.example.com   DOMAIN_REALITY=reality.example.com   ADMIN_EMAIL=admin@example.com
-```
-
-## 4. Multi-VDS
-
-Panel:
-
-```bash
-sudo bash remnawave-manager.sh install panel --yes   DOMAIN_PANEL=panel.example.com   DOMAIN_SUB=sub.example.com   DOMAIN_REALITY=reality.example.com   EDGE_ADDRESS=203.0.113.20   ADMIN_EMAIL=admin@example.com
-```
-
-Edge:
-
-```bash
-sudo bash remnawave-manager.sh install edge --yes   PANEL_IP=203.0.113.10   DOMAIN_REALITY=reality.example.com   ADMIN_EMAIL=admin@example.com   NODE_SECRET_KEY='секрет-ноды'
-```
-
-## 5. Проверки
-
-```bash
-sudo bash remnawave-manager.sh status
+sudo tail -100 /var/log/remnawave-manager.log
+sudo docker logs --tail=100 remnawave
 sudo bash remnawave-manager.sh doctor
-sudo nginx -t
-sudo ss -lntup
-sudo ufw status
 ```
 
-## 6. Backup / Restore
+## 7. Backup / Restore
 
 ```bash
 sudo bash remnawave-manager.sh backup
 sudo bash remnawave-manager.sh restore /var/backups/remnawave/ARCHIVE.tgz
 ```
 
-В `25.1.2-prod` SQL dump хранится внутри backup-архива во временном виде и при restore извлекается непосредственно из архива. Это также устраняет зависимость от имени `.age`-файла.
+## 8. Production test
 
-## 7. Обновление
+После bootstrap проверить Panel URL, Subscription URL, сертификаты, Node, Reality SNI, UFW, timers и backup/restore.
 
-```bash
-sudo bash remnawave-manager.sh update
-```
-
-Перед update создаётся backup. После update выполняется health/API check.
-
-## 8. Внешние add-ons
-
-Используйте осторожно: upstream scripts выполняют внешний код с правами root.
-
-## 9. Удаление
-
-```bash
-sudo bash remnawave-manager.sh uninstall
-```
-
-Backup-архивы сохраняются.
-
-## 10. Production status
-
-Статические проверки пройдены. Реальное развертывание на VDS ещё требуется.
-
-Следующий обязательный этап: чистый VDS -> Single-VDS -> backup -> restore -> Multi-VDS Panel/Edge.
+Реальный runtime test обязателен.
 

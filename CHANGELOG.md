@@ -1,35 +1,34 @@
 ﻿# Changelog
 
-## 25.1.2-prod
+## 25.1.3-prod
 
-Исправляющая revision после дополнительного статического аудита.
+Исправлена критичная ошибка bootstrap на актуальном Remnawave Backend.
 
-### Исправления
+### Что исправлено
 
-- backup больше не оставляет отдельный незашифрованный PostgreSQL dump в `/var/backups/remnawave`;
-- SQL dump включается непосредственно в backup-архив из временного каталога;
-- restore ищет SQL dump внутри архива и не зависит от имени исходного `.tgz` или `.age`;
-- `.age` restore теперь проходит тот же DB recovery path;
-- ошибки `docker compose up` при restore больше не проглатываются;
-- ошибка `nginx -t` после restore больше не игнорируется;
-- версия Manager обновлена до `25.1.2-prod`.
+- внутренние API-запросы Manager теперь передают `X-Forwarded-For: 127.0.0.1`;
+- добавлен `X-Forwarded-Proto: https`;
+- добавлен `X-Forwarded-Host`;
+- внутренний API `Host` выставляется в Panel domain;
+- `wait_api`, `doctor`, `update` API check и systemd healthcheck используют тот же proxy-aware путь;
+- это устраняет ошибку `Reverse proxy and HTTPS are required` при bootstrap до публикации API через внешний Nginx.
 
-### Проверки
+Официальный SDK Remnawave документирует использование `x-forwarded-for` и `x-forwarded-proto=https` для доступа к Panel API из внутренних bridge-сетей. citeturn764358search6
+
+### Runtime test
+
+На тестовом VDS Ubuntu 24.04:
+
+- Docker установлен успешно;
+- PostgreSQL/Valkey/Backend стали healthy;
+- DNS `pst.corgilusi.xyz`, `sb.corgilusi.xyz`, `blog.corgilusi.xyz` указывали на `13.143.166.48`;
+- bootstrap остановился именно на ProxyCheckMiddleware из-за отсутствия proxy headers.
+
+Следующий запуск `25.1.3-prod` должен пройти этот участок; затем продолжается TLS/Node/Reality bootstrap.
+
+### Checks
 
 - `bash -n`: OK
-- `--help`: OK
-- dry-run `single`: OK
-- dry-run `panel`: OK
-- dry-run `edge`: OK
-- статические assertions: OK
+- локальный статический аудит: OK
 - ShellCheck: не запускался
-- реальный VDS/Docker/ACME runtime deployment: не выполнялся
-
-## 25.1.1-prod
-
-Исправления `FRONT_END_DOMAIN`, `TRUST_PROXY`, PostgreSQL secret defaults, healthcheck и аргументов Xray core.
-
-## 25.1.0-prod
-
-Первая опубликованная production revision.
 
