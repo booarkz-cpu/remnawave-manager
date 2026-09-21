@@ -13,4 +13,4 @@ sudo bash remnawave-manager.sh
 
 На уже стоящей системе: `sudo bash remnawave-manager.sh protocols`
 
-SHA256: `67052bd1206712f1a2dd6a15bbfee66539b4813031628d93f02ea98c778d987c`
+SHA256: `534353340dc8987375f5bc45242f01a97327c8d8713bfc5628f1884f891e7e60`

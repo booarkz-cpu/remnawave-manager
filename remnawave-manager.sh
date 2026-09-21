@@ -725,7 +725,7 @@ create_node(){
 }
 
 bind_nodes_to_profile(){
-  local inbound_uuids node_uuids body uuid existing
+  local inbound_uuids node_uuids body uuid existing raw code
   inbound_uuids="$(profile_inbound_uuids)"
   [[ -n "$inbound_uuids" && "$inbound_uuids" != '[]' ]] || die 'Нет inbound UUID после обновления профиля.'
   node_uuids="$(list_node_uuids)"
@@ -735,11 +735,13 @@ bind_nodes_to_profile(){
   fi
   body="$(jq -nc --arg p "$PROFILE_UUID" --argjson ibs "$inbound_uuids" --argjson uuids "$node_uuids" \
     '{uuids:$uuids, configProfile:{activeConfigProfileUuid:$p, activeInbounds:$ibs}}')"
-  if api_json "$(api_call POST /nodes/bulk-actions/profile-modification "$body" "$API_JWT")" >/dev/null 2>&1; then
+  raw="$(api_call POST /nodes/bulk-actions/profile-modification "$body" "$API_JWT" || true)"
+  code="$(tail -n1 <<<"$raw")"
+  if [[ "$code" =~ ^2[0-9][0-9]$ ]]; then
     ok "Все ноды привязаны к AUTO-PROFILE через bulk profile-modification."
     return 0
   fi
-  warn 'Bulk profile-modification недоступен; привязываем каждую ноду PATCH /nodes/.'
+  warn "Bulk profile-modification недоступен (HTTP ${code:-000}); привязываем каждую ноду PATCH /nodes/."
   existing="$(api_json "$(api_call GET /nodes/ '' "$API_JWT")")"
   while IFS= read -r uuid; do
     [[ -n "$uuid" ]] || continue
