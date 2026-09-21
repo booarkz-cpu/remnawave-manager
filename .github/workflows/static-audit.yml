@@ -14,5 +14,5 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Run static audit
-        run: sudo bash tests/static-audit.sh
+        run: bash tests/static-audit.sh
 

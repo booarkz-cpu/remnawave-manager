@@ -1,34 +1,37 @@
 ﻿# Changelog
 
+## 25.1.4-prod
+
+Release hygiene после CI-проверки `25.1.3-prod`.
+
+### Исправления
+
+- удалён UTF-8 BOM из `tests/static-audit.sh`;
+- workflow запускает audit через `bash tests/static-audit.sh`;
+- исправлена неверная историческая checksum `remnawave-manager-v25.1.2-prod.sh`;
+- `SHA256SUMS` теперь содержит проверенные SHA256 для всех опубликованных версий;
+- `25.1.3` proxy-aware API bootstrap сохранён без изменений.
+
+### Проверки
+
+- GitHub Actions static audit: должен быть green после публикации;
+- локальный `bash -n`: OK;
+- `--help`: OK;
+- dry-run Single/Panel/Edge: OK.
+
 ## 25.1.3-prod
 
-Исправлена критичная ошибка bootstrap на актуальном Remnawave Backend.
+Исправлен ProxyCheckMiddleware bootstrap: внутренние API-запросы передают reverse-proxy headers.
 
-### Что исправлено
+## 25.1.2-prod
 
-- внутренние API-запросы Manager теперь передают `X-Forwarded-For: 127.0.0.1`;
-- добавлен `X-Forwarded-Proto: https`;
-- добавлен `X-Forwarded-Host`;
-- внутренний API `Host` выставляется в Panel domain;
-- `wait_api`, `doctor`, `update` API check и systemd healthcheck используют тот же proxy-aware путь;
-- это устраняет ошибку `Reverse proxy and HTTPS are required` при bootstrap до публикации API через внешний Nginx.
+Исправлен backup/restore PostgreSQL.
 
-Официальный SDK Remnawave документирует использование `x-forwarded-for` и `x-forwarded-proto=https` для доступа к Panel API из внутренних bridge-сетей. citeturn764358search6
+## 25.1.1-prod
 
-### Runtime test
+Исправлены `FRONT_END_DOMAIN`, `TRUST_PROXY`, PostgreSQL secret defaults и healthcheck.
 
-На тестовом VDS Ubuntu 24.04:
+## 25.1.0-prod
 
-- Docker установлен успешно;
-- PostgreSQL/Valkey/Backend стали healthy;
-- DNS `pst.corgilusi.xyz`, `sb.corgilusi.xyz`, `blog.corgilusi.xyz` указывали на `13.143.166.48`;
-- bootstrap остановился именно на ProxyCheckMiddleware из-за отсутствия proxy headers.
-
-Следующий запуск `25.1.3-prod` должен пройти этот участок; затем продолжается TLS/Node/Reality bootstrap.
-
-### Checks
-
-- `bash -n`: OK
-- локальный статический аудит: OK
-- ShellCheck: не запускался
+Первая опубликованная production revision.
 

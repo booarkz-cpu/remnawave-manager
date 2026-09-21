@@ -2,37 +2,52 @@
 
 Production-ориентированный Bash-менеджер для развёртывания и обслуживания Remnawave на Debian/Ubuntu.
 
-**Текущая версия:** `25.1.3-prod`
+**Текущая версия:** `25.1.4-prod`
 
 ## Быстрый старт
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/booarkz-cpu/remnawave-manager/main/remnawave-manager-v25.1.3-prod.sh -o remnawave-manager.sh
+curl -fsSL https://raw.githubusercontent.com/booarkz-cpu/remnawave-manager/main/remnawave-manager-v25.1.4-prod.sh -o remnawave-manager.sh
 chmod +x remnawave-manager.sh
 sha256sum remnawave-manager.sh
 bash remnawave-manager.sh --dry-run
+```
+
+Single-VDS:
+
+```bash
 sudo bash remnawave-manager.sh install single
 ```
 
-## Что автоматизирует
+## 25.1.4 — release hygiene
 
-Single-VDS и Multi-VDS (Panel + Edge), Docker Compose, Nginx SNI routing, VLESS/Reality, Let's Encrypt/ECDSA, UFW/fail2ban, backup/restore, update, monitoring, optional Hysteria2, upstream add-ons, Xray core management и внешний Xray Checker.
+Этот релиз не меняет архитектуру `25.1.3`. Исправлены только release/CI проблемы:
 
-## Важное исправление 25.1.3
+- убран UTF-8 BOM из `tests/static-audit.sh`;
+- исправлены исторические checksum в `SHA256SUMS`;
+- checksum каждого опубликованного Manager соответствует фактическому файлу;
+- GitHub Actions static audit запускается через `bash`, чтобы тестовый файл не зависел от executable bit/BOM.
 
-Remnawave Panel требует reverse proxy и HTTPS. Для внутренних API-запросов Manager теперь передаёт `X-Forwarded-For: 127.0.0.1` и `X-Forwarded-Proto: https`, как показано в официальном TypeScript SDK для доступа из bridge/internal networks. citeturn764358search6
+## Runtime bootstrap
 
-В предыдущей версии bootstrap делал локальный HTTP-запрос без этих заголовков, из-за чего backend возвращал `Reverse proxy and HTTPS are required`.
+`25.1.3-prod` уже содержит proxy-aware внутренние API-запросы с:
+
+```text
+X-Forwarded-For: 127.0.0.1
+X-Forwarded-Proto: https
+X-Forwarded-Host: <Panel domain>
+Host: <Panel domain>
+```
+
+Это исправление сохраняется в `25.1.4-prod`.
 
 ## DNS
 
-Для Single-VDS:
+Single-VDS:
 
 - `panel.example.com` -> VDS IP
 - `sub.example.com` -> VDS IP
 - `reality.example.com` -> VDS IP
-
-Backend-порты и локальные monitoring-порты не должны быть публично открыты.
 
 ## Обслуживание
 
@@ -56,15 +71,13 @@ sudo rm -f /opt/remnawave/credentials.txt
 
 ## Production status
 
-Статические проверки: `bash -n`, `--help`, dry-run Single/Panel/Edge.
+Статические проверки обязательны. Реальный VDS runtime test ещё продолжается на тестовом сервере.
 
-Реальный VDS сейчас используется как первый runtime test. До успешного прохождения полного bootstrap, TLS, Node/Reality, backup и restore релиз следует считать test-production, а не окончательно validated production.
-
-## Контрольная сумма
+## SHA256
 
 ```text
-74274f01bd10e072ab18c474490af64de36f24777cd860fce1a457eb113d9020  remnawave-manager-v25.1.3-prod.sh
+ac3843b37ff02c40101768a0dbb2f4c2312fc8cd9690ba78d0936b03060086f4  remnawave-manager-v25.1.4-prod.sh
 ```
 
-Подробности: [docs/INSTALLATION_RU.md](docs/INSTALLATION_RU.md) и [CHANGELOG.md](CHANGELOG.md).
+Подробности: [CHANGELOG.md](CHANGELOG.md) и [docs/INSTALLATION_RU.md](docs/INSTALLATION_RU.md).
 
