@@ -2,19 +2,19 @@
 
 Production-ориентированный Bash-менеджер для развёртывания и обслуживания Remnawave на Debian/Ubuntu.
 
-**Текущая версия:** `25.1.9-prod`
+**Текущая версия:** `25.1.10-prod`
 
 ## Быстрый старт
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/booarkz-cpu/remnawave-manager/v25.1.9-prod/remnawave-manager-v25.1.9-prod.sh -o remnawave-manager.sh
+curl -fsSL https://raw.githubusercontent.com/booarkz-cpu/remnawave-manager/v25.1.10-prod/remnawave-manager-v25.1.10-prod.sh -o remnawave-manager.sh
 chmod +x remnawave-manager.sh
 sha256sum remnawave-manager.sh
 bash remnawave-manager.sh --dry-run
 sudo bash remnawave-manager.sh install single
 ```
 
-## 25.1.9-prod
+## 25.1.10-prod
 
 Firewall/SSH bootstrap hotfix:
 
@@ -53,7 +53,22 @@ X-Remnawave-Client-Type: browser
 ## SHA256
 
 ```text
-04edbee57c6fb0250d6d6c1e8e967553ebc37462a11460e95038068921603086  remnawave-manager-v25.1.9-prod.sh
+04edbee57c6fb0250d6d6c1e8e967553ebc37462a11460e95038068921603086  remnawave-manager-v25.1.10-prod.sh
 ```
 
 Подробности: [CHANGELOG.md](CHANGELOG.md).
+
+
+РќР° СЌС‚Р°РїРµ СѓСЃС‚Р°РЅРѕРІРєРё Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ РїРѕР»РЅРѕРµ РѕР±РЅРѕРІР»РµРЅРёРµ РїР°РєРµС‚РѕРІ РћРЎ РґРѕ СЂР°Р·РІС‘СЂС‚С‹РІР°РЅРёСЏ Р·Р°РІРёСЃРёРјРѕСЃС‚РµР№.
+
+
+РќР° СЌС‚Р°РїРµ СѓСЃС‚Р°РЅРѕРІРєРё Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ РїРѕР»РЅРѕРµ РѕР±РЅРѕРІР»РµРЅРёРµ РїР°РєРµС‚РѕРІ РћРЎ РґРѕ СЂР°Р·РІС‘СЂС‚С‹РІР°РЅРёСЏ Р·Р°РІРёСЃРёРјРѕСЃС‚РµР№.
+
+
+РќР° СЌС‚Р°РїРµ СѓСЃС‚Р°РЅРѕРІРєРё Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ РїРѕР»РЅРѕРµ РѕР±РЅРѕРІР»РµРЅРёРµ РїР°РєРµС‚РѕРІ РћРЎ РґРѕ СЂР°Р·РІС‘СЂС‚С‹РІР°РЅРёСЏ Р·Р°РІРёСЃРёРјРѕСЃС‚РµР№.
+
+
+РќР° СЌС‚Р°РїРµ СѓСЃС‚Р°РЅРѕРІРєРё Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ РїРѕР»РЅРѕРµ РѕР±РЅРѕРІР»РµРЅРёРµ РїР°РєРµС‚РѕРІ РћРЎ РґРѕ СЂР°Р·РІС‘СЂС‚С‹РІР°РЅРёСЏ Р·Р°РІРёСЃРёРјРѕСЃС‚РµР№.
+
+
+           .
