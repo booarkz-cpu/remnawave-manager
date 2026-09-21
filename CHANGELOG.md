@@ -1,20 +1,18 @@
 ﻿# Changelog
 
-## 25.1.1-prod
+## 25.1.2-prod
 
-Исправляющая production revision после статического аудита `25.1.0-prod`.
+Исправляющая revision после дополнительного статического аудита.
 
 ### Исправления
 
-- `FRONT_END_DOMAIN` теперь соответствует формату upstream: домен без `https://`. citeturn464550search1turn655685search10
-- `TRUST_PROXY` для Subscription Page изменён на `1`, чтобы доверять одному reverse-proxy hop вместо `true`. citeturn464550search4
-- стандартный пароль PostgreSQL из upstream sample (`postgres`) больше не принимается как production secret;
-- healthcheck теперь проверяет каждый service в Compose, а не только наличие любого запущенного service;
-- restore теперь импортирует PostgreSQL dump из backup;
-- ошибка распаковки restore больше не подавляется;
-- `core-update` и `core-restore` теперь правильно принимают каталог Node вторым позиционным аргументом;
-- проверка TLS считает сертификат готовым только при наличии certificate и private key;
-- default camouflage page снова соответствует русской странице Manager.
+- backup больше не оставляет отдельный незашифрованный PostgreSQL dump в `/var/backups/remnawave`;
+- SQL dump включается непосредственно в backup-архив из временного каталога;
+- restore ищет SQL dump внутри архива и не зависит от имени исходного `.tgz` или `.age`;
+- `.age` restore теперь проходит тот же DB recovery path;
+- ошибки `docker compose up` при restore больше не проглатываются;
+- ошибка `nginx -t` после restore больше не игнорируется;
+- версия Manager обновлена до `25.1.2-prod`.
 
 ### Проверки
 
@@ -23,19 +21,15 @@
 - dry-run `single`: OK
 - dry-run `panel`: OK
 - dry-run `edge`: OK
-- YAML parsing compose blocks: OK
 - статические assertions: OK
-- ShellCheck в среде не установлен и не запускался
-- реальный VDS/Docker/ACME deployment не выполнялся
+- ShellCheck: не запускался
+- реальный VDS/Docker/ACME runtime deployment: не выполнялся
 
-### Совместимость
+## 25.1.1-prod
 
-Upstream Node продолжает использовать официальный `remnawave/node:latest`, `NODE_PORT` и `SECRET_KEY`. citeturn226976search0turn226976search1
+Исправления `FRONT_END_DOMAIN`, `TRUST_PROXY`, PostgreSQL secret defaults, healthcheck и аргументов Xray core.
 
 ## 25.1.0-prod
 
 Первая опубликованная production revision.
-
-SHA-256:
-`31784d414e5c497ff0560a517cc7df04ab4a6ded7a515bf9925513f5480ab874`
 
