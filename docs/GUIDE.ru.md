@@ -289,24 +289,30 @@ bash remnawave-manager.sh node-transports apply
 
 Этот раздел обновляет **только** `remnawave-manager.sh` (и `/usr/local/bin/remnawave-manager`, если ставили CLI). Он **не** тянет Docker-образы и **не** удаляет базу панели.
 
-### Способ A — если на VDS уже стоит 1.3.0 или новее
+Сначала версия в шапке: `bash remnawave-manager.sh --help`.
+
+### Способ A — 1.1.0 или 1.2.0 (`check-update` печатает справку)
+
+Команды `check-update` в этих версиях **нет**. Неизвестная команда печатает полный `--help` — это не ошибка сети. В 1.1.0 уже есть `self-update`:
+
+```bash
+bash remnawave-manager.sh self-update
+```
+
+После замены в шапке должно быть `1.3.0` или новее. Тогда заработают `check-update` и автопроверка в меню.
+
+### Способ B — уже 1.3.0 или новее
 
 1. Откройте меню: `bash remnawave-manager.sh`
 2. Если GitHub Latest новее — ответьте **Y**.
-3. Или без вопроса:
+3. Или:
 
 ```bash
 bash remnawave-manager.sh check-update
 bash remnawave-manager.sh check-update --apply
 ```
 
-То же самое: пункт **24** → **2**, или:
-
-```bash
-bash remnawave-manager.sh self-update
-```
-
-`self-update` скачивает Latest, проверяет файл через `bash -n`, заменяет текущий скрипт и копию CLI, затем перезапускается.
+То же: пункт **24** → **2**, или снова `self-update`.
 
 Не опрашивать GitHub при открытии меню:
 
@@ -314,11 +320,11 @@ bash remnawave-manager.sh self-update
 bash remnawave-manager.sh --no-update-check
 ```
 
-Время проверки пишется в `LAST_UPDATE_CHECK_AT` / `LAST_REMOTE_VERSION` в `manager.env` (кэш 6 часов). Пункт **24** → **3** — только проверка, без скачивания.
+Время проверки — `LAST_UPDATE_CHECK_AT` / `LAST_REMOTE_VERSION` в `manager.env` (кэш 6 часов). Пункт **24** → **3** — только проверка, без скачивания.
 
-### Способ B — любая старая версия (1.2.x, 1.1.x, 25.2.x, …)
+### Способ C — нет `self-update` (1.0.0 / 25.2.x) или GitHub не открывается
 
-В них нет `check-update`. Скачайте Latest сами и сверьте хеш:
+Скачайте Latest вручную и сверьте хеш:
 
 ```bash
 cd ~
@@ -479,7 +485,8 @@ bash remnawave-manager.sh addon remnawave|remnanode|selfsteal|wtm|netbird|egames
 | `repair` просит DOMAIN_* | Введите имена panel / sub / Reality; 1.3.x поднимает их и с диска |
 | Нода не Connected | UFW 2222 только с IP панели; `SECRET_KEY` как в `credentials.txt`; DNS Reality → нода |
 | Доп. протокол не работает | Пункт **25** на панели, затем `node-transports apply` на ноде |
-| Меню не видит новый скрипт | `check-update --apply` или способ B; либо `self-update` (кэш 6 часов) |
+| `check-update` печатает всю справку `1.1.0` | Это старый скрипт. Выполните `bash remnawave-manager.sh self-update` |
+| Меню не видит новый скрипт | `self-update` или `check-update --apply` (с 1.3.0); кэш 6 часов |
 | Хеш не совпал | Удалите файл, скачайте Latest снова, не запускайте |
 | `"-":0: bad minute` на старом 25.2.2 | Обновите **скрипт** (раздел 10), затем `protocols` — сертификаты Hysteria идут через systemd, не crontab |
 

@@ -289,24 +289,30 @@ bash remnawave-manager.sh node-transports apply
 
 This section updates **only** `remnawave-manager.sh` (and `/usr/local/bin/remnawave-manager` if you installed the CLI). It does **not** pull Docker images and does **not** wipe the panel database.
 
-### Method A — recommended (script 1.3.0 or newer already on the VPS)
+First, the version in the help header: `bash remnawave-manager.sh --help`.
+
+### Method A — 1.1.0 or 1.2.0 (`check-update` prints help)
+
+Those builds **do not** have `check-update`. An unknown command prints the full `--help` — that is not a network error. 1.1.0 already has `self-update`:
+
+```bash
+bash remnawave-manager.sh self-update
+```
+
+After the replace, the header should show `1.3.0` or newer. Then `check-update` and the menu auto-check work.
+
+### Method B — already 1.3.0 or newer
 
 1. Open the menu: `bash remnawave-manager.sh`
-2. If GitHub Latest is newer, answer **Y** to install it.
-3. Or without the prompt:
+2. If GitHub Latest is newer, answer **Y**.
+3. Or:
 
 ```bash
 bash remnawave-manager.sh check-update
 bash remnawave-manager.sh check-update --apply
 ```
 
-Equivalent: menu **24** → **2**, or:
-
-```bash
-bash remnawave-manager.sh self-update
-```
-
-`self-update` downloads Latest, runs `bash -n` on the file, replaces the running script and the CLI copy, then restarts.
+Equivalent: menu **24** → **2**, or `self-update` again.
 
 Skip the automatic GitHub query:
 
@@ -316,9 +322,9 @@ bash remnawave-manager.sh --no-update-check
 
 The last check time is stored as `LAST_UPDATE_CHECK_AT` / `LAST_REMOTE_VERSION` in `manager.env` (6 hour cache). Menu **24** → **3** checks without downloading.
 
-### Method B — any older version (1.2.x, 1.1.x, 25.2.x, …)
+### Method C — no `self-update` (1.0.0 / 25.2.x) or GitHub unreachable
 
-Those builds have no `check-update`. Download Latest yourself, then verify the hash:
+Download Latest by hand and verify the hash:
 
 ```bash
 cd ~
@@ -479,7 +485,8 @@ Optional converter (not required to bind): <https://rezzosoft.ru/converter.html>
 | `repair` asks for DOMAIN_* | Enter panel / sub / Reality hostnames; 1.3.x also hydrates them from disk |
 | Node not Connected | Panel IP in UFW for 2222; `SECRET_KEY` matches `credentials.txt`; Reality DNS → node |
 | Extra protocol does not work | Item **25** on the panel, then `node-transports apply` on the node |
-| Menu does not see a new script | `check-update --apply` or Method B; wait 6 hours or ignore the cache by using `self-update` |
+| `check-update` prints the full `1.1.0` help | Old script. Run `bash remnawave-manager.sh self-update` |
+| Menu does not see a new script | `self-update` or `check-update --apply` (from 1.3.0); 6 hour cache |
 | Hash mismatch | Delete the file; download Latest again; do not run it |
 | `"-":0: bad minute` on old 25.2.2 | Update the **script** (section 10), then `protocols` — Hysteria certs use systemd, not crontab |
 

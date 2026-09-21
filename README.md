@@ -77,6 +77,20 @@ Step-by-step (one VPS, two VPS, DNS, files on disk): **[docs/GUIDE.en.md](docs/G
 
 This replaces **only** the installer file. It does not pull Docker images and does not wipe the panel database. Image updates are menu **14**.
 
+First look at the help header: `bash remnawave-manager.sh --help` (line “Corgi Lusi · Remnawave Manager …”).
+
+### 1.1.0 or 1.2.0 — you do not have `check-update`
+
+If `bash remnawave-manager.sh check-update` prints the **full help** and the header says `1.1.0` / `1.2.0`, that is expected: `check-update` exists only from 1.3.0. 1.1.0 already has `self-update`. On the VPS run:
+
+```bash
+bash remnawave-manager.sh self-update
+```
+
+It downloads GitHub Latest, runs `bash -n`, replaces this file (and `/usr/local/bin/remnawave-manager` if the CLI was installed), then restarts. The header should then show `1.3.0` or newer. `check-update` works only after that.
+
+If there is no `self-update` (1.0.0 / 25.2.x) or GitHub is unreachable, download Latest by hand as in [Quick start](#quick-start) and compare SHA256.
+
 ### Already on 1.3.0 or newer
 
 The menu checks GitHub Latest (at most every 6 hours) and asks to install. Or:
@@ -86,23 +100,9 @@ bash remnawave-manager.sh check-update
 bash remnawave-manager.sh check-update --apply
 ```
 
-Same thing: menu **24** → **2**, or `bash remnawave-manager.sh self-update`.
+Same thing: menu **24** → **2**, or `self-update` again. Skip the query: `--no-update-check`. Check only: menu **24** → **3**.
 
-Skip the query: `--no-update-check`. Check only (no download): menu **24** → **3**.
-
-`self-update` downloads Latest, runs `bash -n`, overwrites this file and `/usr/local/bin/remnawave-manager` if that CLI copy exists, then restarts.
-
-### Older script (1.2.x, 1.1.x, 25.2.x, …)
-
-Those builds have no `check-update`. Use Latest + SHA256 as in [Quick start](#quick-start). If the hashes differ, do not run the file.
-
-Then, if you had used menu **19**:
-
-```bash
-bash remnawave-manager.sh install-script
-```
-
-Do this on **both** the panel VPS and the node VPS.
+Run the script update on **both** VPS (panel and node). If you used menu **19**, after a manual `curl` run `bash remnawave-manager.sh install-script`.
 
 ### After the file is updated
 
