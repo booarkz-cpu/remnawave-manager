@@ -1,4 +1,4 @@
-# Установка Remnawave Manager 1.1.0
+# Установка Remnawave Manager 1.2.0
 
 ## 1. Подготовка
 
@@ -14,7 +14,7 @@ chmod +x remnawave-manager.sh
 sha256sum remnawave-manager.sh
 ```
 
-Сверьте сумму с файлом `SHA256SUMS`. Актуальный файл также называется `remnawave-manager-v1.1.0.sh`. Скачивайте через jsDelivr `@v1.1.0`, не с `raw.githubusercontent.com/main`.
+Сверьте сумму с файлом `SHA256SUMS`. Актуальный файл также называется `remnawave-manager-v1.2.0.sh`. Скачивайте через jsDelivr `@v1.2.0`, не с `raw.githubusercontent.com/main`.
 
 Без аргументов скрипт открывает меню с описанием всех функций и предлагает язык (English / русский). Профиль, ноды, хосты и сквад привязываются через API — панель и конвертер править не нужно. Префикс `sudo` в команде не нужен: скрипт сам поднимает root.
 
@@ -72,6 +72,20 @@ bash remnawave-manager.sh install node --yes \
 `install node` — синоним `install edge`. По умолчанию ставятся все транспорты: Reality (SNI TCP/443), Hysteria2 UDP/443, gRPC TCP/8443, xHTTP TCP/4443. На панели вызовите `install panel` с `EDGE_ADDRESS=<IP ноды>` или затем `bash remnawave-manager.sh protocols` — inbound’ы, хосты и сквад CorgiLusi привяжутся через API. Default-Profile будет удалён.
 
 Повторная автопривязка на уже стоящей системе: `bash remnawave-manager.sh bind` (то же, что `protocols`) или пункт 4 меню.
+
+Добавить или снять xHTTP / gRPC / Hysteria2 на уже установленной ноде (панель и нода на разных VDS) — **отдельный пункт 25**, не пункт 4:
+
+```bash
+# панель
+bash remnawave-manager.sh node-transports add grpc
+bash remnawave-manager.sh node-transports add xhttp
+bash remnawave-manager.sh node-transports add hysteria2
+bash remnawave-manager.sh node-transports remove grpc
+bash remnawave-manager.sh node-transports reality-only
+
+# нода
+bash remnawave-manager.sh node-transports apply
+```
 
 ## 6. ProxyCheckMiddleware
 
@@ -244,3 +258,17 @@ bash remnawave-manager.sh --lang ru
 ```
 
 Автор — Корги Люси. Пункт **24** или `bash remnawave-manager.sh community-update` скачивает оригиналы Rezzosoft / eGames / DigneZzZ. `self-update` обновляет этот скрипт с GitHub Latest.
+
+## 20. Обновление до 1.2.0 (транспорты уже установленной ноды)
+
+```bash
+curl -fL --retry 5 --retry-all-errors \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.2.0/remnawave-manager.sh \
+  -o remnawave-manager.sh
+chmod +x remnawave-manager.sh
+sha256sum remnawave-manager.sh
+# нужно: f5fe62ececf0fe5261a801bde4be0b325273b1761d7ee731df138a7fa19ca3b2
+bash remnawave-manager.sh --lang ru
+```
+
+Пункт **25** или `bash remnawave-manager.sh node-transports add|remove grpc|xhttp|hysteria2|all`. На панели: профиль и хосты. На ноде: `node-transports apply`.

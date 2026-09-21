@@ -4,9 +4,9 @@
 
 Production installer for [Remnawave](https://docs.rw) on Debian/Ubuntu. Interactive menu with a description of every function. UI language: **English** or **Russian**.
 
-**Current version:** `1.1.0`
+**Current version:** `1.2.0`
 
-Author: **Corgi Lusi (Корги Люси)**. Extra behaviour comes from [Rezzosoft KVN](https://github.com/Rrezzak09VPN/remnanode-VLESS-Reality-Hysteria2), [eGamesAPI](https://github.com/eGamesAPI/remnawave-reverse-proxy) and [DigneZzZ](https://github.com/DigneZzZ/remnawave-scripts). Original authorship is kept — see [CREDITS.md](CREDITS.md). Menu item **24** refreshes those authors’ modules.
+Author: **Corgi Lusi (Корги Люси)**. Extra behaviour comes from [Rezzosoft KVN](https://github.com/Rrezzak09VPN/remnanode-VLESS-Reality-Hysteria2), [eGamesAPI](https://github.com/eGamesAPI/remnawave-reverse-proxy) and [DigneZzZ](https://github.com/DigneZzZ/remnawave-scripts). Original authorship is kept — see [CREDITS.md](CREDITS.md). Menu item **24** refreshes those authors’ modules. Menu item **25** adds or removes xHTTP, gRPC and Hysteria2 on a node that is already installed (including on another VPS).
 
 The Xray profile, inbounds, nodes, hosts, **CorgiLusi** squad and CorgiLusi user are created through the Remnawave API. Each node gets its own config profile. **Default-Profile** is removed from internal squads after install.
 
@@ -14,7 +14,7 @@ The Xray profile, inbounds, nodes, hosts, **CorgiLusi** squad and CorgiLusi user
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.1.0/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.2.0/remnawave-manager.sh \
   -o remnawave-manager.sh
 chmod +x remnawave-manager.sh
 bash remnawave-manager.sh
@@ -57,6 +57,7 @@ By default every transport is enabled: Reality, Hysteria2, gRPC and xHTTP.
 | 22 | Language | English or Русский |
 | 23 | URLs | Panel / subscription / SNI and CorgiLusi user link (passwords stay in `credentials.txt`) |
 | 24 | Author updates | Refresh Rezzosoft / eGames / DigneZzZ modules; update this script from GitHub |
+| 25 | Node transports | Add or remove xHTTP, gRPC, Hysteria2 on an already-installed node (other VPS too) |
 | 0 | Exit | — |
 
 ## Install modes
@@ -93,7 +94,26 @@ All on by default. Binding is automatic.
 
 Flags: `--all-protocols` (same as default), `--reality-only`, `--hysteria2`, `--grpc`, `--xhttp`.
 
-On an existing system: `bash remnawave-manager.sh protocols` (alias: `bind`) or menu item 4.
+On an existing system: `bash remnawave-manager.sh protocols` (alias: `bind`) or menu item 4 — rebuilds every CorgiLusi profile.
+
+To **add or remove** xHTTP, gRPC or Hysteria2 on a node that is already up (panel and node may be on different VPS), use a **separate** item — menu **25** — so you do not mix it with a full re-bind:
+
+```bash
+# On the panel (updates profile, inbounds, hosts, squad; leftover extra hosts are deleted)
+bash remnawave-manager.sh node-transports add grpc
+bash remnawave-manager.sh node-transports add xhttp
+bash remnawave-manager.sh node-transports add hysteria2
+bash remnawave-manager.sh node-transports add all
+bash remnawave-manager.sh node-transports remove grpc
+bash remnawave-manager.sh node-transports remove xhttp
+bash remnawave-manager.sh node-transports remove hysteria2
+bash remnawave-manager.sh node-transports reality-only
+
+# On the node VPS (UFW ports, /dev/shm certs, sing-box Hysteria2 stack)
+bash remnawave-manager.sh node-transports apply
+```
+
+Adding one transport keeps the others as they are in `manager.env`. Item 4 / `protocols` is still the full auto-bind (all transports unless you pass `--reality-only` / `--grpc` / …).
 
 ## Maintenance CLI
 
@@ -101,6 +121,6 @@ The header of the menu shows live local health (panel API, subscription `:3010`,
 
 On HTTP 502 for the subscription page: menu **7 (repair)** or `bash remnawave-manager.sh repair`. Do not paste PowerShell scripts onto the Linux VPS.
 
-`status`, `doctor`, `repair`, `backup`, `restore`, `update`, `up`, `down`, `restart`, `logs`, `urls`, `health`, `core-update`, `stealth`, `addon remnawave|remnanode|selfsteal|wtm|netbird|egames`.
+`status`, `doctor`, `repair`, `backup`, `restore`, `update`, `up`, `down`, `restart`, `logs`, `urls`, `health`, `core-update`, `stealth`, `addon remnawave|remnanode|selfsteal|wtm|netbird|egames`, `node-transports add|remove|apply|reality-only`.
 
 Details: [docs/INSTALLATION_RU.md](docs/INSTALLATION_RU.md), [CHANGELOG.md](CHANGELOG.md), [SHA256SUMS](SHA256SUMS).

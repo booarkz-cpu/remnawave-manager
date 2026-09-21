@@ -3,11 +3,12 @@ set -Eeuo pipefail
 
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
-SCRIPT=remnawave-manager-v1.1.0.sh
+SCRIPT=remnawave-manager-v1.2.0.sh
 
 echo "[1/18] bash -n current + historical"
 bash -n "$SCRIPT"
 bash -n remnawave-manager.sh
+bash -n remnawave-manager-v1.1.0.sh
 bash -n remnawave-manager-v1.0.0.sh
 bash -n remnawave-manager-v25.2.7-prod.sh
 bash -n remnawave-manager-v25.2.6-prod.sh
@@ -139,6 +140,14 @@ grep -Fq 'Default-Profile' "$SCRIPT"
 grep -Fq 'profile_name_for_node()' "$SCRIPT"
 grep -Fq 'canonical_node_name()' "$SCRIPT"
 grep -Fq 'is_discard_name()' "$SCRIPT"
+grep -Fq 'persist_protocol_flags()' "$SCRIPT"
+grep -Fq 'prune_protocol_hosts()' "$SCRIPT"
+grep -Fq 'apply_local_node_transports()' "$SCRIPT"
+grep -Fq 'sync_node_transports()' "$SCRIPT"
+grep -Fq 'node_transports_menu()' "$SCRIPT"
+grep -Fq 'node_transports_cli()' "$SCRIPT"
+grep -Fq 'node-transports' "$SCRIPT"
+grep -Fq 'ufw_toggle()' "$SCRIPT"
 if grep -nE 'Default Profile\)' "$SCRIPT"; then
   echo 'FAIL: unquoted space in case pattern breaks bash -n' >&2
   exit 1
@@ -194,12 +203,14 @@ grep -Fq 'urls | health' /tmp/rw-help-en.txt
 grep -Fq 'Do not prefix the command with sudo' /tmp/rw-help-en.txt
 grep -Fq 'community-update' /tmp/rw-help-en.txt
 grep -Fq 'Corgi Lusi' /tmp/rw-help-en.txt
+grep -Fq 'node-transports' /tmp/rw-help-en.txt
+grep -Fq 'grpc|xhttp|hysteria2|all' /tmp/rw-help-en.txt
 
 echo "[14/18] current script copies match"
 cmp -s remnawave-manager.sh "$SCRIPT"
 
 echo "[15/18] VERSION string"
-grep -Fq "VERSION='1.1.0'" "$SCRIPT"
+grep -Fq "VERSION='1.2.0'" "$SCRIPT"
 if grep -nE "^VERSION='[^']*-prod'" remnawave-manager.sh; then
   echo 'FAIL: current VERSION must not use a -prod suffix' >&2
   exit 1
