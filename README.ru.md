@@ -6,7 +6,7 @@
 
 Production-установщик [Remnawave](https://docs.rw) на Debian/Ubuntu. Интерактивное меню с описанием каждой функции. Язык: **русский** или **English**.
 
-**Текущая версия:** `1.4.4`
+**Текущая версия:** `1.5.0`
 
 **Лицензия:** [MIT](LICENSE) — можно использовать, копировать, менять и распространять с сохранением копирайта. Оригиналы, которые качает пункт **24**, остаются на условиях их авторов — [CREDITS.md](CREDITS.md).
 
@@ -61,13 +61,13 @@ bash remnawave-manager.sh
 
 Без аргументов открывается меню. `sudo` в команде писать не нужно — скрипт сам поднимает root. При первом запуске спрашивает **English** или **Русский** (сохраняется в `/opt/remnawave/manager.env`). Позже — пункт 22 или `--lang ru|en`.
 
-Фиксированная 1.4.4 через jsDelivr (по желанию):
+Фиксированная 1.5.0 через jsDelivr (по желанию):
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.4.4/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.5.0/remnawave-manager.sh \
   -o remnawave-manager.sh
-# sha256: c94a44bf4c9e5930593bfe2227b14fed1e495efd72d300ba857aa10778d37a0d
+# sha256: 72c9cb8ca9ac35bb03b596bb32d68ff507c43f36992d1ee615962da3f44bacdb
 ```
 
 По умолчанию включаются все транспорты: Reality, Hysteria2, gRPC и xHTTP.
@@ -127,7 +127,7 @@ Remnawave обычно **переустанавливать не нужно**.
 
 ## Меню
 
-Номера **1–27** совпадают со скриптом и не съезжают. Без аргументов открывается это меню (`bash remnawave-manager.sh`). `sudo` не пишите.
+Номера **1–27** не съезжают; **28–32** добавлены в 1.5.0. Без аргументов открывается это меню (`bash remnawave-manager.sh`). `sudo` не пишите.
 
 Отдельные страницы (тот же текст): [docs/MENU.ru.md](docs/MENU.ru.md) · [English](docs/MENU.en.md).
 
@@ -160,6 +160,11 @@ Remnawave обычно **переустанавливать не нужно**.
 | [25](#25-транспорты-ноды) | Транспорты ноды | `node-transports …` |
 | [26](#26-этот-скрипт) | Этот скрипт | `self-update` / `check-update` |
 | [27](#27-добавить-ноду) | Добавить ноду | `add-node` |
+| [28](#28-пользователи) | Пользователи | `users …` |
+| [29](#29-управление-нодами) | Управление нодами | `nodes …` |
+| [30](#30-оповещения-и-удалённый-backup) | Оповещения и удалённый backup | `telegram` / `backup-remote` |
+| [31](#31-сертификаты) | Сертификаты | `certs [renew]` |
+| [32](#32-файрвол) | Файрвол | `firewall [IPv4]` |
 | [0](#0-выход) | Выход | — |
 
 Два разных обновления: пункт **26** меняет этот файл установщика; пункт **14** тянет Docker-образы Remnawave.
@@ -271,7 +276,7 @@ remnanode в host-сети + SNI Reality на втором VDS. Нужны `PANE
 
 ### 23. Адреса
 
-Панель, подписка, SNI Reality и ссылка CorgiLusi. **Без паролей, JWT и секрета ноды.**
+Панель, подписка, SNI Reality и ссылка CorgiLusi. **Без паролей, JWT и секрета ноды**, пока не напишете **SHOW** — тогда логин панели печатается один раз и **не** попадает в `/var/log/remnawave-manager.log`. CLI: `admin-login`.
 
 ### 24. Обновления авторов
 
@@ -284,7 +289,7 @@ remnanode в host-сети + SNI Reality на втором VDS. Нужны `PANE
 1. Нода: номер, UUID или **0** = все. **q** — главное меню.
 2. Дальше: **[1]** Hysteria2 · **[2]** gRPC · **[3]** xHTTP · **[4]** все три · **[5–7]** снять один · **[8]** только Reality · **[9]** применить на **этом** сервере · **[0]** к **списку нод** · **[q]** главное меню.
 
-На **панели** 1–8 меняют профиль и хосты через API. На VDS **ноды** — **[9]** или `node-transports apply`.
+На **панели** 1–8 меняют профиль и хосты через API и печатают команду для ноды: `bash remnawave-manager.sh node-transports apply`. На VDS **ноды** — **[9]** или эта команда.
 
 ### 26. Этот скрипт
 
@@ -293,6 +298,26 @@ GitHub **Latest этого установщика**, не образы Docker. (
 ### 27. Добавить ноду
 
 Регистрирует **ещё одну** ноду на уже работающей **панели** через API — без `apt full-upgrade` и без пункта **1**. Затем на новом VDS пункт **3** с Node secret из `credentials.txt`. Только с сервера панели.
+
+### 28. Пользователи
+
+Только панель. Список, создать (3–32 `A–Za-z0-9._-`), вкл/выкл, **ссылка подписки** (не пароль админа). Сквад как у CorgiLusi. CLI: `users list|create ИМЯ|enable UUID|disable UUID|sub UUID`.
+
+### 29. Управление нодами
+
+Выключить, включить, перезапустить **одну** ноду (`0` / `all` — все, только restart), сменить адрес. Выбор как в пункте 25. CLI: `nodes list|disable|enable|restart|address`.
+
+### 30. Оповещения и удалённый backup
+
+Telegram: токен + chat, тест. Healthcheck не чаще раза в час пишет, если API панели мёртв, сертификат < 21 дня или нода не Connected. rclone+age с VDS (02:00 или сразу). Токен в лог не попадает.
+
+### 31. Сертификаты
+
+Срок panel / sub / Reality. `certbot renew` сейчас, принудительно, копия в `/dev/shm` для Hysteria2. В шапке меню — ближайший срок.
+
+### 32. Файрвол
+
+Показать UFW, задать или снять **ADMIN_IP**, пересобрать правила. Снятие ADMIN_IP открывает SSH с любого IPv4.
 
 ### 0. Выход
 
@@ -360,7 +385,7 @@ bash remnawave-manager.sh node-transports apply
 
 При HTTP 502: пункт **7** или `bash remnawave-manager.sh repair`. Скрипты PowerShell на Linux VDS не запускайте.
 
-CLI: `status`, `doctor`, `repair`, `backup`, `restore`, `update`, `up`, `down`, `restart`, `logs`, `urls`, `health`, `core-update`, `stealth`, `addon …`, `node-transports …`, `add-node`, `check-update`, `self-update`, `--version`.
+CLI: `status`, `doctor`, `repair`, `backup`, `restore`, `update`, `up`, `down`, `restart`, `logs`, `urls`, `health`, `users`, `nodes`, `telegram`, `backup-remote`, `certs`, `firewall`, `admin-login`, `core-update`, `stealth`, `addon …`, `node-transports …`, `add-node`, `check-update`, `self-update`, `--version`.
 
 ---
 

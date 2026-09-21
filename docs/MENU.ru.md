@@ -2,7 +2,7 @@
 
 [English](MENU.en.md) · [Русский](MENU.ru.md) · [README](../README.ru.md) · [Инструкция](GUIDE.ru.md)
 
-Меню без аргументов: `bash remnawave-manager.sh`. Префикс `sudo` не пишите. Номера **1–27** фиксированы; **0** / `q` — выход.
+Меню без аргументов: `bash remnawave-manager.sh`. Префикс `sudo` не пишите. Номера **1–27** не съезжают; **28–32** добавлены в 1.5.0. **0** / `q` — выход.
 
 Два обновления, которые путают:
 
@@ -221,9 +221,9 @@ CLI: `bash remnawave-manager.sh --lang ru|en`
 
 ## 23. Адреса
 
-Панель, подписка, SNI Reality и ссылка пользователя CorgiLusi. **Без паролей, JWT и секрета ноды.**
+Панель, подписка, SNI Reality и ссылка пользователя CorgiLusi. **Без паролей, JWT и секрета ноды**, пока не напишете **SHOW**. Тогда логин панели печатается **один раз** и **не** попадает в `/var/log/remnawave-manager.log`. Любой другой ответ — отмена.
 
-CLI: `bash remnawave-manager.sh urls` · проверка снаружи: `health`
+CLI: `bash remnawave-manager.sh urls` · проверка снаружи: `health` · `bash remnawave-manager.sh admin-login SHOW`
 
 ---
 
@@ -262,7 +262,7 @@ CLI: `bash remnawave-manager.sh community-update`
    - **[0]** К **списку нод**
    - **[q]** Главное меню
 
-На **панели** пункты 1–8 меняют профиль, inbound’ы, хосты и сквад через API (лишние хосты удаляются). На VDS **ноды** — **[9]** или `node-transports apply`. Схема «два сервера»: сначала панель, затем apply на ноде.
+На **панели** пункты 1–8 меняют профиль, inbound’ы, хосты и сквад через API (лишние хосты удаляются) и печатают **чеклист**: UUID ноды (или «все») и команду для VDS ноды — `bash remnawave-manager.sh node-transports apply`. На VDS **ноды** — **[9]** или эта команда. Схема «два сервера»: сначала панель, затем apply на ноде.
 
 CLI:
 
@@ -296,6 +296,96 @@ CLI: `bash remnawave-manager.sh check-update` · `check-update --apply` · `self
 Только с сервера панели (не с VDS «только нода»).
 
 CLI: `bash remnawave-manager.sh add-node`
+
+---
+
+## 28. Пользователи
+
+**Только VDS панели.** Пользователи VPN через API — не пароль администратора панели.
+
+1. Список (имя, статус, UUID)
+2. Создать (3–32 `A–Za-z0-9._-`, начинается с буквы; тот же сквад **CorgiLusi**; срок 10 лет, без лимита трафика)
+3. Включить
+4. Выключить
+5. Показать **ссылку подписки** (из API `subscriptionUrl` или `https://ДОМЕН_ПОДПИСКИ/shortUuid`)
+0. Назад · **q** главное меню
+
+CLI:
+
+```bash
+bash remnawave-manager.sh users list
+bash remnawave-manager.sh users create Alice
+bash remnawave-manager.sh users enable UUID_ИЛИ_ИМЯ
+bash remnawave-manager.sh users disable UUID_ИЛИ_ИМЯ
+bash remnawave-manager.sh users sub UUID_ИЛИ_ИМЯ
+```
+
+---
+
+## 29. Управление нодами
+
+**Только VDS панели.** Действие на **одну** ноду (выбор как в пункте 25). Restart может быть `0` / `all`.
+
+1. Список (имя, адрес, Connected/disabled, UUID)
+2. Перезапустить (`forceRestart`, если API так просит)
+3. Выключить
+4. Включить
+5. Сменить адрес (IPv4 или hostname) — `PATCH /nodes/` с `uuid` в JSON
+0. Назад
+
+CLI:
+
+```bash
+bash remnawave-manager.sh nodes list
+bash remnawave-manager.sh nodes restart [UUID|all]
+bash remnawave-manager.sh nodes disable UUID
+bash remnawave-manager.sh nodes enable UUID
+bash remnawave-manager.sh nodes address UUID 203.0.113.20
+```
+
+---
+
+## 30. Оповещения и удалённый backup
+
+Telegram и копия с VDS в одном меню. **Токен бота в лог установщика не пишется.**
+
+1. Включить Telegram (токен + chat id, необязательно thread) — пишет `TELEGRAM_*` в `manager.env`, ставит `/usr/local/sbin/remnawave-health-notify.sh`, цепляет 5-минутный healthcheck
+2. Отправить тест
+3. Выключить оповещения (`TELEGRAM_ALERTS=0`; токен на диске остаётся)
+4. Указать rclone remote и включить таймер **02:00** (`age`, затем `rclone copy`)
+5. Сделать шифрованную удалённую копию **сейчас**
+6. Выключить таймер удалённого backup
+0. Назад
+
+Healthcheck (не чаще раза в час на событие): API панели мёртв, Let’s Encrypt **< 21 дня**, нода не Connected.
+
+CLI: `telegram enable|disable|test` · `backup-remote [rclone:path]` (без пути — выполнить сейчас)
+
+---
+
+## 31. Сертификаты
+
+1. Срок panel / sub / Reality
+2. `certbot renew` сейчас, затем reload nginx
+3. Принудительно обновить эти три имени (`--force-renewal`)
+4. Скопировать сертификаты в `/dev/shm` на **этом** сервере (Hysteria2)
+0. Назад
+
+В **шапке меню** — ближайший срок (жёлтым, если меньше 21 дня).
+
+CLI: `certs` · `certs renew` · `certs force`
+
+---
+
+## 32. Файрвол
+
+1. `ufw status verbose`
+2. Задать **ADMIN_IP** (IPv4) и пересобрать — SSH только с этого адреса
+3. Снять ADMIN_IP и пересобрать — SSH с любого IPv4 на порту SSH
+4. Пересобрать UFW с текущими флагами (80/443, транспорты, нода 2222)
+0. Назад
+
+CLI: `firewall` · `firewall 203.0.113.10`
 
 ---
 

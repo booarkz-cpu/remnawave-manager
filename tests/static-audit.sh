@@ -3,11 +3,12 @@ set -Eeuo pipefail
 
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
-SCRIPT=remnawave-manager-v1.4.4.sh
+SCRIPT=remnawave-manager-v1.5.0.sh
 
 echo "[1/18] bash -n current + historical"
 bash -n "$SCRIPT"
 bash -n remnawave-manager.sh
+bash -n remnawave-manager-v1.5.0.sh
 bash -n remnawave-manager-v1.4.4.sh
 bash -n remnawave-manager-v1.4.3.sh
 bash -n remnawave-manager-v1.4.2.sh
@@ -219,6 +220,15 @@ grep -Fq '### 1. Full install' README.md
 grep -Fq '### 1. Полная установка' README.ru.md
 grep -Fq '### 25. Node transports' README.md
 grep -Fq '### 25. Транспорты ноды' README.ru.md
+grep -Fq '### 28. Users' README.md
+grep -Fq '### 32. Firewall' README.md
+grep -Fq '### 28. Пользователи' README.ru.md
+grep -Fq '### 32. Файрвол' README.ru.md
+grep -Fq '## 28. Users' docs/MENU.en.md
+grep -Fq '## 32. Firewall' docs/MENU.en.md
+grep -Fq '## 28. Пользователи' docs/MENU.ru.md
+grep -Fq '## 32. Файрвол' docs/MENU.ru.md
+grep -Fq 'admin-login SHOW' docs/MENU.en.md docs/GUIDE.en.md
 grep -Fq '## License' README.md
 grep -Fq '## Лицензия' README.ru.md
 grep -Fq '[English](README.md)' README.md
@@ -250,7 +260,9 @@ grep -Fq 'check-update' /tmp/rw-help-en.txt
 grep -Fq -- '--no-update-check' /tmp/rw-help-en.txt
 grep -Fq -- '--version' /tmp/rw-help-en.txt
 grep -Fq 'add-node' /tmp/rw-help-en.txt
-bash "$SCRIPT" --version | grep -Fq '1.4.4'
+grep -Fq 'users list' /tmp/rw-help-en.txt
+grep -Fq 'admin-login' /tmp/rw-help-en.txt
+bash "$SCRIPT" --version | grep -Fq '1.5.0'
 set +e
 bash "$SCRIPT" --lang en nosuchcmd >/tmp/rw-unk.txt 2>&1
 unk_rc=$?
@@ -263,7 +275,7 @@ if grep -Fq 'panel + node on one server' /tmp/rw-unk.txt; then
 fi
 # 1.4.0 self-update restart glued `--lang ru` into one argv because IFS has no space.
 bash "$SCRIPT" '--lang ru' --no-update-check --version >/tmp/rw-lang-glue.txt 2>&1
-grep -Fq '1.4.4' /tmp/rw-lang-glue.txt
+grep -Fq '1.5.0' /tmp/rw-lang-glue.txt
 if grep -Fq 'Unknown command' /tmp/rw-lang-glue.txt; then
   echo 'FAIL: glued --lang ru treated as unknown command' >&2
   exit 1
@@ -297,12 +309,31 @@ grep -Fq 'cert_days_left()' "$SCRIPT"
 grep -Fq 'TARGET_NODE_UUID' "$SCRIPT"
 grep -Fq 'menu_row 26' "$SCRIPT"
 grep -Fq 'menu_row 27' "$SCRIPT"
+grep -Fq 'menu_row 28' "$SCRIPT"
+grep -Fq 'menu_row 32' "$SCRIPT"
+grep -Fq 'users_menu()' "$SCRIPT"
+grep -Fq 'node_control_menu()' "$SCRIPT"
+grep -Fq 'alerts_backup_menu()' "$SCRIPT"
+grep -Fq 'certs_menu()' "$SCRIPT"
+grep -Fq 'firewall_menu()' "$SCRIPT"
+grep -Fq 'show_admin_login_once()' "$SCRIPT"
+grep -Fq 'print_node_apply_hint()' "$SCRIPT"
+grep -Fq 'write_health_notify_script()' "$SCRIPT"
+grep -Fq 'say_tty()' "$SCRIPT"
+grep -Fq 'TELEGRAM_ALERTS' "$SCRIPT"
+grep -Fq 'BACKUP_REMOTE' "$SCRIPT"
+grep -Fq 'ADMIN_IP' "$SCRIPT"
+awk '/^show_admin_login_once\(\)/,/^urls_and_optional_admin\(\)/' "$SCRIPT" | grep -Fq say_tty
+if awk '/^show_admin_login_once\(\)/,/^urls_and_optional_admin\(\)/' "$SCRIPT" | grep -q 'tee -a "$LOG"'; then
+  echo 'FAIL: admin-login must not write the password to the log' >&2
+  exit 1
+fi
 
 echo "[14/18] current script copies match"
 cmp -s remnawave-manager.sh "$SCRIPT"
 
 echo "[15/18] VERSION string"
-grep -Fq "VERSION='1.4.4'" "$SCRIPT"
+grep -Fq "VERSION='1.5.0'" "$SCRIPT"
 if grep -nE "^VERSION='[^']*-prod'" remnawave-manager.sh; then
   echo 'FAIL: current VERSION must not use a -prod suffix' >&2
   exit 1

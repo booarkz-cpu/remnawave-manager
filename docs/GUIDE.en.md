@@ -2,7 +2,7 @@
 
 [English](GUIDE.en.md) · [Русский](GUIDE.ru.md) · [README](../README.md)
 
-Installer and day-to-day manager for [Remnawave](https://docs.rw) on Debian/Ubuntu. Author: **Corgi Lusi (Корги Люси)**. Current script version: **1.4.4**.
+Installer and day-to-day manager for [Remnawave](https://docs.rw) on Debian/Ubuntu. Author: **Corgi Lusi (Корги Люси)**. Current script version: **1.5.0**.
 
 This page is the full instruction. The GitHub README describes **every menu item** in English and Russian. Historical per-release notes: [INSTALLATION_RU.md](INSTALLATION_RU.md) (bilingual changelog lives in [CHANGELOG.md](../CHANGELOG.md)). License: [MIT](../LICENSE).
 
@@ -92,14 +92,14 @@ grep ' remnawave-manager.sh$' SHA256SUMS
 
 The two hashes must match. Latest release: <https://github.com/booarkz-cpu/remnawave-manager/releases/latest>
 
-Pinned copy (example for 1.4.4):
+Pinned copy (example for 1.5.0):
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.4.4/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.5.0/remnawave-manager.sh \
   -o remnawave-manager.sh
 sha256sum remnawave-manager.sh
-# 1.4.4: c94a44bf4c9e5930593bfe2227b14fed1e495efd72d300ba857aa10778d37a0d
+# 1.5.0: 72c9cb8ca9ac35bb03b596bb32d68ff507c43f36992d1ee615962da3f44bacdb
 ```
 
 See [SHA256SUMS](../SHA256SUMS) in the repo for every versioned file.
@@ -216,7 +216,7 @@ The panel backend requires reverse-proxy headers (`X-Forwarded-For` and `X-Forwa
 
 ## 8. Menu
 
-Numbers **1–27** are fixed. **Full functionality of every item:** [MENU.en.md](MENU.en.md) · [Русский](MENU.ru.md) · also in the GitHub [README](../README.md#menu).
+Numbers **1–27** stay; **28–32** were added in 1.5.0. **Full functionality of every item:** [MENU.en.md](MENU.en.md) · [Русский](MENU.ru.md) · also in the GitHub [README](../README.md#menu).
 
 | # | Function | What it does |
 | --- | --- | --- |
@@ -242,11 +242,16 @@ Numbers **1–27** are fixed. **Full functionality of every item:** [MENU.en.md]
 | 20 | Converter | Optional Rezzosoft JSON helper — not required to bind |
 | 21 | Credits / help | Authorship and CLI help |
 | 22 | Language | English or Русский |
-| 23 | URLs | Panel / sub / SNI / CorgiLusi user link |
+| 23 | URLs | Panel / sub / SNI / CorgiLusi; type SHOW for admin login once |
 | 24 | Author updates | Refresh upstream modules (this script: item **26**) |
-| 25 | Node transports | Add or remove xHTTP, gRPC, Hysteria2 on an existing node |
+| 25 | Node transports | Add or remove xHTTP, gRPC, Hysteria2; panel then prints apply-on-node |
 | 26 | This script | Check / install GitHub Latest of this installer |
 | 27 | Add a node | Register another node via API — no OS upgrade, no menu 1 |
+| 28 | Users | List / create / enable / disable / subscription URL |
+| 29 | Node control | Disable, enable, restart one node, change address |
+| 30 | Alerts and remote backup | Telegram test; rclone+age off-VPS |
+| 31 | Certificates | Days left, renew now, `/dev/shm` on the node |
+| 32 | Firewall | ADMIN_IP allowlist, rebuild UFW |
 | 0 | Exit | — |
 
 ---
@@ -266,7 +271,7 @@ Install-time flags: `--all-protocols` (default), `--reality-only`, `--hysteria2`
 
 **Full re-bind** of every profile (menu **4** / `protocols` / `bind`): use after install or when you want CorgiLusi profiles rebuilt. If you do not pass a protocol flag, this command turns **all** transports on.
 
-**Add or remove extras on a node that is already up** — including a node on another VPS — is a **separate** item (**25**). Adding one transport does not reset the others. Pick a node (number, UUID, or `0` = all). After a node, `[0]` returns to that list; `q` leaves for the main menu.
+**Add or remove extras on a node that is already up** — including a node on another VPS — is a **separate** item (**25**). Adding one transport does not reset the others. Pick a node (number, UUID, or `0` = all). After a node, `[0]` returns to that list; `q` leaves for the main menu. On a **panel-only** VPS, 1–8 print the copy-paste for the node: `bash remnawave-manager.sh node-transports apply`.
 
 On the **panel**:
 
@@ -446,6 +451,13 @@ bash remnawave-manager.sh self-update
 bash remnawave-manager.sh community-update
 
 bash remnawave-manager.sh status | doctor | repair | urls
+bash remnawave-manager.sh users list|create|enable|disable|sub
+bash remnawave-manager.sh nodes list|disable|enable|restart|address
+bash remnawave-manager.sh telegram enable|disable|test
+bash remnawave-manager.sh backup-remote [rclone:path]
+bash remnawave-manager.sh certs [renew|force]
+bash remnawave-manager.sh firewall [IPv4]
+bash remnawave-manager.sh admin-login SHOW
 bash remnawave-manager.sh backup | restore FILE | update
 bash remnawave-manager.sh up | down | restart | logs [container]
 bash remnawave-manager.sh stealth | install-script
@@ -468,7 +480,7 @@ bash remnawave-manager.sh addon remnawave|remnanode|selfsteal|wtm|netbird|egames
 | `/opt/remnawave/credentials.txt` | Admin, tokens, node secret |
 | `/opt/remnawave-addons/` | Downloaded upstream modules (menu 24) |
 | `/var/backups/remnawave/` | Backups |
-| `/var/log/remnawave-manager.log` | Installer log |
+| `/usr/local/sbin/remnawave-health-notify.sh` | Telegram from the 5-minute healthcheck (menu **30**) |
 | `/usr/local/bin/remnawave-manager` | Optional CLI copy |
 
 Never publish API tokens, `SECRET_KEY`, PostgreSQL password, or `credentials.txt`. See [SECURITY.md](../SECURITY.md).

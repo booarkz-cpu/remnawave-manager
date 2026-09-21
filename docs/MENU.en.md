@@ -2,7 +2,7 @@
 
 [English](MENU.en.md) · [Русский](MENU.ru.md) · [README](../README.md) · [Guide](GUIDE.en.md)
 
-Open the menu with no arguments: `bash remnawave-manager.sh`. Do not type `sudo`. Numbers **1–27** are fixed; **0** / `q` leaves.
+Open the menu with no arguments: `bash remnawave-manager.sh`. Do not type `sudo`. Numbers **1–27** stay; **28–32** were added in 1.5.0. **0** / `q` leaves.
 
 Two updates that look similar and are not:
 
@@ -221,9 +221,9 @@ CLI: `bash remnawave-manager.sh --lang en|ru`
 
 ## 23. URLs
 
-Panel, subscription, Reality SNI and the CorgiLusi user subscription link. **No passwords, JWT or node secret.**
+Panel, subscription, Reality SNI and the CorgiLusi user subscription link. **No passwords, JWT or node secret** until you type **SHOW**. Then the panel login is printed **once** on the terminal and is **not** written to `/var/log/remnawave-manager.log`. Anything other than SHOW cancels.
 
-CLI: `bash remnawave-manager.sh urls` · public check: `health`
+CLI: `bash remnawave-manager.sh urls` · public check: `health` · `bash remnawave-manager.sh admin-login SHOW`
 
 ---
 
@@ -262,7 +262,7 @@ Flow:
    - **[0]** Back to the **node list**
    - **[q]** Main menu
 
-On the **panel**, 1–8 update profile, inbounds, hosts and squad via API (extra hosts are pruned). On the **node** VPS run **[9]** or `node-transports apply`. Split install: panel first, then apply on the node.
+On the **panel**, 1–8 update profile, inbounds, hosts and squad via API (extra hosts are pruned), then print a **checklist**: node UUID (or “all”) and the exact command to run on the node VPS — `bash remnawave-manager.sh node-transports apply`. On the **node** VPS run **[9]** or that command. Split install: panel first, then apply on the node.
 
 CLI:
 
@@ -296,6 +296,96 @@ Registers **another** node on an already-running **panel** via API: address, nam
 Must be run on the panel (not on a node-only VPS).
 
 CLI: `bash remnawave-manager.sh add-node`
+
+---
+
+## 28. Users
+
+**Panel VPS only.** VPN users via API — not the panel admin password.
+
+1. List (username, status, UUID)
+2. Create (3–32 `A–Za-z0-9._-`, starts with a letter; same **CorgiLusi** squad; 10-year expiry, unlimited traffic)
+3. Enable
+4. Disable
+5. Show **subscription URL** (from API `subscriptionUrl`, or `https://SUB_DOMAIN/shortUuid`)
+0. Back · **q** main menu
+
+CLI:
+
+```bash
+bash remnawave-manager.sh users list
+bash remnawave-manager.sh users create Alice
+bash remnawave-manager.sh users enable UUID_OR_NAME
+bash remnawave-manager.sh users disable UUID_OR_NAME
+bash remnawave-manager.sh users sub UUID_OR_NAME
+```
+
+---
+
+## 29. Node control
+
+**Panel VPS only.** Act on **one** node (pick like item 25). Restart may use `0` / `all`.
+
+1. List (name, address, Connected/disabled, UUID)
+2. Restart (`forceRestart` when the API needs it)
+3. Disable
+4. Enable
+5. Change address (IPv4 or hostname) — `PATCH /nodes/` with `uuid` in the JSON body
+0. Back
+
+CLI:
+
+```bash
+bash remnawave-manager.sh nodes list
+bash remnawave-manager.sh nodes restart [UUID|all]
+bash remnawave-manager.sh nodes disable UUID
+bash remnawave-manager.sh nodes enable UUID
+bash remnawave-manager.sh nodes address UUID 203.0.113.20
+```
+
+---
+
+## 30. Alerts and remote backup
+
+Telegram and off-VPS backup from one menu. The bot **token is not printed** in the installer log.
+
+1. Enable Telegram (bot token + chat id, optional thread) — writes `TELEGRAM_*` to `manager.env`, installs `/usr/local/sbin/remnawave-health-notify.sh`, hooks the 5-minute healthcheck
+2. Send a test message
+3. Disable alerts (`TELEGRAM_ALERTS=0`; token stays on disk)
+4. Set rclone destination and enable the daily **02:00** timer (`age` encrypt, then `rclone copy`)
+5. Run encrypted remote backup **now**
+6. Disable the remote-backup timer
+0. Back
+
+Healthcheck (at most once an hour per event): panel API down, Let’s Encrypt **< 21 days**, node not Connected.
+
+CLI: `telegram enable|disable|test` · `backup-remote [rclone:path]` (no path = run now)
+
+---
+
+## 31. Certificates
+
+1. Days left for panel / sub / Reality
+2. `certbot renew` now, then nginx reload
+3. Force-renew those three names (`--force-renewal`)
+4. Copy certs into `/dev/shm` on **this** server (Hysteria2)
+0. Back
+
+The **menu header** shows the nearest expiry (yellow under 21 days).
+
+CLI: `certs` · `certs renew` · `certs force`
+
+---
+
+## 32. Firewall
+
+1. `ufw status verbose`
+2. Set **ADMIN_IP** (IPv4) and rebuild — SSH only from that address
+3. Clear ADMIN_IP and rebuild — SSH from any IPv4 on the SSH port
+4. Rebuild UFW with current install flags (80/443, transports, node 2222)
+0. Back
+
+CLI: `firewall` · `firewall 203.0.113.10`
 
 ---
 

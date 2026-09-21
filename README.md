@@ -6,7 +6,7 @@
 
 Production installer for [Remnawave](https://docs.rw) on Debian/Ubuntu. Interactive menu with a description of every function. UI: **English** or **Russian**.
 
-**Current version:** `1.4.4`
+**Current version:** `1.5.0`
 
 **License:** [MIT](LICENSE) — use, copy, modify, and redistribute with the copyright notice. Original files downloaded by menu **24** stay under their authors’ terms — [CREDITS.md](CREDITS.md).
 
@@ -61,13 +61,13 @@ bash remnawave-manager.sh
 
 No arguments opens the menu. Do not type `sudo` — the script raises root itself. On first run it asks for **English** or **Русский** (saved in `/opt/remnawave/manager.env`). Switch later with menu item 22 or `--lang en|ru`.
 
-Pinned 1.4.4 via jsDelivr (optional):
+Pinned 1.5.0 via jsDelivr (optional):
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.4.4/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.5.0/remnawave-manager.sh \
   -o remnawave-manager.sh
-# sha256: c94a44bf4c9e5930593bfe2227b14fed1e495efd72d300ba857aa10778d37a0d
+# sha256: 72c9cb8ca9ac35bb03b596bb32d68ff507c43f36992d1ee615962da3f44bacdb
 ```
 
 By default every transport is enabled: Reality, Hysteria2, gRPC and xHTTP.
@@ -127,7 +127,7 @@ Full text: [docs/GUIDE.en.md §10](docs/GUIDE.en.md#10-how-to-update-this-script
 
 ## Menu
 
-Numbers **1–27** match the script and never shift. No arguments opens this menu (`bash remnawave-manager.sh`). Do not type `sudo`.
+Numbers **1–27** stay; **28–32** were added in 1.5.0. No arguments opens this menu (`bash remnawave-manager.sh`). Do not type `sudo`.
 
 Standalone pages (same text): [docs/MENU.en.md](docs/MENU.en.md) · [Русский](docs/MENU.ru.md).
 
@@ -160,6 +160,11 @@ Standalone pages (same text): [docs/MENU.en.md](docs/MENU.en.md) · [Русск�
 | [25](#25-node-transports) | Node transports | `node-transports …` |
 | [26](#26-this-script) | This script | `self-update` / `check-update` |
 | [27](#27-add-a-node) | Add a node | `add-node` |
+| [28](#28-users) | Users | `users …` |
+| [29](#29-node-control) | Node control | `nodes …` |
+| [30](#30-alerts-and-remote-backup) | Alerts and remote backup | `telegram` / `backup-remote` |
+| [31](#31-certificates) | Certificates | `certs [renew]` |
+| [32](#32-firewall) | Firewall | `firewall [IPv4]` |
 | [0](#0-exit) | Exit | — |
 
 Two updates that look similar and are not: **26** replaces this installer file; **14** pulls Remnawave Docker images.
@@ -271,7 +276,7 @@ Corgi Lusi authorship, Rezzosoft / eGames / DigneZzZ credits, and full CLI `--he
 
 ### 23. URLs
 
-Panel, subscription, Reality SNI and the CorgiLusi user link. **No passwords, JWT or node secret.**
+Panel, subscription, Reality SNI and the CorgiLusi user link. **No passwords, JWT or node secret** until you type **SHOW** — then the panel login is printed once and is **not** written to `/var/log/remnawave-manager.log`. CLI: `admin-login` (then SHOW).
 
 ### 24. Author updates
 
@@ -284,7 +289,7 @@ Add or remove **xHTTP, gRPC, Hysteria2** on a node that is already installed (in
 1. Pick a node: number, UUID, or **0** = all. **q** = main menu.
 2. Then: **[1]** add Hysteria2 · **[2]** add gRPC · **[3]** add xHTTP · **[4]** add all three · **[5–7]** remove one · **[8]** Reality only · **[9]** apply on **this** server (UFW, `/dev/shm` certs, Hysteria2 stack) · **[0]** back to the **node list** · **[q]** main menu.
 
-On the **panel**, 1–8 update profile, inbounds, hosts and squad via API. On the **node** VPS run **[9]** or `node-transports apply`.
+On the **panel**, 1–8 update profile, inbounds, hosts and squad via API, then print the copy-paste for the node: `bash remnawave-manager.sh node-transports apply`. On the **node** VPS run **[9]** or that command.
 
 ### 26. This script
 
@@ -293,6 +298,26 @@ GitHub **Latest of this installer**, not Docker images. (1) check Latest, (2) in
 ### 27. Add a node
 
 Registers **another** node on an already-running **panel** via API — no `apt full-upgrade`, no menu **1**. Then on the new VPS run item **3** with the Node secret from `credentials.txt`. Panel VPS only.
+
+### 28. Users
+
+Panel only. List, create (3–32 `A–Za-z0-9._-`), enable/disable, show the **subscription URL** (not the admin password). Same squad as CorgiLusi. CLI: `users list|create NAME|enable UUID|disable UUID|sub UUID`.
+
+### 29. Node control
+
+Disable, enable, restart **one** node (or `0` / `all` for restart), change address (IPv4 or hostname). Pick like item 25. CLI: `nodes list|disable|enable|restart|address`.
+
+### 30. Alerts and remote backup
+
+Enable Telegram (token + chat, test message). Healthcheck then warns at most once an hour if the panel API is down, a cert has < 21 days, or a node is not Connected. rclone+age off-VPS copy (daily 02:00 or run now). Token is not printed in the log.
+
+### 31. Certificates
+
+Days left for panel / sub / Reality. `certbot renew` now, force-renew, copy into `/dev/shm` for Hysteria2. The menu header shows the nearest expiry.
+
+### 32. Firewall
+
+Show UFW, set or clear **ADMIN_IP**, rebuild rules (SSH, 80/443, transport ports, node 2222). Clearing ADMIN_IP allows SSH from any IPv4.
 
 ### 0. Exit
 
@@ -360,7 +385,7 @@ The menu header shows live local health (panel API, subscription `:3010`, remnan
 
 On HTTP 502: menu **7** or `bash remnawave-manager.sh repair`. Do not paste PowerShell onto the Linux VPS.
 
-CLI: `status`, `doctor`, `repair`, `backup`, `restore`, `update`, `up`, `down`, `restart`, `logs`, `urls`, `health`, `core-update`, `stealth`, `addon …`, `node-transports …`, `add-node`, `check-update`, `self-update`, `--version`.
+CLI: `status`, `doctor`, `repair`, `backup`, `restore`, `update`, `up`, `down`, `restart`, `logs`, `urls`, `health`, `users`, `nodes`, `telegram`, `backup-remote`, `certs`, `firewall`, `admin-login`, `core-update`, `stealth`, `addon …`, `node-transports …`, `add-node`, `check-update`, `self-update`, `--version`.
 
 ---
 

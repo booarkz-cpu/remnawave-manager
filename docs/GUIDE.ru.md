@@ -2,7 +2,7 @@
 
 [English](GUIDE.en.md) · [Русский](GUIDE.ru.md) · [README](../README.ru.md)
 
-Установщик и повседневный менеджер [Remnawave](https://docs.rw) на Debian/Ubuntu. Автор: **Корги Люси (Corgi Lusi)**. Текущая версия скрипта: **1.4.4**.
+Установщик и повседневный менеджер [Remnawave](https://docs.rw) на Debian/Ubuntu. Автор: **Корги Люси (Corgi Lusi)**. Текущая версия скрипта: **1.5.0**.
 
 Это полная инструкция. На GitHub в README — **полный разбор каждого пункта меню** на русском и английском. Журнал обновлений по версиям: [INSTALLATION_RU.md](INSTALLATION_RU.md), [CHANGELOG.md](../CHANGELOG.md). Лицензия: [MIT](../LICENSE).
 
@@ -92,14 +92,14 @@ grep ' remnawave-manager.sh$' SHA256SUMS
 
 Две суммы должны совпасть. Latest: <https://github.com/booarkz-cpu/remnawave-manager/releases/latest>
 
-Фиксированная копия (пример для 1.4.4):
+Фиксированная копия (пример для 1.5.0):
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.4.4/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.5.0/remnawave-manager.sh \
   -o remnawave-manager.sh
 sha256sum remnawave-manager.sh
-# 1.4.4: c94a44bf4c9e5930593bfe2227b14fed1e495efd72d300ba857aa10778d37a0d
+# 1.5.0: 72c9cb8ca9ac35bb03b596bb32d68ff507c43f36992d1ee615962da3f44bacdb
 ```
 
 Все суммы версий — в [SHA256SUMS](../SHA256SUMS).
@@ -216,7 +216,7 @@ Backend панели требует заголовки reverse-proxy (`X-Forward
 
 ## 8. Меню
 
-Номера **1–27** фиксированы. **Полный функционал каждого пункта:** [MENU.ru.md](MENU.ru.md) · [English](MENU.en.md) · также в GitHub [README.ru.md](../README.ru.md#меню).
+Номера **1–27** не съезжают; **28–32** добавлены в 1.5.0. **Полный функционал каждого пункта:** [MENU.ru.md](MENU.ru.md) · [English](MENU.en.md) · также в GitHub [README.ru.md](../README.ru.md#меню).
 
 | № | Функция | Что делает |
 | --- | --- | --- |
@@ -242,11 +242,16 @@ Backend панели требует заголовки reverse-proxy (`X-Forward
 | 20 | Конвертер | Необязательный JSON Rezzosoft — для привязки не нужен |
 | 21 | Авторство / справка | Авторы и справка CLI |
 | 22 | Язык | Русский или English |
-| 23 | Адреса | Панель / подписка / SNI / ссылка CorgiLusi |
+| 23 | Адреса | Панель / подписка / SNI / CorgiLusi; SHOW — логин панели один раз |
 | 24 | Обновления авторов | Модули upstream (этот скрипт: пункт **26**) |
-| 25 | Транспорты ноды | Добавить или снять xHTTP, gRPC, Hysteria2 на уже стоящей ноде |
+| 25 | Транспорты ноды | Добавить или снять xHTTP, gRPC, Hysteria2; панель печатает apply для ноды |
 | 26 | Этот скрипт | Проверить / поставить GitHub Latest этого установщика |
 | 27 | Добавить ноду | Зарегистрировать ещё одну ноду через API — без обновления ОС и без пункта 1 |
+| 28 | Пользователи | Список / создать / вкл / выкл / ссылка подписки |
+| 29 | Управление нодами | Выкл, вкл, перезапуск одной ноды, смена адреса |
+| 30 | Оповещения и удалённый backup | Telegram; rclone+age с VDS |
+| 31 | Сертификаты | Срок, обновить сейчас, `/dev/shm` на ноде |
+| 32 | Файрвол | ADMIN_IP, пересборка UFW |
 | 0 | Выход | — |
 
 ---
@@ -266,7 +271,7 @@ Backend панели требует заголовки reverse-proxy (`X-Forward
 
 **Полная перепривязка** всех профилей (пункт **4** / `protocols` / `bind`) — после установки или когда нужно заново собрать CorgiLusi. Без флага протокола эта команда включает **все** транспорты.
 
-**Добавить или снять** доп. протоколы на уже установленной ноде, в том числе на другом VDS — **отдельный** пункт **25**. Добавление одного транспорта не сбрасывает остальные. Нода: номер, UUID или `0` = все. После выбора `[0]` — снова список нод, `q` — главное меню.
+**Добавить или снять** доп. протоколы на уже установленной ноде, в том числе на другом VDS — **отдельный** пункт **25**. Добавление одного транспорта не сбрасывает остальные. Нода: номер, UUID или `0` = все. После выбора `[0]` — снова список нод, `q` — главное меню. На VDS **только панели** пункты 1–8 печатают команду для ноды: `bash remnawave-manager.sh node-transports apply`.
 
 На **панели**:
 
@@ -446,6 +451,13 @@ bash remnawave-manager.sh self-update
 bash remnawave-manager.sh community-update
 
 bash remnawave-manager.sh status | doctor | repair | urls
+bash remnawave-manager.sh users list|create|enable|disable|sub
+bash remnawave-manager.sh nodes list|disable|enable|restart|address
+bash remnawave-manager.sh telegram enable|disable|test
+bash remnawave-manager.sh backup-remote [rclone:path]
+bash remnawave-manager.sh certs [renew|force]
+bash remnawave-manager.sh firewall [IPv4]
+bash remnawave-manager.sh admin-login SHOW
 bash remnawave-manager.sh backup | restore FILE | update
 bash remnawave-manager.sh up | down | restart | logs [контейнер]
 bash remnawave-manager.sh stealth | install-script
@@ -468,7 +480,7 @@ bash remnawave-manager.sh addon remnawave|remnanode|selfsteal|wtm|netbird|egames
 | `/opt/remnawave/credentials.txt` | Админ, токены, секрет ноды |
 | `/opt/remnawave-addons/` | Скачанные модули авторов (пункт 24) |
 | `/var/backups/remnawave/` | Backup |
-| `/var/log/remnawave-manager.log` | Журнал установщика |
+| `/usr/local/sbin/remnawave-health-notify.sh` | Telegram из 5-минутного healthcheck (пункт **30**) |
 | `/usr/local/bin/remnawave-manager` | Необязательная копия CLI |
 
 Не публикуйте API-токены, `SECRET_KEY`, пароль PostgreSQL и `credentials.txt`. См. [SECURITY.md](../SECURITY.md).
