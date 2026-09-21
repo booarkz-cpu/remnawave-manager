@@ -2,6 +2,8 @@
 
 **Корги Люси (Corgi Lusi)** — автор объединённого установщика Remnawave Manager: [booarkz-cpu/remnawave-manager](https://github.com/booarkz-cpu/remnawave-manager).
 
+В `1.4.2` пункт 25 действительно снимает Hysteria2 / gRPC / xHTTP: hydrate больше не затирает выбор из меню значениями из `manager.env`.
+
 В `1.4.1` исправлен перезапуск после `self-update`: «Неизвестная команда: --lang ru» из‑за `IFS` без пробела.
 
 В `1.4.0` неизвестная команда не сбрасывает полный `--help`; `--version` без sudo; пункт **26** обновляет этот скрипт; пункт **27** добавляет ноду без обновления ОС; doctor показывает сертификаты, порты и Connected.
