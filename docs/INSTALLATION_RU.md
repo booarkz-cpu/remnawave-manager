@@ -1,4 +1,4 @@
-# Установка Remnawave Manager 25.2.0-prod
+# Установка Remnawave Manager 25.2.1-prod
 
 ## 1. Подготовка
 
@@ -14,9 +14,9 @@ chmod +x remnawave-manager.sh
 sha256sum remnawave-manager.sh
 ```
 
-Сверьте сумму с файлом `SHA256SUMS`. Актуальный файл также называется `remnawave-manager-v25.2.0-prod.sh`. Скачивайте через jsDelivr `@v25.2.0-prod`, не с `raw.githubusercontent.com/main`.
+Сверьте сумму с файлом `SHA256SUMS`. Актуальный файл также называется `remnawave-manager-v25.2.1-prod.sh`. Скачивайте через jsDelivr `@v25.2.1-prod`, не с `raw.githubusercontent.com/main`.
 
-Без аргументов скрипт открывает русское меню. Конвертер конфигов Rezzosoft: https://rezzosoft.ru/converter.html
+Без аргументов скрипт открывает русское меню. Профиль, ноды, хосты и сквад привязываются через API — панель и конвертер править не нужно.
 
 Во время `install` скрипт выполняет `apt-get full-upgrade`. Автоматически VDS не перезагружается; если появится `/var/run/reboot-required`, перезагрузите сервер после завершения установки.
 
@@ -40,7 +40,7 @@ sudo bash remnawave-manager.sh install single --yes \
   ADMIN_EMAIL=admin@example.com
 ```
 
-Панель работает в Docker, Node — в `network_mode: host`. Адрес Node в карточке панели — gateway сети `remnawave-network` (не `127.0.0.1`).
+Панель работает в Docker, Node — в `network_mode: host`. Адрес Node, который панель пишет в карточку, — gateway сети `remnawave-network` (не `127.0.0.1`). Карточка, inbound’ы и хосты создаются установщиком, в UI их трогать не нужно.
 
 ## 5. Панель и нода на разных серверах
 
@@ -54,20 +54,19 @@ sudo bash remnawave-manager.sh install panel --yes \
   ADMIN_EMAIL=admin@example.com
 ```
 
-Скопируйте SECRET_KEY из `/opt/remnawave/credentials.txt` или карточки Node в панели. На втором VDS:
+Скопируйте SECRET_KEY из `/opt/remnawave/credentials.txt` на сервере панели. На втором VDS:
 
 ```bash
 sudo bash remnawave-manager.sh install node --yes \
   PANEL_IP=203.0.113.10 \
   DOMAIN_REALITY=reality.example.com \
   ADMIN_EMAIL=admin@example.com \
-  NODE_SECRET_KEY='секрет_из_панели' \
-  --hysteria2 --grpc --xhttp
+  NODE_SECRET_KEY='секрет_из_credentials.txt'
 ```
 
-`install node` — синоним `install edge`. Reality идёт по SNI TCP/443, Hysteria2 — UDP/443, gRPC — TCP/8443, xHTTP — TCP/4443. JSON профиля можно доработать в конвертере Rezzosoft: https://rezzosoft.ru/converter.html
+`install node` — синоним `install edge`. По умолчанию ставятся все транспорты: Reality (SNI TCP/443), Hysteria2 UDP/443, gRPC TCP/8443, xHTTP TCP/4443. На панели вызовите `install panel` с `EDGE_ADDRESS=<IP ноды>` или затем `sudo bash remnawave-manager.sh protocols` — inbound’ы, хосты и сквад AUTO привяжутся через API.
 
-Дополнительные транспорты на уже стоящей системе: `sudo bash remnawave-manager.sh protocols` или пункт 4 меню.
+Повторная автопривязка на уже стоящей системе: `sudo bash remnawave-manager.sh bind` (то же, что `protocols`) или пункт 4 меню.
 
 ## 6. ProxyCheckMiddleware
 
@@ -113,4 +112,18 @@ sudo bash remnawave-manager.sh repair
 
 ## 10. Production test
 
-После bootstrap проверить Panel URL, Subscription URL, сертификаты, Node (status Connected), Reality SNI (сайт о корги), UFW, timers и backup/restore.
+После bootstrap проверить Panel URL, Subscription URL, сертификаты, Node (status Connected), Reality SNI (сайт о корги), UFW, timers и backup/restore. Карточка Node / Hosts / Squads в панели должна уже быть заполнена установщиком.
+
+## 11. Обновление до 25.2.1-prod (автопривязка)
+
+```bash
+curl -fL --retry 5 --retry-all-errors \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v25.2.1-prod/remnawave-manager.sh \
+  -o remnawave-manager.sh
+chmod +x remnawave-manager.sh
+sha256sum remnawave-manager.sh
+# нужно: 67052bd1206712f1a2dd6a15bbfee66539b4813031628d93f02ea98c778d987c
+sudo bash remnawave-manager.sh protocols
+```
+
+Команда `protocols` (синоним `bind`) обновляет AUTO-PROFILE, вешает все inbound’ы на ноды, создаёт хосты и сквад AUTO. UI панели для этого не открывайте.

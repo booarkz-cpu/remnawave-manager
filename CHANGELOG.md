@@ -1,5 +1,20 @@
 # Changelog
 
+## 25.2.1-prod
+
+Полностью автоматическая привязка без правок в панели и без конвертера.
+
+- UPDATE профиля/ноды/хоста идёт на коллекцию (`PATCH /config-profiles/`, `PATCH /nodes/`, `PATCH /hosts/`) с `uuid` в JSON, как в backend-contract 3.4.x;
+- после обновления профиля все inbound UUID вешаются на ноды (`POST /nodes/bulk-actions/profile-modification`, запасной путь — PATCH каждой ноды);
+- хосты создаются с `path`/`host` для gRPC и xHTTP, `alpn=h3` для Hysteria2 и массивом `nodes`;
+- сквад AUTO получает все inbound’ы; пользователь AUTO и URL подписки появляются без UI;
+- по умолчанию включаются Reality + Hysteria2 + gRPC + xHTTP (`--reality-only`, если нужен только Reality).
+
+На уже установленном 25.2.0: скачайте `@v25.2.1-prod` и выполните `sudo bash remnawave-manager.sh protocols`.
+
+SHA256:
+`67052bd1206712f1a2dd6a15bbfee66539b4813031628d93f02ea98c778d987c`
+
 ## 25.2.0-prod
 
 Русское меню и мультипротокол. Панель и нода ставятся на разные серверы. В установщик добавлены функции Rezzosoft KVN, eGamesAPI и DigneZzZ (авторство сохранено).
