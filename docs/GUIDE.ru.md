@@ -2,7 +2,7 @@
 
 [English](GUIDE.en.md) · [Русский](GUIDE.ru.md) · [README](../README.ru.md)
 
-Установщик и повседневный менеджер [Remnawave](https://docs.rw) на Debian/Ubuntu. Автор: **Корги Люси (Corgi Lusi)**. Текущая версия скрипта: **1.3.0**.
+Установщик и повседневный менеджер [Remnawave](https://docs.rw) на Debian/Ubuntu. Автор: **Корги Люси (Corgi Lusi)**. Текущая версия скрипта: **1.4.0**.
 
 Это полная инструкция. На GitHub короткий вариант — в [README.ru.md](../README.ru.md). Журнал обновлений по версиям: [INSTALLATION_RU.md](INSTALLATION_RU.md), [CHANGELOG.md](../CHANGELOG.md).
 
@@ -10,7 +10,7 @@
 
 | Что | Команда / меню | Что меняется |
 | --- | --- | --- |
-| **Этот скрипт** (`remnawave-manager.sh`) | `check-update`, `self-update`, пункт 24 → 2 | Файл установщика на диске |
+| **Этот скрипт** (`remnawave-manager.sh`) | `check-update`, `self-update`, пункт **26** | Файл установщика на диске |
 | **Remnawave** (образы панели, ноды, подписки) | `update`, пункт **14** | Docker-образы; данные панели сохраняются |
 
 ---
@@ -92,14 +92,14 @@ grep ' remnawave-manager.sh$' SHA256SUMS
 
 Две суммы должны совпасть. Latest: <https://github.com/booarkz-cpu/remnawave-manager/releases/latest>
 
-Фиксированная копия (пример для 1.3.0):
+Фиксированная копия (пример для 1.4.0):
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.3.0/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.4.0/remnawave-manager.sh \
   -o remnawave-manager.sh
 sha256sum remnawave-manager.sh
-# 1.3.0: dd7ece932c3dd26a93dacc0c24249dfa1b15bb8f7bd475b5b846a6d6a933c152
+# 1.4.0: fe91e431c96d54efed1a1d7219349578733d5fd30d9ab744f1436c3602be24de
 ```
 
 Все суммы версий — в [SHA256SUMS](../SHA256SUMS).
@@ -223,7 +223,7 @@ Backend панели требует заголовки reverse-proxy (`X-Forward
 | 3 | Только нода | remnanode + SNI Reality |
 | 4 | Автопривязка протоколов | Профили CorgiLusi, сквад, хосты; удаление Default-Profile |
 | 5 | Состояние | Контейнеры, nginx, fail2ban, таймеры |
-| 6 | Диагностика | API, `:3010`, публичный HTTPS, порты, UFW |
+| 6 | Диагностика | API, `:3010`, публичный HTTPS, сертификаты, UDP/TCP, Connected нод, UFW |
 | 7 | Repair | Исправить nginx и 502 подписки; Docker/БД не трогает |
 | 8 | Логи | remnawave / remnanode / subscription-page |
 | 9 | Up | `docker compose up` всех стеков |
@@ -241,8 +241,10 @@ Backend панели требует заголовки reverse-proxy (`X-Forward
 | 21 | Авторство / справка | Авторы и справка CLI |
 | 22 | Язык | Русский или English |
 | 23 | Адреса | Панель / подписка / SNI / ссылка CorgiLusi |
-| 24 | Обновления авторов | Модули upstream; **обновление этого скрипта** |
+| 24 | Обновления авторов | Модули upstream (этот скрипт: пункт **26**) |
 | 25 | Транспорты ноды | Добавить или снять xHTTP, gRPC, Hysteria2 на уже стоящей ноде |
+| 26 | Этот скрипт | Проверить / поставить GitHub Latest этого установщика |
+| 27 | Добавить ноду | Зарегистрировать ещё одну ноду через API — без обновления ОС и без пункта 1 |
 | 0 | Выход | — |
 
 ---
@@ -262,7 +264,7 @@ Backend панели требует заголовки reverse-proxy (`X-Forward
 
 **Полная перепривязка** всех профилей (пункт **4** / `protocols` / `bind`) — после установки или когда нужно заново собрать CorgiLusi. Без флага протокола эта команда включает **все** транспорты.
 
-**Добавить или снять** доп. протоколы на уже установленной ноде, в том числе на другом VDS — **отдельный** пункт **25**. Добавление одного транспорта не сбрасывает остальные.
+**Добавить или снять** доп. протоколы на уже установленной ноде, в том числе на другом VDS — **отдельный** пункт **25**. Добавление одного транспорта не сбрасывает остальные. Если нод несколько, меню спрашивает UUID (`0` = все).
 
 На **панели**:
 
@@ -299,7 +301,7 @@ bash remnawave-manager.sh node-transports apply
 bash remnawave-manager.sh self-update
 ```
 
-После замены в шапке должно быть `1.3.0` или новее. Тогда заработают `check-update` и автопроверка в меню.
+После замены в шапке должно быть `1.4.0` или новее. Тогда заработают `check-update` и автопроверка в меню.
 
 ### Способ B — уже 1.3.0 или новее
 
@@ -312,7 +314,7 @@ bash remnawave-manager.sh check-update
 bash remnawave-manager.sh check-update --apply
 ```
 
-То же: пункт **24** → **2**, или снова `self-update`.
+То же: пункт **26**, или снова `self-update`. С 1.4.0 неизвестная команда печатает короткий текст, а не всю справку.
 
 Не опрашивать GitHub при открытии меню:
 
@@ -320,7 +322,7 @@ bash remnawave-manager.sh check-update --apply
 bash remnawave-manager.sh --no-update-check
 ```
 
-Время проверки — `LAST_UPDATE_CHECK_AT` / `LAST_REMOTE_VERSION` в `manager.env` (кэш 6 часов). Пункт **24** → **3** — только проверка, без скачивания.
+Время проверки — `LAST_UPDATE_CHECK_AT` / `LAST_REMOTE_VERSION` в `manager.env` (кэш 6 часов). Пункт **26** → **1** — только проверка, без скачивания.
 
 ### Способ C — нет `self-update` (1.0.0 / 25.2.x) или GitHub не открывается
 
@@ -428,11 +430,13 @@ bash remnawave-manager.sh restore /var/backups/remnawave/ARCHIVE.tgz
 bash remnawave-manager.sh                         # меню
 bash remnawave-manager.sh --lang en|ru
 bash remnawave-manager.sh --help
+bash remnawave-manager.sh --version
 bash remnawave-manager.sh --no-update-check
 
 bash remnawave-manager.sh install single|panel|node [--yes] [--dry-run]
 bash remnawave-manager.sh protocols | bind
-bash remnawave-manager.sh node-transports add|remove grpc|xhttp|hysteria2|all
+bash remnawave-manager.sh add-node
+bash remnawave-manager.sh node-transports add|remove grpc|xhttp|hysteria2|all [uuid]
 bash remnawave-manager.sh node-transports apply | reality-only
 
 bash remnawave-manager.sh check-update [--apply]
@@ -485,8 +489,8 @@ bash remnawave-manager.sh addon remnawave|remnanode|selfsteal|wtm|netbird|egames
 | `repair` просит DOMAIN_* | Введите имена panel / sub / Reality; 1.3.x поднимает их и с диска |
 | Нода не Connected | UFW 2222 только с IP панели; `SECRET_KEY` как в `credentials.txt`; DNS Reality → нода |
 | Доп. протокол не работает | Пункт **25** на панели, затем `node-transports apply` на ноде |
-| `check-update` печатает всю справку `1.1.0` | Это старый скрипт. Выполните `bash remnawave-manager.sh self-update` |
-| Меню не видит новый скрипт | `self-update` или `check-update --apply` (с 1.3.0); кэш 6 часов |
+| `check-update` печатает всю справку `1.1.0` | Это старый скрипт. Выполните `bash remnawave-manager.sh self-update` (с 1.4.0 неизвестная команда — короткий текст) |
+| Меню не видит новый скрипт | пункт **26**, `self-update` или `check-update --apply` (с 1.3.0); кэш 6 часов |
 | Хеш не совпал | Удалите файл, скачайте Latest снова, не запускайте |
 | `"-":0: bad minute` на старом 25.2.2 | Обновите **скрипт** (раздел 10), затем `protocols` — сертификаты Hysteria идут через systemd, не crontab |
 

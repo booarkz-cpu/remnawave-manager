@@ -7,6 +7,23 @@
 
 Ниже — заметки по конкретным релизам (хеши, что менять после скачивания старой версии). Для повседневной работы используйте Latest и раздел 10 в GUIDE.
 
+# Установка Remnawave Manager 1.4.0
+
+Неизвестная команда больше не печатает весь `--help`. `--version` без sudo. Пункт **26** — этот скрипт; пункт **24** — модули авторов. Пункт **27** / `add-node` регистрирует ноду без `apt full-upgrade`. Перед install — предпроверка DNS, портов 80/443, диска и Docker. Пункт **25** выбирает UUID, если нод несколько. Doctor: сертификаты Let’s Encrypt, UDP/TCP, Connected.
+
+```bash
+curl -fL --retry 5 --retry-all-errors \
+  https://github.com/booarkz-cpu/remnawave-manager/releases/latest/download/remnawave-manager.sh \
+  -o remnawave-manager.sh
+chmod +x remnawave-manager.sh
+sha256sum remnawave-manager.sh
+# актуальная сумма — SHA256SUMS, файл remnawave-manager-v1.4.0.sh
+bash remnawave-manager.sh --version
+bash remnawave-manager.sh --lang ru
+```
+
+jsDelivr: `@v1.4.0` / `fe91e431c96d54efed1a1d7219349578733d5fd30d9ab744f1436c3602be24de`.
+
 # Установка Remnawave Manager 1.3.0
 
 ## 1. Подготовка

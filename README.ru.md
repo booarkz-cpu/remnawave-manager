@@ -6,7 +6,7 @@
 
 Production-установщик [Remnawave](https://docs.rw) на Debian/Ubuntu. Интерактивное меню с описанием каждой функции. Язык: **русский** или **English**.
 
-**Текущая версия:** `1.3.0`
+**Текущая версия:** `1.4.0`
 
 Автор: **Корги Люси (Corgi Lusi)**. В скрипт добавлены функции из [Rezzosoft KVN](https://github.com/Rrezzak09VPN/remnanode-VLESS-Reality-Hysteria2), [eGamesAPI](https://github.com/eGamesAPI/remnawave-reverse-proxy) и [DigneZzZ](https://github.com/DigneZzZ/remnawave-scripts). Авторство исходников сохранено — [CREDITS.md](CREDITS.md).
 
@@ -58,13 +58,13 @@ bash remnawave-manager.sh
 
 Без аргументов открывается меню. `sudo` в команде писать не нужно — скрипт сам поднимает root. При первом запуске спрашивает **English** или **Русский** (сохраняется в `/opt/remnawave/manager.env`). Позже — пункт 22 или `--lang ru|en`.
 
-Фиксированная 1.3.0 через jsDelivr (по желанию):
+Фиксированная 1.4.0 через jsDelivr (по желанию):
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.3.0/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.4.0/remnawave-manager.sh \
   -o remnawave-manager.sh
-# sha256: dd7ece932c3dd26a93dacc0c24249dfa1b15bb8f7bd475b5b846a6d6a933c152
+# sha256: fe91e431c96d54efed1a1d7219349578733d5fd30d9ab744f1436c3602be24de
 ```
 
 По умолчанию включаются все транспорты: Reality, Hysteria2, gRPC и xHTTP.
@@ -87,7 +87,7 @@ curl -fL --retry 5 --retry-all-errors \
 bash remnawave-manager.sh self-update
 ```
 
-Скрипт скачает GitHub Latest, проверит `bash -n`, заменит файл (и `/usr/local/bin/remnawave-manager`, если CLI ставили) и перезапустится. После этого в шапке должно быть `1.3.0` или новее. `check-update` заработает только тогда.
+Скрипт скачает GitHub Latest, проверит `bash -n`, заменит файл (и `/usr/local/bin/remnawave-manager`, если CLI ставили) и перезапустится. После этого в шапке должно быть `1.4.0` или новее. `check-update` заработает только тогда.
 
 Если `self-update` нет (1.0.0 / 25.2.x) или сеть к GitHub не открывается — скачайте Latest вручную, как в [Быстром старте](#быстрый-старт), и сверьте SHA256.
 
@@ -98,9 +98,10 @@ bash remnawave-manager.sh self-update
 ```bash
 bash remnawave-manager.sh check-update
 bash remnawave-manager.sh check-update --apply
+bash remnawave-manager.sh --version
 ```
 
-То же: пункт **24** → **2**, или снова `self-update`. Не опрашивать GitHub: `--no-update-check`. Только проверка: пункт **24** → **3**.
+То же: пункт **26**, или снова `self-update`. Пункт **24** по-прежнему обновляет модули авторов (и оставляет ярлык на этот скрипт). Не опрашивать GitHub: `--no-update-check`. Только проверка: пункт **26** → **1**, или `check-update`. С 1.4.0 неизвестная команда больше не печатает всю справку.
 
 Команду обновления скрипта запускайте на **обоих** VDS (панель и нода). Если CLI ставили пунктом **19**, после ручного `curl` выполните `bash remnawave-manager.sh install-script`.
 
@@ -130,7 +131,7 @@ Remnawave обычно **переустанавливать не нужно**.
 | 3 | Только нода | remnanode в host-сети, SNI Reality; `SECRET_KEY` из `credentials.txt` панели |
 | 4 | Автопривязка протоколов | Отдельный профиль CorgiLusi на ноду, сквад CorgiLusi, без Default-Profile |
 | 5 | Состояние | Контейнеры, nginx/fail2ban, systemd-таймеры |
-| 6 | Диагностика | API панели, страница подписки, порты, UFW |
+| 6 | Диагностика | API панели, страница подписки, сертификаты, порты, Connected нод, UFW |
 | 7 | Repair | Переписывает proxy-заголовки и SelfSteal без удаления Docker/БД |
 | 8 | Логи | Журнал remnawave / remnanode / subscription-page |
 | 9 | Up | `docker compose up` всех стеков |
@@ -148,8 +149,10 @@ Remnawave обычно **переустанавливать не нужно**.
 | 21 | Авторство / справка | Авторы и полная справка CLI |
 | 22 | Язык | Русский или English |
 | 23 | Адреса | Панель / подписка / SNI и ссылка CorgiLusi |
-| 24 | Обновления авторов | Свежие модули авторов; **обновление этого скрипта** |
+| 24 | Обновления авторов | Свежие модули авторов (этот скрипт: пункт **26**) |
 | 25 | Транспорты ноды | Добавить или снять xHTTP, gRPC, Hysteria2 на уже установленной ноде |
+| 26 | Этот скрипт | Проверить / поставить GitHub Latest этого установщика |
+| 27 | Добавить ноду | Зарегистрировать ещё одну ноду через API — без обновления ОС и без пункта 1 |
 | 0 | Выход | — |
 
 ---
@@ -194,7 +197,7 @@ bash remnawave-manager.sh --lang ru install node --yes \
 
 На уже установленной системе **полная** перепривязка: `bash remnawave-manager.sh protocols` (синоним: `bind`) или пункт **4**.
 
-Чтобы **добавить или снять** доп. протоколы на уже стоящей ноде (панель и нода могут быть на разных VDS), используйте **отдельный** пункт **25**:
+Чтобы **добавить или снять** доп. протоколы на уже стоящей ноде (панель и нода могут быть на разных VDS), используйте **отдельный** пункт **25**. Если нод несколько, меню спрашивает UUID (`0` = все):
 
 ```bash
 # Панель
@@ -214,7 +217,7 @@ bash remnawave-manager.sh node-transports apply
 
 При HTTP 502: пункт **7** или `bash remnawave-manager.sh repair`. Скрипты PowerShell на Linux VDS не запускайте.
 
-CLI: `status`, `doctor`, `repair`, `backup`, `restore`, `update`, `up`, `down`, `restart`, `logs`, `urls`, `health`, `core-update`, `stealth`, `addon …`, `node-transports …`, `check-update`, `self-update`.
+CLI: `status`, `doctor`, `repair`, `backup`, `restore`, `update`, `up`, `down`, `restart`, `logs`, `urls`, `health`, `core-update`, `stealth`, `addon …`, `node-transports …`, `add-node`, `check-update`, `self-update`, `--version`.
 
 ---
 

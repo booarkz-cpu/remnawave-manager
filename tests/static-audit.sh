@@ -3,11 +3,13 @@ set -Eeuo pipefail
 
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
-SCRIPT=remnawave-manager-v1.3.0.sh
+SCRIPT=remnawave-manager-v1.4.0.sh
 
 echo "[1/18] bash -n current + historical"
 bash -n "$SCRIPT"
 bash -n remnawave-manager.sh
+bash -n remnawave-manager-v1.4.0.sh
+bash -n remnawave-manager-v1.3.0.sh
 bash -n remnawave-manager-v1.2.0.sh
 bash -n remnawave-manager-v1.1.0.sh
 bash -n remnawave-manager-v1.0.0.sh
@@ -228,12 +230,35 @@ grep -Fq 'node-transports' /tmp/rw-help-en.txt
 grep -Fq 'grpc|xhttp|hysteria2|all' /tmp/rw-help-en.txt
 grep -Fq 'check-update' /tmp/rw-help-en.txt
 grep -Fq -- '--no-update-check' /tmp/rw-help-en.txt
+grep -Fq -- '--version' /tmp/rw-help-en.txt
+grep -Fq 'add-node' /tmp/rw-help-en.txt
+bash "$SCRIPT" --version | grep -Fq '1.4.0'
+set +e
+bash "$SCRIPT" --lang en nosuchcmd >/tmp/rw-unk.txt 2>&1
+unk_rc=$?
+set -e
+[[ "$unk_rc" -eq 2 ]]
+grep -Fq 'Unknown command' /tmp/rw-unk.txt
+if grep -Fq 'panel + node on one server' /tmp/rw-unk.txt; then
+  echo 'FAIL: unknown command dumped full --help' >&2
+  exit 1
+fi
+grep -Fq 'preflight()' "$SCRIPT"
+grep -Fq 'pick_target_node()' "$SCRIPT"
+grep -Fq 'add_node_menu()' "$SCRIPT"
+grep -Fq 'script_update_menu()' "$SCRIPT"
+grep -Fq 'unknown_cmd()' "$SCRIPT"
+grep -Fq 'print_version()' "$SCRIPT"
+grep -Fq 'cert_days_left()' "$SCRIPT"
+grep -Fq 'TARGET_NODE_UUID' "$SCRIPT"
+grep -Fq 'menu_row 26' "$SCRIPT"
+grep -Fq 'menu_row 27' "$SCRIPT"
 
 echo "[14/18] current script copies match"
 cmp -s remnawave-manager.sh "$SCRIPT"
 
 echo "[15/18] VERSION string"
-grep -Fq "VERSION='1.3.0'" "$SCRIPT"
+grep -Fq "VERSION='1.4.0'" "$SCRIPT"
 if grep -nE "^VERSION='[^']*-prod'" remnawave-manager.sh; then
   echo 'FAIL: current VERSION must not use a -prod suffix' >&2
   exit 1

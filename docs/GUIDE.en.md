@@ -2,7 +2,7 @@
 
 [English](GUIDE.en.md) · [Русский](GUIDE.ru.md) · [README](../README.md)
 
-Installer and day-to-day manager for [Remnawave](https://docs.rw) on Debian/Ubuntu. Author: **Corgi Lusi (Корги Люси)**. Current script version: **1.3.0**.
+Installer and day-to-day manager for [Remnawave](https://docs.rw) on Debian/Ubuntu. Author: **Corgi Lusi (Корги Люси)**. Current script version: **1.4.0**.
 
 This page is the full instruction. The GitHub README is the short version. Historical per-release notes: [INSTALLATION_RU.md](INSTALLATION_RU.md) (bilingual changelog lives in [CHANGELOG.md](../CHANGELOG.md)).
 
@@ -10,7 +10,7 @@ Two different “updates” exist. Do not mix them:
 
 | What | Command / menu | What changes |
 | --- | --- | --- |
-| **This script** (`remnawave-manager.sh`) | `check-update`, `self-update`, menu 24 → 2 | The installer file on disk |
+| **This script** (`remnawave-manager.sh`) | `check-update`, `self-update`, menu **26** | The installer file on disk |
 | **Remnawave** (panel, node, subscription images) | `update`, menu **14** | Docker images; panel data stays |
 
 ---
@@ -92,14 +92,14 @@ grep ' remnawave-manager.sh$' SHA256SUMS
 
 The two hashes must match. Latest release: <https://github.com/booarkz-cpu/remnawave-manager/releases/latest>
 
-Pinned copy (example for 1.3.0):
+Pinned copy (example for 1.4.0):
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.3.0/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.4.0/remnawave-manager.sh \
   -o remnawave-manager.sh
 sha256sum remnawave-manager.sh
-# 1.3.0: dd7ece932c3dd26a93dacc0c24249dfa1b15bb8f7bd475b5b846a6d6a933c152
+# 1.4.0: fe91e431c96d54efed1a1d7219349578733d5fd30d9ab744f1436c3602be24de
 ```
 
 See [SHA256SUMS](../SHA256SUMS) in the repo for every versioned file.
@@ -223,7 +223,7 @@ The panel backend requires reverse-proxy headers (`X-Forwarded-For` and `X-Forwa
 | 3 | Node only | remnanode + Reality SNI |
 | 4 | Auto-bind protocols | Rebuild CorgiLusi profiles, squad, hosts; drop Default-Profile |
 | 5 | Status | Containers, nginx, fail2ban, timers |
-| 6 | Doctor | API, `:3010`, public HTTPS, ports, UFW |
+| 6 | Doctor | API, `:3010`, public HTTPS, certs, UDP/TCP listen, node Connected, UFW |
 | 7 | Repair | Fix nginx headers and subscription 502; keep Docker/DB |
 | 8 | Logs | Follow remnawave / remnanode / subscription-page |
 | 9 | Up | `docker compose up` for every stack |
@@ -241,8 +241,10 @@ The panel backend requires reverse-proxy headers (`X-Forwarded-For` and `X-Forwa
 | 21 | Credits / help | Authorship and CLI help |
 | 22 | Language | English or Русский |
 | 23 | URLs | Panel / sub / SNI / CorgiLusi user link |
-| 24 | Author updates | Refresh upstream modules; **update this script** |
+| 24 | Author updates | Refresh upstream modules (this script: item **26**) |
 | 25 | Node transports | Add or remove xHTTP, gRPC, Hysteria2 on an existing node |
+| 26 | This script | Check / install GitHub Latest of this installer |
+| 27 | Add a node | Register another node via API — no OS upgrade, no menu 1 |
 | 0 | Exit | — |
 
 ---
@@ -262,7 +264,7 @@ Install-time flags: `--all-protocols` (default), `--reality-only`, `--hysteria2`
 
 **Full re-bind** of every profile (menu **4** / `protocols` / `bind`): use after install or when you want CorgiLusi profiles rebuilt. If you do not pass a protocol flag, this command turns **all** transports on.
 
-**Add or remove extras on a node that is already up** — including a node on another VPS — is a **separate** item (**25**). Adding one transport does not reset the others.
+**Add or remove extras on a node that is already up** — including a node on another VPS — is a **separate** item (**25**). Adding one transport does not reset the others. If several nodes exist, pick a UUID (`0` = all).
 
 On the **panel**:
 
@@ -299,7 +301,7 @@ Those builds **do not** have `check-update`. An unknown command prints the full 
 bash remnawave-manager.sh self-update
 ```
 
-After the replace, the header should show `1.3.0` or newer. Then `check-update` and the menu auto-check work.
+After the replace, the header should show `1.4.0` or newer. Then `check-update` and the menu auto-check work.
 
 ### Method B — already 1.3.0 or newer
 
@@ -312,7 +314,7 @@ bash remnawave-manager.sh check-update
 bash remnawave-manager.sh check-update --apply
 ```
 
-Equivalent: menu **24** → **2**, or `self-update` again.
+Equivalent: menu **26**, or `self-update` again. From 1.4.0 an unknown command prints a short hint instead of the full help.
 
 Skip the automatic GitHub query:
 
@@ -320,7 +322,7 @@ Skip the automatic GitHub query:
 bash remnawave-manager.sh --no-update-check
 ```
 
-The last check time is stored as `LAST_UPDATE_CHECK_AT` / `LAST_REMOTE_VERSION` in `manager.env` (6 hour cache). Menu **24** → **3** checks without downloading.
+The last check time is stored as `LAST_UPDATE_CHECK_AT` / `LAST_REMOTE_VERSION` in `manager.env` (6 hour cache). Menu **26** → **1** checks without downloading.
 
 ### Method C — no `self-update` (1.0.0 / 25.2.x) or GitHub unreachable
 
@@ -428,11 +430,13 @@ Age-encrypted archives need `/opt/remnawave/backup-age.key`. Uninstall (menu **1
 bash remnawave-manager.sh                         # menu
 bash remnawave-manager.sh --lang en|ru
 bash remnawave-manager.sh --help
+bash remnawave-manager.sh --version
 bash remnawave-manager.sh --no-update-check
 
 bash remnawave-manager.sh install single|panel|node [--yes] [--dry-run]
 bash remnawave-manager.sh protocols | bind
-bash remnawave-manager.sh node-transports add|remove grpc|xhttp|hysteria2|all
+bash remnawave-manager.sh add-node
+bash remnawave-manager.sh node-transports add|remove grpc|xhttp|hysteria2|all [uuid]
 bash remnawave-manager.sh node-transports apply | reality-only
 
 bash remnawave-manager.sh check-update [--apply]
@@ -485,8 +489,8 @@ Optional converter (not required to bind): <https://rezzosoft.ru/converter.html>
 | `repair` asks for DOMAIN_* | Enter panel / sub / Reality hostnames; 1.3.x also hydrates them from disk |
 | Node not Connected | Panel IP in UFW for 2222; `SECRET_KEY` matches `credentials.txt`; Reality DNS → node |
 | Extra protocol does not work | Item **25** on the panel, then `node-transports apply` on the node |
-| `check-update` prints the full `1.1.0` help | Old script. Run `bash remnawave-manager.sh self-update` |
-| Menu does not see a new script | `self-update` or `check-update --apply` (from 1.3.0); 6 hour cache |
+| `check-update` prints the full `1.1.0` help | Old script. Run `bash remnawave-manager.sh self-update` (from 1.4.0 unknown commands print a short hint) |
+| Menu does not see a new script | menu **26**, `self-update` or `check-update --apply` (from 1.3.0); 6 hour cache |
 | Hash mismatch | Delete the file; download Latest again; do not run it |
 | `"-":0: bad minute` on old 25.2.2 | Update the **script** (section 10), then `protocols` — Hysteria certs use systemd, not crontab |
 
