@@ -3,11 +3,12 @@ set -Eeuo pipefail
 
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
-SCRIPT=remnawave-manager-v1.5.1.sh
+SCRIPT=remnawave-manager-v1.5.2.sh
 
 echo "[1/18] bash -n current + historical"
 bash -n "$SCRIPT"
 bash -n remnawave-manager.sh
+bash -n remnawave-manager-v1.5.2.sh
 bash -n remnawave-manager-v1.5.1.sh
 bash -n remnawave-manager-v1.5.0.sh
 bash -n remnawave-manager-v1.4.4.sh
@@ -263,7 +264,7 @@ grep -Fq -- '--version' /tmp/rw-help-en.txt
 grep -Fq 'add-node' /tmp/rw-help-en.txt
 grep -Fq 'users list' /tmp/rw-help-en.txt
 grep -Fq 'admin-login' /tmp/rw-help-en.txt
-bash "$SCRIPT" --version | grep -Fq '1.5.1'
+bash "$SCRIPT" --version | grep -Fq '1.5.2'
 set +e
 bash "$SCRIPT" --lang en nosuchcmd >/tmp/rw-unk.txt 2>&1
 unk_rc=$?
@@ -276,7 +277,7 @@ if grep -Fq 'panel + node on one server' /tmp/rw-unk.txt; then
 fi
 # 1.4.0 self-update restart glued `--lang ru` into one argv because IFS has no space.
 bash "$SCRIPT" '--lang ru' --no-update-check --version >/tmp/rw-lang-glue.txt 2>&1
-grep -Fq '1.5.1' /tmp/rw-lang-glue.txt
+grep -Fq '1.5.2' /tmp/rw-lang-glue.txt
 if grep -Fq 'Unknown command' /tmp/rw-lang-glue.txt; then
   echo 'FAIL: glued --lang ru treated as unknown command' >&2
   exit 1
@@ -340,12 +341,37 @@ if awk '/^show_admin_login_once\(\)/,/^urls_and_optional_admin\(\)/' "$SCRIPT" |
   echo 'FAIL: admin-login must not write the password to the log' >&2
   exit 1
 fi
+if grep -nE 'source /etc/os-release|\. /etc/os-release' "$SCRIPT"; then
+  echo 'FAIL: os-release must not be sourced (Ubuntu sets VERSION= and clobbers --version)' >&2
+  exit 1
+fi
+grep -Fq 'os_release_field()' "$SCRIPT"
+grep -Fq 'panel_api_ready()' "$SCRIPT"
+grep -Fq 'menu_call()' "$SCRIPT"
+grep -Fq 'restore "$arch"' "$SCRIPT"
+awk '/^ask\(\)/,/^check_os\(\)/' "$SCRIPT" | grep -Fq err_cancelled
+grep -Fq 'RW_UPSERT_KEY' "$SCRIPT"
+grep -Fq 'ENVIRON["RW_UPSERT_KEY"]' "$SCRIPT"
+awk '/^load_kv_file\(\)/,/^if \[\[ -r "\$ENV_FILE" \]\]/' "$SCRIPT" | grep -Fq 'VERSION|PATH|HOME|IFS'
+if awk '/^show_result\(\)/,/^status\(\)/' "$SCRIPT" | grep -q ADMIN_PASSWORD; then
+  echo 'FAIL: show_result must not print ADMIN_PASSWORD' >&2
+  exit 1
+fi
+awk '/^download_upstream\(\)/,/^addon_catalog\(\)/' "$SCRIPT" | grep -Fq '&& return 0'
+awk '/^restore\(\)/,/^repair\(\)/' "$SCRIPT" | grep -Fq "trap - EXIT"
+if awk '/^restore\(\)/,/^repair\(\)/' "$SCRIPT" | grep -qE "trap [-'\"A-Za-z0-9 .$\\\\]+RETURN"; then
+  echo 'FAIL: restore must not use a RETURN trap (nested warn/ok would delete tmp)' >&2
+  exit 1
+fi
+awk '/^ask_protocols\(\)/,/^nginx_apply\(\)/' "$SCRIPT" | grep -Fq 'HYSTERIA2=0; ENABLE_GRPC=1; ENABLE_XHTTP=0'
+awk '/^ask_protocols\(\)/,/^nginx_apply\(\)/' "$SCRIPT" | grep -Fq 'HYSTERIA2=0; ENABLE_GRPC=0; ENABLE_XHTTP=1'
+grep -Fq '[[:space:]]${ip}[[:space:]]' "$SCRIPT"
 
 echo "[14/18] current script copies match"
 cmp -s remnawave-manager.sh "$SCRIPT"
 
 echo "[15/18] VERSION string"
-grep -Fq "VERSION='1.5.1'" "$SCRIPT"
+grep -Fq "VERSION='1.5.2'" "$SCRIPT"
 if grep -nE "^VERSION='[^']*-prod'" remnawave-manager.sh; then
   echo 'FAIL: current VERSION must not use a -prod suffix' >&2
   exit 1
@@ -367,5 +393,26 @@ sha256sum -c SHA256SUMS
 echo "[18/18] dry-run repair help text"
 grep -Fq repair /tmp/rw-help.txt
 grep -Fq 'install node' /tmp/rw-help.txt
+
+echo "[extra] load_kv_file ignores VERSION/PATH; upsert_kv keeps backslashes"
+tmpd="$(mktemp -d)"
+awk '/^load_kv_file\(\)/{p=1} p{print} p && /^}$/{exit}' "$SCRIPT" > "$tmpd/kv.inc"
+awk '/^upsert_kv\(\)/{p=1} p{print} /^persist_manager\(\)/{exit}' "$SCRIPT" | sed '$d' > "$tmpd/up.inc"
+cat > "$tmpd/t.sh" <<'EOF'
+set -Eeuo pipefail
+# shellcheck disable=SC1091
+. ./kv.inc
+. ./up.inc
+VERSION='1.5.2'
+PATH_SAVE="$PATH"
+printf '%s\n' 'VERSION=9.9.9' 'PATH=/evil' 'ADMIN_PASSWORD=ab\cd$ef' > env.test
+load_kv_file env.test
+[[ "$VERSION" == 1.5.2 ]]
+[[ "$PATH" == "$PATH_SAVE" ]]
+[[ "$ADMIN_PASSWORD" == 'ab\cd$ef' ]]
+upsert_kv out.env SECRET 'x\y&z'
+grep -Fx 'SECRET=x\y&z' out.env >/dev/null
+EOF
+( cd "$tmpd" && bash t.sh )
 
 echo "STATIC AUDIT OK"

@@ -7,6 +7,12 @@
 
 Ниже — заметки по конкретным релизам (хеши, что менять после скачивания старой версии). Для повседневной работы используйте Latest и раздел 10 в GUIDE.
 
+# Установка Remnawave Manager 1.5.2
+
+Аудит: пункт **13** restore, `ask`/EOF, `VERSION` из os-release, меню 27–32 не abort. Сначала `self-update`.
+
+jsDelivr: `@v1.5.2` / `65a1a8ef96d427863c0fdad5fc765dee634f18562b34723a5e6a768acb9bc0ba`.
+
 # Установка Remnawave Manager 1.5.1
 
 Пункт **26**: проверка Latest больше не роняет меню. Тег с первого редиректа GitHub, запас jsDelivr. С 1.5.0: `self-update` или curl jsDelivr `@v1.5.1`.
