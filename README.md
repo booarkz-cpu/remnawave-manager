@@ -4,17 +4,17 @@
 
 Production installer for [Remnawave](https://docs.rw) on Debian/Ubuntu. Interactive menu with a description of every function. UI language: **English** or **Russian**.
 
-**Current version:** `25.2.4-prod`
+**Current version:** `25.2.5-prod`
 
 Main line: **booarkz-cpu**. Extra behaviour comes from [Rezzosoft KVN](https://github.com/Rrezzak09VPN/remnanode-VLESS-Reality-Hysteria2), [eGamesAPI](https://github.com/eGamesAPI/remnawave-reverse-proxy) and [DigneZzZ](https://github.com/DigneZzZ/remnawave-scripts). Original authorship is kept — see [CREDITS.md](CREDITS.md).
 
-The Xray profile, inbounds, nodes, hosts, AUTO squad and AUTO user are created through the Remnawave API. You do not edit the panel UI or the converter to bind protocols.
+The Xray profile, inbounds, nodes, hosts, **CorgiLusi** squad and CorgiLusi user are created through the Remnawave API. Each node gets its own config profile. **Default-Profile** is removed from internal squads after install.
 
 ## Quick start
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v25.2.4-prod/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v25.2.5-prod/remnawave-manager.sh \
   -o remnawave-manager.sh
 chmod +x remnawave-manager.sh
 sudo bash remnawave-manager.sh
@@ -36,7 +36,7 @@ By default every transport is enabled: Reality, Hysteria2, gRPC and xHTTP.
 | 1 | Full install | Panel + node on one VPS, nginx SNI, Corgi SelfSteal, certificates, API bind |
 | 2 | Panel only | Panel + subscription page + HTTPS; `EDGE_ADDRESS` registers the node now |
 | 3 | Node only | Host-network remnanode, Reality SNI site; `SECRET_KEY` from panel `credentials.txt` |
-| 4 | Auto-bind protocols | Refresh AUTO-PROFILE, attach inbounds, create hosts and AUTO squad (no panel UI) |
+| 4 | Auto-bind protocols | Per-node CorgiLusi profile, CorgiLusi squad, delete Default-Profile |
 | 5 | Status | Containers, nginx/fail2ban, systemd timers |
 | 6 | Doctor | Panel API, subscription page, ports, UFW |
 | 7 | Repair | Rewrite proxy headers and SelfSteal without wiping Docker/DB |
@@ -55,7 +55,7 @@ By default every transport is enabled: Reality, Hysteria2, gRPC and xHTTP.
 | 20 | Converter | Optional Rezzosoft JSON helper (not required to bind) |
 | 21 | Credits / help | Authorship and full CLI help |
 | 22 | Language | English or Русский |
-| 23 | URLs | Panel / subscription / SNI and AUTO user link (passwords stay in `credentials.txt`) |
+| 23 | URLs | Panel / subscription / SNI and CorgiLusi user link (passwords stay in `credentials.txt`) |
 | 0 | Exit | — |
 
 ## Install modes

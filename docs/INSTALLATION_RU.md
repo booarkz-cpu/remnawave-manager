@@ -1,4 +1,4 @@
-# Установка Remnawave Manager 25.2.4-prod
+# Установка Remnawave Manager 25.2.5-prod
 
 ## 1. Подготовка
 
@@ -14,7 +14,7 @@ chmod +x remnawave-manager.sh
 sha256sum remnawave-manager.sh
 ```
 
-Сверьте сумму с файлом `SHA256SUMS`. Актуальный файл также называется `remnawave-manager-v25.2.4-prod.sh`. Скачивайте через jsDelivr `@v25.2.4-prod`, не с `raw.githubusercontent.com/main`.
+Сверьте сумму с файлом `SHA256SUMS`. Актуальный файл также называется `remnawave-manager-v25.2.5-prod.sh`. Скачивайте через jsDelivr `@v25.2.5-prod`, не с `raw.githubusercontent.com/main`.
 
 Без аргументов скрипт открывает меню с описанием всех функций и предлагает язык (English / русский). Профиль, ноды, хосты и сквад привязываются через API — панель и конвертер править не нужно.
 
@@ -69,7 +69,7 @@ sudo bash remnawave-manager.sh install node --yes \
   NODE_SECRET_KEY='секрет_из_credentials.txt'
 ```
 
-`install node` — синоним `install edge`. По умолчанию ставятся все транспорты: Reality (SNI TCP/443), Hysteria2 UDP/443, gRPC TCP/8443, xHTTP TCP/4443. На панели вызовите `install panel` с `EDGE_ADDRESS=<IP ноды>` или затем `sudo bash remnawave-manager.sh protocols` — inbound’ы, хосты и сквад AUTO привяжутся через API.
+`install node` — синоним `install edge`. По умолчанию ставятся все транспорты: Reality (SNI TCP/443), Hysteria2 UDP/443, gRPC TCP/8443, xHTTP TCP/4443. На панели вызовите `install panel` с `EDGE_ADDRESS=<IP ноды>` или затем `sudo bash remnawave-manager.sh protocols` — inbound’ы, хосты и сквад CorgiLusi привяжутся через API. Default-Profile будет удалён.
 
 Повторная автопривязка на уже стоящей системе: `sudo bash remnawave-manager.sh bind` (то же, что `protocols`) или пункт 4 меню.
 
@@ -131,7 +131,7 @@ sha256sum remnawave-manager.sh
 sudo bash remnawave-manager.sh protocols
 ```
 
-Команда `protocols` (синоним `bind`) обновляет AUTO-PROFILE, вешает все inbound’ы на ноды, создаёт хосты и сквад AUTO. UI панели для этого не открывайте.
+Команда `protocols` (синоним `bind`) обновляет профили CorgiLusi (по одному на ноду), вешает inbound’ы, создаёт хосты и сквад CorgiLusi, удаляет Default-Profile. UI панели для этого не открывайте.
 
 ## 12. Обновление до 25.2.2-prod (меню и язык)
 
@@ -174,3 +174,17 @@ sudo bash remnawave-manager.sh --lang ru
 ```
 
 Пункт **7 Repair**. Если `manager.env` содержит только язык, домены берутся из `.env` панели, `credentials.txt` и nginx. Если скрипт всё же спросит домены — укажите panel / sub / reality (например pst / sb / blog).
+
+## 15. Обновление до 25.2.5-prod (сквад CorgiLusi, без Default-Profile)
+
+```bash
+curl -fL --retry 5 --retry-all-errors \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v25.2.5-prod/remnawave-manager.sh \
+  -o remnawave-manager.sh
+chmod +x remnawave-manager.sh
+sha256sum remnawave-manager.sh
+# нужно: d428f8fac02c9904a8dec07b585fc8f0ecafd561482b1a72c8be756c101e65e2
+sudo bash remnawave-manager.sh --lang ru
+```
+
+Пункт **4** (автопривязка) или `sudo bash remnawave-manager.sh protocols`: сквад CorgiLusi, отдельный профиль на ноду, Default-Profile удаляется.

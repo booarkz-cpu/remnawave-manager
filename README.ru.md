@@ -4,17 +4,17 @@
 
 Production-установщик [Remnawave](https://docs.rw) на Debian/Ubuntu. Интерактивное меню с описанием каждой функции. Язык интерфейса: **русский** или **English**.
 
-**Текущая версия:** `25.2.4-prod`
+**Текущая версия:** `25.2.5-prod`
 
 Автор основной линии: **booarkz-cpu**. В скрипт добавлены функции из [Rezzosoft KVN](https://github.com/Rrezzak09VPN/remnanode-VLESS-Reality-Hysteria2), [eGamesAPI](https://github.com/eGamesAPI/remnawave-reverse-proxy) и [DigneZzZ](https://github.com/DigneZzZ/remnawave-scripts). Авторство исходных проектов сохранено — см. [CREDITS.md](CREDITS.md).
 
-Профиль Xray, inbound’ы, ноды, хосты, сквад AUTO и пользователь AUTO создаются через API. Панель и конвертер для привязки протоколов править не нужно.
+Профиль Xray, inbound’ы, ноды, хосты, сквад **CorgiLusi** и пользователь CorgiLusi создаются через API. У каждой ноды свой config-профиль. **Default-Profile** во внутренних сквадах удаляется сразу после установки.
 
 ## Быстрый старт
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v25.2.4-prod/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v25.2.5-prod/remnawave-manager.sh \
   -o remnawave-manager.sh
 chmod +x remnawave-manager.sh
 sudo bash remnawave-manager.sh
@@ -36,7 +36,7 @@ sudo bash remnawave-manager.sh --lang en
 | 1 | Полная установка | Панель + нода на одном VDS, nginx SNI, Corgi SelfSteal, сертификаты, автопривязка |
 | 2 | Только панель | Панель + страница подписки + HTTPS; `EDGE_ADDRESS` сразу регистрирует ноду |
 | 3 | Только нода | remnanode в host-сети, SNI-сайт Reality; `SECRET_KEY` из `credentials.txt` панели |
-| 4 | Автопривязка протоколов | Обновляет AUTO-PROFILE, вешает inbound’ы, создаёт хосты и сквад AUTO (без UI панели) |
+| 4 | Автопривязка протоколов | Отдельный профиль CorgiLusi на ноду, сквад CorgiLusi, удаление Default-Profile |
 | 5 | Состояние | Контейнеры, nginx/fail2ban, systemd-таймеры |
 | 6 | Диагностика | API панели, страница подписки, порты, UFW |
 | 7 | Repair | Переписывает proxy-заголовки и SelfSteal без удаления Docker/БД |
@@ -55,7 +55,7 @@ sudo bash remnawave-manager.sh --lang en
 | 20 | Конвертер | Необязательный JSON-помощник Rezzosoft (для привязки не нужен) |
 | 21 | Авторство / справка | Авторы и полная справка CLI |
 | 22 | Язык | Русский или English |
-| 23 | Адреса | Панель / подписка / SNI и ссылка AUTO (пароли остаются в `credentials.txt`) |
+| 23 | Адреса | Панель / подписка / SNI и ссылка CorgiLusi (пароли остаются в `credentials.txt`) |
 | 0 | Выход | — |
 
 ## Режимы установки

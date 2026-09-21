@@ -1,5 +1,12 @@
 # Changelog
 
+## 25.2.5-prod
+
+Сквад и профили называются **CorgiLusi**, не AUTO. У каждой ноды свой config-профиль. Сразу после установки **Default-Profile** (и сквад с таким именем) удаляется. Старый AUTO-PROFILE переименовывается в CorgiLusi при `protocols` / пункте 4.
+
+SHA256:
+`d428f8fac02c9904a8dec07b585fc8f0ecafd561482b1a72c8be756c101e65e2`
+
 ## 25.2.4-prod
 
 `repair` больше не требует заполненный `manager.env`. Домены поднимаются из `.env` панели, `credentials.txt`, nginx и Let's Encrypt. `--lang` не создаёт пустой env, из‑за которого пункт 7 падал с «нет DOMAIN_PANEL». `manager.env` больше не `source` — пароли с `$` и `&` больше не ломают загрузку доменов.

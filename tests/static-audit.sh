@@ -3,11 +3,12 @@ set -Eeuo pipefail
 
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
-SCRIPT=remnawave-manager-v25.2.4-prod.sh
+SCRIPT=remnawave-manager-v25.2.5-prod.sh
 
 echo "[1/18] bash -n current + historical"
 bash -n "$SCRIPT"
 bash -n remnawave-manager.sh
+bash -n remnawave-manager-v25.2.4-prod.sh
 bash -n remnawave-manager-v25.2.3-prod.sh
 bash -n remnawave-manager-v25.2.2-prod.sh
 bash -n remnawave-manager-v25.2.1-prod.sh
@@ -116,9 +117,18 @@ grep -Fq 'ensure_internal_squad()' "$SCRIPT"
 grep -Fq 'PATCH /nodes/' "$SCRIPT"
 grep -Fq 'PATCH /config-profiles/' "$SCRIPT"
 grep -Fq 'PATCH /hosts/' "$SCRIPT"
-grep -Fq '/nodes/bulk-actions/profile-modification' "$SCRIPT"
 grep -Fq '/internal-squads/' "$SCRIPT"
 grep -Fq 'create_auto_user()' "$SCRIPT"
+grep -Fq 'CorgiLusi' "$SCRIPT"
+grep -Fq 'remove_default_profile_and_squads()' "$SCRIPT"
+grep -Fq 'Default-Profile' "$SCRIPT"
+grep -Fq 'profile_name_for_node()' "$SCRIPT"
+grep -Fq 'canonical_node_name()' "$SCRIPT"
+grep -Fq 'is_discard_name()' "$SCRIPT"
+if grep -nE 'Default Profile\)' "$SCRIPT"; then
+  echo 'FAIL: unquoted space in case pattern breaks bash -n' >&2
+  exit 1
+fi
 if grep -nE 'PATCH "/nodes/\$\{' "$SCRIPT"; then
   echo 'FAIL: node UPDATE must PATCH /nodes/ with uuid in the JSON body' >&2
   exit 1
@@ -166,7 +176,7 @@ echo "[14/18] current script copies match"
 cmp -s remnawave-manager.sh "$SCRIPT"
 
 echo "[15/18] VERSION string"
-grep -Fq "VERSION='25.2.4-prod'" "$SCRIPT"
+grep -Fq "VERSION='25.2.5-prod'" "$SCRIPT"
 
 echo "[16/18] SHA256SUMS covers every versioned script"
 missing=0
