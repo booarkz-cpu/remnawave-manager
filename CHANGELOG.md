@@ -1,5 +1,17 @@
 # Changelog
 
+## 25.1.8-prod
+
+Bootstrap/API token compatibility hotfix.
+
+- автоматические имена API token сокращены до безопасной длины для текущего ограничения backend `name <= 30`;
+- добавлена внутренняя проверка длины имени перед запросом создания token;
+- имя token больше не зависит от строки версии релиза;
+- сохранён `ADMIN_PASSWORD` bootstrap persistence из 25.1.7.
+
+SHA256:
+`1271774b70e4f4c0b4f8574e25248b665547bc90aac2b6e59ce5d8e2824b46aa`
+
 ## 25.1.7-prod
 
 Bootstrap persistence hotfix.
