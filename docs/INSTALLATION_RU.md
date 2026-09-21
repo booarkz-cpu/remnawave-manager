@@ -87,7 +87,10 @@ sudo bash remnawave-manager.sh restore /var/backups/remnawave/ARCHIVE.tgz
 Скачайте **25.1.14** с GitHub Releases (не `raw.githubusercontent.com/main` — кэш отдаёт 25.1.12):
 
 ```bash
-curl -fsSL -L https://github.com/booarkz-cpu/remnawave-manager/releases/download/v25.1.14-prod/remnawave-manager.sh -o remnawave-manager.sh
+rm -f remnawave-manager.sh
+curl -fL --retry 5 --retry-all-errors \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v25.1.14-prod/remnawave-manager.sh \
+  -o remnawave-manager.sh
 chmod +x remnawave-manager.sh
 sha256sum remnawave-manager.sh
 sudo bash remnawave-manager.sh repair
