@@ -2,12 +2,14 @@
 
 Production-oriented Bash manager for deploying and maintaining Remnawave on Debian/Ubuntu.
 
-**Current version:** `25.1.13-prod`
+**Current version:** `25.1.14-prod`
 
 ## Quick start
 
+Download from **GitHub Releases** (avoids `raw.githubusercontent.com` CDN cache):
+
 ```bash
-curl -fsSL https://raw.githubusercontent.com/booarkz-cpu/remnawave-manager/main/remnawave-manager.sh -o remnawave-manager.sh
+curl -fsSL -L https://github.com/booarkz-cpu/remnawave-manager/releases/latest/download/remnawave-manager.sh -o remnawave-manager.sh
 chmod +x remnawave-manager.sh
 sha256sum remnawave-manager.sh
 sudo bash remnawave-manager.sh install single --dry-run --yes \
@@ -22,34 +24,22 @@ sudo bash remnawave-manager.sh install single --yes \
   ADMIN_EMAIL=admin@example.com
 ```
 
-`remnawave-manager.sh` is a copy of `remnawave-manager-v25.1.13-prod.sh`.
+`remnawave-manager.sh` is a copy of `remnawave-manager-v25.1.14-prod.sh`.
 
-## 25.1.13-prod
+## 25.1.14-prod
 
-Hotfix for `repair` on a 25.1.11 VDS: 25.1.12 deleted `/etc/nginx/conf.d/ssl-params.conf` before rewriting `reality-site.conf`, so `nginx -t` failed and the 502/Corgi changes never applied.
+`repair` on a VDS that already lost `/etc/nginx/conf.d/ssl-params.conf` (failed 25.1.12 run) now recreates a comment-only stub first, so `nginx -t` cannot fail on a missing include. Download via Releases, not cached `raw.githubusercontent.com`.
 
-- leftover `include /etc/nginx/conf.d/ssl-params.conf` is rewritten to the snippet **before** the old file is removed;
-- `repair` writes all nginx files, then reloads once.
-
-If `repair` from 25.1.12 failed with `ssl-params.conf` missing, download 25.1.13 and run `repair` again.
-
-## 25.1.12-prod
-
-Fixes a live single-VDS install where the panel and subscription page returned HTTP 502 and the Reality SNI site was a generic stub.
-
-- nginx no longer uses Ubuntu `proxy_params`; it sends the official Remnawave reverse-proxy headers (`Host`, `X-Real-IP`, `X-Forwarded-For`, `X-Forwarded-Proto: https`, `X-Forwarded-Host`) plus HTTP/1.1 so ProxyCheckMiddleware does not destroy the upstream socket;
-- SSL snippets live in `/etc/nginx/snippets/` so Ubuntu does not auto-include them twice from `conf.d/`;
-- default SelfSteal camouflage is a Corgi Lusi kennel site (`--selfsteal-template corgi|simple|business|nothing`);
-- `repair` rewrites nginx and the masking site on an already installed VDS without touching Docker/DB;
-- SSH port detection no longer trips `set -o pipefail` via `head` SIGPIPE.
-
-If `repair` from 25.1.12 failed with `ssl-params.conf` missing, or you are still on 25.1.11:
+If panel/subscription still return 502:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/booarkz-cpu/remnawave-manager/main/remnawave-manager.sh -o remnawave-manager.sh
+curl -fsSL -L https://github.com/booarkz-cpu/remnawave-manager/releases/download/v25.1.14-prod/remnawave-manager.sh -o remnawave-manager.sh
 chmod +x remnawave-manager.sh
+sha256sum remnawave-manager.sh
 sudo bash remnawave-manager.sh repair
 ```
+
+The script must print `repair: Remnawave Manager 25.1.14-prod`. If it does not, you still have an old copy.
 
 ## Runtime
 
@@ -67,12 +57,10 @@ X-Remnawave-Client-Type: browser
 
 **Static audit:** green.
 
-**Real VDS runtime test:** use 25.1.13 `repair` if 25.1.12 failed on `ssl-params.conf`.
+**Real VDS runtime test:** 25.1.14 `repair` after a failed 25.1.12 run.
 
 ## SHA256
 
-```text
-c868a4970404dc9ae37d687f49e780a6de9ee8698115604cde1999c816b7148b  remnawave-manager-v25.1.13-prod.sh
-```
+See [SHA256SUMS](SHA256SUMS).
 
 Details: [CHANGELOG.md](CHANGELOG.md), [docs/INSTALLATION_RU.md](docs/INSTALLATION_RU.md).

@@ -3,12 +3,12 @@ set -Eeuo pipefail
 
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
-SCRIPT=remnawave-manager-v25.1.13-prod.sh
+SCRIPT=remnawave-manager-v25.1.14-prod.sh
 
 echo "[1/14] bash -n current + historical"
 bash -n "$SCRIPT"
 bash -n remnawave-manager.sh
-for f in remnawave-manager-v25.1.{0,1,2,3,4,5,6,7,8,9,10,11,12}-prod.sh; do
+for f in remnawave-manager-v25.1.{0,1,2,3,4,5,6,7,8,9,10,11,12,13}-prod.sh; do
   bash -n "$f"
 done
 
@@ -66,6 +66,7 @@ grep -Fq "SELFSTEAL_TEMPLATE:-corgi" "$SCRIPT"
 grep -Fq 'repair()' "$SCRIPT"
 grep -Fq 'migrate_ssl_params_includes' "$SCRIPT"
 grep -Fq 'NGINX_SKIP_RELOAD' "$SCRIPT"
+grep -Fq 'Compatibility stub' "$SCRIPT"
 if grep -n 'include /etc/nginx/proxy_params' "$SCRIPT"; then
   echo 'FAIL: Ubuntu proxy_params is not sufficient for ProxyCheckMiddleware' >&2
   exit 1
@@ -75,7 +76,7 @@ echo "[10/14] current script copies match"
 cmp -s remnawave-manager.sh "$SCRIPT"
 
 echo "[11/14] VERSION string"
-grep -Fq "VERSION='25.1.13-prod'" "$SCRIPT"
+grep -Fq "VERSION='25.1.14-prod'" "$SCRIPT"
 
 echo "[12/14] SHA256SUMS covers every versioned script"
 missing=0

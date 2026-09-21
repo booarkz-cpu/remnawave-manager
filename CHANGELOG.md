@@ -1,5 +1,12 @@
 # Changelog
 
+## 25.1.14-prod
+
+`repair` больше не может сломать nginx: `/etc/nginx/conf.d/ssl-params.conf` сразу восстанавливается как пустой stub, если 25.1.12 его удалил. Скачивайте релиз с GitHub Releases, не с закэшированного `raw.githubusercontent.com`.
+
+SHA256:
+будет после упаковки.
+
 ## 25.1.13-prod
 
 Hotfix `repair` после 25.1.12: файл `/etc/nginx/conf.d/ssl-params.conf` удалялся до перезаписи `reality-site.conf`, `nginx -t` падал, панель оставалась на 502.

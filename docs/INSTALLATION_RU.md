@@ -1,4 +1,4 @@
-# Установка Remnawave Manager 25.1.13-prod
+# Установка Remnawave Manager 25.1.14-prod
 
 ## 1. Подготовка
 
@@ -9,12 +9,12 @@ Ubuntu/Debian VDS, root-доступ, публичный IPv4 и DNS A-запи�
 Из корня репозитория или напрямую с GitHub:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/booarkz-cpu/remnawave-manager/main/remnawave-manager.sh -o remnawave-manager.sh
+curl -fsSL -L https://github.com/booarkz-cpu/remnawave-manager/releases/latest/download/remnawave-manager.sh -o remnawave-manager.sh
 chmod +x remnawave-manager.sh
 sha256sum remnawave-manager.sh
 ```
 
-Сверьте сумму с файлом `SHA256SUMS`. Актуальный файл также называется `remnawave-manager-v25.1.13-prod.sh`.
+Сверьте сумму с файлом `SHA256SUMS`. Актуальный файл также называется `remnawave-manager-v25.1.14-prod.sh`. Не берите скрипт с `raw.githubusercontent.com/main` — у CDN кэш на 5 минут, можно скачать старую 25.1.12.
 
 Во время `install` скрипт выполняет `apt-get full-upgrade`. Автоматически VDS не перезагружается; если появится `/var/run/reboot-required`, перезагрузите сервер после завершения установки.
 
@@ -84,15 +84,16 @@ sudo bash remnawave-manager.sh restore /var/backups/remnawave/ARCHIVE.tgz
 
 Панель и subscription-page требуют `X-Forwarded-For` и `X-Forwarded-Proto: https`. Без них backend рвёт сокет, nginx отвечает 502.
 
-Скачайте **25.1.13+** (не 25.1.12: там `repair` падал на удалении `ssl-params.conf`) и выполните:
+Скачайте **25.1.14** с GitHub Releases (не `raw.githubusercontent.com/main` — кэш отдаёт 25.1.12):
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/booarkz-cpu/remnawave-manager/main/remnawave-manager.sh -o remnawave-manager.sh
+curl -fsSL -L https://github.com/booarkz-cpu/remnawave-manager/releases/download/v25.1.14-prod/remnawave-manager.sh -o remnawave-manager.sh
 chmod +x remnawave-manager.sh
+sha256sum remnawave-manager.sh
 sudo bash remnawave-manager.sh repair
 ```
 
-Команда переписывает nginx vhosts, proxy-заголовки и маскировочный сайт Reality (по умолчанию — Corgi Lusi). Docker и база не трогаются.
+В логе должно быть `repair: Remnawave Manager 25.1.14-prod`. Команда переписывает nginx vhosts, proxy-заголовки и маскировочный сайт Reality (Corgi Lusi). Docker и база не трогаются.
 
 ## 10. Production test
 
