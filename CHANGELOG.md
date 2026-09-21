@@ -1,11 +1,18 @@
 # Changelog
 
+## 25.1.15-prod
+
+Ubuntu nginx 1.24 не знает директиву `http2 on;` (она появилась в 1.25.1). Vhost снова используют `listen ... ssl http2;`.
+
+SHA256:
+`15ad868699b467264ffda6354b94cf9fc6961b02569adcce36c480c131464835`
+
 ## 25.1.14-prod
 
 `repair` больше не может сломать nginx: `/etc/nginx/conf.d/ssl-params.conf` сразу восстанавливается как пустой stub, если 25.1.12 его удалил. Скачивайте релиз с GitHub Releases, не с закэшированного `raw.githubusercontent.com`.
 
 SHA256:
-будет после упаковки.
+`e94215cc2dfb6e829ee8af449569d43b0d2f1e910017c8ebc40a1766d9f0e6a0`
 
 ## 25.1.13-prod
 
