@@ -15,4 +15,3 @@ jobs:
       - uses: actions/checkout@v4
       - name: Run static audit
         run: bash tests/static-audit.sh
-

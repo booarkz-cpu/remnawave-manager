@@ -1,50 +1,48 @@
-﻿# Remnawave Manager
+# Remnawave Manager
 
-Production-ориентированный Bash-менеджер для развёртывания и обслуживания Remnawave на Debian/Ubuntu.
+Production-РѕСЂРёРµРЅС‚РёСЂРѕРІР°РЅРЅС‹Р№ Bash-РјРµРЅРµРґР¶РµСЂ РґР»СЏ СЂР°Р·РІС‘СЂС‚С‹РІР°РЅРёСЏ Рё РѕР±СЃР»СѓР¶РёРІР°РЅРёСЏ Remnawave РЅР° Debian/Ubuntu.
 
-**Текущая версия:** `25.1.5-prod`
+**РўРµРєСѓС‰Р°СЏ РІРµСЂСЃРёСЏ:** `25.1.6-prod`
 
-## Быстрый старт
+## Р‘С‹СЃС‚СЂС‹Р№ СЃС‚Р°СЂС‚
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/booarkz-cpu/remnawave-manager/main/remnawave-manager-v25.1.5-prod.sh -o remnawave-manager.sh
+curl -fsSL https://raw.githubusercontent.com/booarkz-cpu/remnawave-manager/main/remnawave-manager-v25.1.6-prod.sh -o remnawave-manager.sh
 chmod +x remnawave-manager.sh
 sha256sum remnawave-manager.sh
 bash remnawave-manager.sh --dry-run
 sudo bash remnawave-manager.sh install single
 ```
 
-## 25.1.5
+## 25.1.6
 
-Runtime-логика `25.1.4-prod` не менялась. Исправлена только release/CI-проверка:
+Hotfix bootstrap/API РґР»СЏ Р°РєС‚СѓР°Р»СЊРЅРѕРіРѕ Remnawave Panel 3.x:
 
-- static audit запускает dry-run Manager через `sudo`;
-- тест проверяет checksum только текущего релизного файла;
-- workflow не падает из-за исторических checksum старых артефактов;
-- тестовый `static-audit.sh` записан без UTF-8 BOM.
+- РґРѕР±Р°РІР»РµРЅ `X-Remnawave-Client-Type: browser` РІРѕ РІРЅСѓС‚СЂРµРЅРЅРёРµ API-Р·Р°РїСЂРѕСЃС‹ Manager;
+- СЌС‚Рѕ СЂР°Р·СЂРµС€Р°РµС‚ admin JWT РІС‹РїРѕР»РЅСЏС‚СЊ API-РІС‹Р·РѕРІС‹, РІРєР»СЋС‡Р°СЏ СЃРѕР·РґР°РЅРёРµ API token, СЃРѕРіР»Р°СЃРЅРѕ С‚РµРєСѓС‰РµРјСѓ `JwtDefaultGuard` backend;
+- РєРѕРјР°РЅРґР° `backup` С‚РµРїРµСЂСЊ СЃРѕРѕР±С‰Р°РµС‚ РїРѕРЅСЏС‚РЅСѓСЋ РѕС€РёР±РєСѓ, РµСЃР»Рё backup helper РµС‰С‘ РЅРµ Р±С‹Р» СѓСЃС‚Р°РЅРѕРІР»РµРЅ.
 
 ## Runtime
 
-`25.1.3+` содержит proxy-aware внутренние API-запросы:
+`25.1.6+` РёСЃРїРѕР»СЊР·СѓРµС‚ proxy-aware РІРЅСѓС‚СЂРµРЅРЅРёРµ API-Р·Р°РїСЂРѕСЃС‹:
 
 ```text
 X-Forwarded-For: 127.0.0.1
 X-Forwarded-Proto: https
 X-Forwarded-Host: <Panel domain>
 Host: <Panel domain>
+X-Remnawave-Client-Type: browser
 ```
-
-Это нужно для актуального ProxyCheckMiddleware Remnawave.
 
 ## Production status
 
-Static audit должен быть green. Реальный VDS runtime test всё ещё обязателен.
+Static audit: green. Р РµР°Р»СЊРЅС‹Р№ VDS runtime test РѕР±СЏР·Р°С‚РµР»РµРЅ.
 
 ## SHA256
 
 ```text
-55a8aa4af70652d69e8572541b73b1846c0cd7e9e8aff6760e11350b7553ae8a  remnawave-manager-v25.1.5-prod.sh
+e890d9cbbc92b7dad020a3bfb25662979f1fa1f453f62563db28bda1b92b2780  remnawave-manager-v25.1.6-prod.sh
 ```
 
-Подробности: [CHANGELOG.md](CHANGELOG.md).
+РџРѕРґСЂРѕР±РЅРѕСЃС‚Рё: [CHANGELOG.md](CHANGELOG.md).
 
