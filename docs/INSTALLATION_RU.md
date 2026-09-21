@@ -1,22 +1,22 @@
-﻿# Установка Remnawave Manager 25.1.3-prod
+# Установка Remnawave Manager 25.1.11-prod
 
 ## 1. Подготовка
 
-Ubuntu/Debian VDS, root-доступ, публичный IPv4 и DNS A-записи.
+Ubuntu/Debian VDS, root-доступ, публичный IPv4 и DNS A-записи на домены Panel, Subscription и Reality SNI.
 
 ## 2. Скачать
 
+Из корня репозитория или напрямую с GitHub:
+
 ```bash
-curl -fsSL https://raw.githubusercontent.com/booarkz-cpu/remnawave-manager/main/remnawave-manager-v25.1.3-prod.sh -o remnawave-manager.sh
+curl -fsSL https://raw.githubusercontent.com/booarkz-cpu/remnawave-manager/main/remnawave-manager.sh -o remnawave-manager.sh
 chmod +x remnawave-manager.sh
 sha256sum remnawave-manager.sh
 ```
 
-Ожидаемый SHA256:
+Сверьте сумму с файлом `SHA256SUMS`. Актуальный файл также называется `remnawave-manager-v25.1.11-prod.sh`.
 
-```text
-74274f01bd10e072ab18c474490af64de36f24777cd860fce1a457eb113d9020
-```
+Во время `install` скрипт выполняет `apt-get full-upgrade`. Автоматически VDS не перезагружается; если появится `/var/run/reboot-required`, перезагрузите сервер после завершения установки.
 
 ## 3. Dry-run
 
@@ -38,13 +38,32 @@ sudo bash remnawave-manager.sh install single --yes \
   ADMIN_EMAIL=admin@example.com
 ```
 
-## 5. ProxyCheckMiddleware
+Панель работает в Docker, Node — в `network_mode: host`. Адрес Node в карточке панели — gateway сети `remnawave-network` (не `127.0.0.1`).
 
-Panel нельзя корректно использовать без reverse proxy/HTTPS. Официальный SDK показывает внутренний доступ через HTTP с `X-Forwarded-For` и `X-Forwarded-Proto: https`. citeturn764358search6
+## 5. Multi-VDS
 
-`25.1.3-prod` добавляет эти заголовки в внутренние API health/bootstrap checks.
+```bash
+sudo bash remnawave-manager.sh install panel --yes \
+  DOMAIN_PANEL=panel.example.com \
+  DOMAIN_SUB=sub.example.com \
+  DOMAIN_REALITY=reality.example.com \
+  EDGE_ADDRESS=203.0.113.20 \
+  ADMIN_EMAIL=admin@example.com
 
-## 6. Диагностика
+sudo bash remnawave-manager.sh install edge --yes \
+  PANEL_IP=203.0.113.10 \
+  DOMAIN_REALITY=reality.example.com \
+  ADMIN_EMAIL=admin@example.com \
+  NODE_SECRET_KEY='секрет_из_credentials_панели'
+```
+
+В режиме panel HTTPS слушает 443 и маршрутизирует SNI на панель и subscription page. Reality inbound живёт на edge.
+
+## 6. ProxyCheckMiddleware
+
+Panel нельзя корректно использовать без reverse proxy/HTTPS. Внутренние API-запросы идут по HTTP с заголовками `X-Forwarded-For`, `X-Forwarded-Proto: https`, `X-Forwarded-Host` и `X-Remnawave-Client-Type: browser`.
+
+## 7. Диагностика
 
 ```bash
 sudo tail -100 /var/log/remnawave-manager.log
@@ -52,16 +71,15 @@ sudo docker logs --tail=100 remnawave
 sudo bash remnawave-manager.sh doctor
 ```
 
-## 7. Backup / Restore
+## 8. Backup / Restore
 
 ```bash
 sudo bash remnawave-manager.sh backup
 sudo bash remnawave-manager.sh restore /var/backups/remnawave/ARCHIVE.tgz
 ```
 
-## 8. Production test
+Для `.age` архива нужен ключ `/opt/remnawave/backup-age.key`.
 
-После bootstrap проверить Panel URL, Subscription URL, сертификаты, Node, Reality SNI, UFW, timers и backup/restore.
+## 9. Production test
 
-Реальный runtime test обязателен.
-
+После bootstrap проверить Panel URL, Subscription URL, сертификаты, Node (status Connected), Reality SNI, UFW, timers и backup/restore.

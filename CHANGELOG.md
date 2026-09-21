@@ -1,5 +1,28 @@
 # Changelog
 
+## 25.1.11-prod
+
+Исправления установщика поверх `25.1.10-prod` (автообновление ОС сохранено).
+
+- Node на одном VDS регистрируется через gateway Docker-сети `remnawave-network`, а не `127.0.0.1` (панель в контейнере не достучится до host-network remnanode по loopback);
+- UFW в режиме `single` открывает порт Node 2222 только с Docker-подсети;
+- режим `install panel` поднимает SNI-router на TCP/443;
+- `ssl_reject_handshake` используется на nginx ≥ 1.19.4, иначе dummy-сертификат и `return 444`;
+- Hysteria2: `sing-box run -c /etc/sing-box/config.json`;
+- Prometheus scrapes host-network node-exporter как `host.docker.internal:9100`;
+- в `.env` панели явно задаётся `REDIS_SOCKET=/var/run/valkey/valkey.sock`;
+- `manager.env` обновляется по ключам (upsert);
+- создание API token устойчиво к занятому имени (`name <= 30`);
+- username администратора больше не берётся как полный email;
+- пароль администратора проверяется по правилам backend (24+ / буква / цифра);
+- restore `.age` определяется по расширению;
+- `--admin-ip` и fail2ban учитывают все SSH-порты;
+- кастомное ядро Xray монтируется в уже существующий `volumes:` node compose;
+- сохранён `apt-get full-upgrade` из 25.1.10 (без авторебута).
+
+SHA256:
+`e10193fd771c386af76697b0bc42c1eddb831b21cf1d60341f6f6fe43269d239`
+
 ## 25.1.10-prod
 
 Automatic full OS update during installation.
@@ -12,7 +35,7 @@ Automatic full OS update during installation.
 - does not reboot automatically; reports `/var/run/reboot-required` when present.
 
 SHA256:
-`97a9a6cdfb5d203c35e43eee87ef8977ec34e3054a9fa5ca64dfc031fedb925`
+`97a9a6cdfb5d203c35e43eee87ef8977ec34e3054a9fa5ca64dfc031fedb9255`
 
 ## 25.1.9-prod
 
