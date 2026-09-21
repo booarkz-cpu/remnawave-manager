@@ -1,5 +1,13 @@
 # v1.5.2
 
+## English
+
+Audit of ordinary / important / critical installer bugs. Item **13** restores the archive again. The menu does not abort on `return 1` (node-only, empty list, certbot, rclone without a target). `ask` on EOF cancels. `/etc/os-release` no longer clobbers `VERSION`. Self-update: `bash remnawave-manager.sh self-update`.
+
+Full journal: [CHANGELOG.md](CHANGELOG.md) · [CHANGELOG.ru.md](CHANGELOG.ru.md).
+
+## Русский
+
 Аудит обычных / важных / критических ошибок установщика. Пункт **13** снова восстанавливает архив. Меню не падает на `return 1` (нода-only, пустой список, certbot, rclone без адреса). `ask` на EOF отменяется. `/etc/os-release` больше не затирает `VERSION`. Self-update: `bash remnawave-manager.sh self-update`.
 
 ```bash

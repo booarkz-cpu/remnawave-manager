@@ -2,7 +2,7 @@
 
 [English](MENU.en.md) · [Русский](MENU.ru.md) · [README](../README.ru.md) · [Инструкция](GUIDE.ru.md)
 
-Меню без аргументов: `bash remnawave-manager.sh`. Префикс `sudo` не пишите. Номера **1–27** не съезжают; **28–32** добавлены в 1.5.0. **0** / `q` — выход.
+Меню без аргументов: `bash remnawave-manager.sh`. **Сначала язык** (Enter оставляет текущий); пункт **22** переключает позже. Префикс `sudo` не пишите. Номера **1–27** не съезжают; **28–32** добавлены в 1.5.0. **0** / `q` — выход.
 
 Два обновления, которые путают:
 
@@ -213,9 +213,9 @@ CLI: `bash remnawave-manager.sh install-script`
 
 ## 22. Язык
 
-**Русский** или **English**. Пишется в `RW_LANG` в `/opt/remnawave/manager.env` (на ноде без панели — env edge).
+Спрашивается **при каждом запуске меню** (до пунктов 1–32). **Русский** или **English**. Enter оставляет текущий язык. Пишется в `RW_LANG` в `/opt/remnawave/manager.env` (на ноде без панели — env edge). Этот пункт переключает язык снова, не выходя из сессии.
 
-CLI: `bash remnawave-manager.sh --lang ru|en`
+Пропустить выбор при старте: `bash remnawave-manager.sh --lang ru|en`
 
 ---
 
@@ -304,7 +304,11 @@ CLI: `bash remnawave-manager.sh add-node`
 **Только VDS панели.** Пользователи VPN через API — не пароль администратора панели.
 
 1. Список (имя, статус, UUID)
-2. Создать (3–32 `A–Za-z0-9._-`, начинается с буквы; тот же сквад **CorgiLusi**; срок 10 лет, без лимита трафика)
+2. Создать — имя (3–32 `A–Za-z0-9._-`, начинается с буквы), затем:
+   - **срок** подписки: дни `1–36500` или `ГГГГ-ММ-ДД` (по умолчанию **365** дней)
+   - лимит **трафика**: `0` = безлимит, целое = ГиБ, или `512M` / `10G` / `1T`
+   - лимит **устройств** (HWID): `0` = без ограничения, иначе `1–1000`
+   Тот же сквад **CorgiLusi**. Поля API: `expireAt`, `trafficLimitBytes`, `trafficLimitStrategy=NO_RESET`, опционально `hwidDeviceLimit`.
 3. Включить
 4. Выключить
 5. Показать **ссылку подписки** (из API `subscriptionUrl` или `https://ДОМЕН_ПОДПИСКИ/shortUuid`)
@@ -314,11 +318,15 @@ CLI:
 
 ```bash
 bash remnawave-manager.sh users list
-bash remnawave-manager.sh users create Alice
+bash remnawave-manager.sh users create Alice 365 0 0
+bash remnawave-manager.sh users create Alice 30 10G 3
+bash remnawave-manager.sh users create Alice 2027-12-31 512M 2
 bash remnawave-manager.sh users enable UUID_ИЛИ_ИМЯ
 bash remnawave-manager.sh users disable UUID_ИЛИ_ИМЯ
 bash remnawave-manager.sh users sub UUID_ИЛИ_ИМЯ
 ```
+
+Значения без меню: `USER_EXPIRE_DAYS`, `USER_TRAFFIC_GB`, `USER_DEVICE_LIMIT`.
 
 ---
 

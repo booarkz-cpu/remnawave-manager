@@ -6,7 +6,7 @@
 
 Production installer for [Remnawave](https://docs.rw) on Debian/Ubuntu. Interactive menu with a description of every function. UI: **English** or **Russian**.
 
-**Current version:** `1.5.3`
+**Current version:** `1.5.4`
 
 **License:** [MIT](LICENSE) — use, copy, modify, and redistribute with the copyright notice. Original files downloaded by menu **24** stay under their authors’ terms — [CREDITS.md](CREDITS.md).
 
@@ -59,15 +59,15 @@ The two hashes must match. Then:
 bash remnawave-manager.sh
 ```
 
-No arguments opens the menu. Do not type `sudo` — the script raises root itself. On first run it asks for **English** or **Русский** (saved in `/opt/remnawave/manager.env`). Switch later with menu item 22 or `--lang en|ru`.
+No arguments opens a **language picker** (English / Русский), then the menu. Do not type `sudo` — the script raises root itself. Enter keeps the current language (`RW_LANG` in `/opt/remnawave/manager.env`). Switch later with menu item 22 or skip the picker with `--lang en|ru`.
 
-Pinned 1.5.3 via jsDelivr (optional):
+Pinned 1.5.4 via jsDelivr (optional):
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.5.3/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.5.4/remnawave-manager.sh \
   -o remnawave-manager.sh
-# sha256: ebfe8913476c0f04a5e13694f30b0bfbb7fa4cd0b81d5d1b9e7018906e9add98
+# sha256: 4a6200b2118c8df6f3a6f38f5efd48a0b2afa9c7358538fb7b5338391b9f7afa
 ```
 
 By default every transport is enabled: Reality, Hysteria2, gRPC and xHTTP.
@@ -301,7 +301,7 @@ Registers **another** node on an already-running **panel** via API — no `apt f
 
 ### 28. Users
 
-Panel only. List, create (3–32 `A–Za-z0-9._-`), enable/disable, show the **subscription URL** (not the admin password). Same squad as CorgiLusi. CLI: `users list|create NAME|enable UUID|disable UUID|sub UUID`.
+Panel only. List, create with **expiry / traffic cap / device limit**, enable/disable, show the **subscription URL** (not the admin password). Same squad as CorgiLusi. CLI: `users create NAME [DAYS|YYYY-MM-DD] [GB|512M|10G] [DEVICES]`.
 
 ### 29. Node control
 
@@ -395,7 +395,9 @@ CLI: `status`, `doctor`, `repair`, `backup`, `restore`, `update`, `up`, `down`, 
 | --- | --- | --- |
 | Full guide | [docs/GUIDE.en.md](docs/GUIDE.en.md) | [docs/GUIDE.ru.md](docs/GUIDE.ru.md) |
 | Menu (every item) | [docs/MENU.en.md](docs/MENU.en.md) | [docs/MENU.ru.md](docs/MENU.ru.md) |
-| Version journal | [CHANGELOG.md](CHANGELOG.md) | [docs/INSTALLATION_RU.md](docs/INSTALLATION_RU.md) |
+| Changelog | [CHANGELOG.md](CHANGELOG.md) | [CHANGELOG.ru.md](CHANGELOG.ru.md) |
+| Security | [SECURITY.md](SECURITY.md) | [SECURITY.ru.md](SECURITY.ru.md) |
+| Install notes | [docs/INSTALLATION_RU.md](docs/INSTALLATION_RU.md) | same |
 | License | [LICENSE](LICENSE) (MIT) | same |
 | Checksums | [SHA256SUMS](SHA256SUMS) | same |
 | Credits | [CREDITS.md](CREDITS.md) | same |
@@ -411,4 +413,4 @@ You may use, copy, modify, merge, publish, distribute, sublicense, and/or sell c
 
 This license covers **this repository** (`remnawave-manager.sh` and its docs). It matches the MIT licenses of [DigneZzZ/remnawave-scripts](https://github.com/DigneZzZ/remnawave-scripts) and [eGamesAPI/remnawave-reverse-proxy](https://github.com/eGamesAPI/remnawave-reverse-proxy). Menu **24** downloads those authors’ original files into `/opt/remnawave-addons`; those copies stay under **their** terms. Rezzosoft’s public tree has no SPDX license — we do not relicense it; we credit the author and keep the converter as an optional link.
 
-There is no warranty. Do not publish secrets from `credentials.txt`. See [SECURITY.md](SECURITY.md).
+There is no warranty. Do not publish secrets from `credentials.txt`. See [SECURITY.md](SECURITY.md) and [SECURITY.ru.md](SECURITY.ru.md).

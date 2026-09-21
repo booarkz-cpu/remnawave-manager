@@ -2,9 +2,9 @@
 
 [English](GUIDE.en.md) · [Русский](GUIDE.ru.md) · [README](../README.ru.md)
 
-Установщик и повседневный менеджер [Remnawave](https://docs.rw) на Debian/Ubuntu. Автор: **Корги Люси (Corgi Lusi)**. Текущая версия скрипта: **1.5.3**.
+Установщик и повседневный менеджер [Remnawave](https://docs.rw) на Debian/Ubuntu. Автор: **Корги Люси (Corgi Lusi)**. Текущая версия скрипта: **1.5.4**.
 
-Это полная инструкция. На GitHub в README — **полный разбор каждого пункта меню** на русском и английском. Журнал обновлений по версиям: [INSTALLATION_RU.md](INSTALLATION_RU.md), [CHANGELOG.md](../CHANGELOG.md). Лицензия: [MIT](../LICENSE).
+Это полная инструкция. На GitHub в README — **полный разбор каждого пункта меню** на русском и английском. Журнал обновлений по версиям: [INSTALLATION_RU.md](INSTALLATION_RU.md), [CHANGELOG.md](../CHANGELOG.md) (English) · [CHANGELOG.ru.md](../CHANGELOG.ru.md) (русский). Безопасность: [SECURITY.md](../SECURITY.md) · [SECURITY.ru.md](../SECURITY.ru.md). Лицензия: [MIT](../LICENSE).
 
 Есть **два разных** обновления. Их нельзя путать:
 
@@ -92,14 +92,14 @@ grep ' remnawave-manager.sh$' SHA256SUMS
 
 Две суммы должны совпасть. Latest: <https://github.com/booarkz-cpu/remnawave-manager/releases/latest>
 
-Фиксированная копия (пример для 1.5.3):
+Фиксированная копия (пример для 1.5.4):
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.5.3/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.5.4/remnawave-manager.sh \
   -o remnawave-manager.sh
 sha256sum remnawave-manager.sh
-# 1.5.3: ebfe8913476c0f04a5e13694f30b0bfbb7fa4cd0b81d5d1b9e7018906e9add98
+# 1.5.4: 4a6200b2118c8df6f3a6f38f5efd48a0b2afa9c7358538fb7b5338391b9f7afa
 ```
 
 Все суммы версий — в [SHA256SUMS](../SHA256SUMS).
@@ -114,7 +114,9 @@ bash remnawave-manager.sh
 
 Префикс **`sudo` писать не нужно**. Если вы не root, скрипт сам перезапустится через sudo. `--help` пароль не спрашивает.
 
-Без аргументов открывается меню. При первом запуске спрашивает **English** или **Русский** и пишет `RW_LANG` в `/opt/remnawave/manager.env` (на ноде без панели — в env edge).
+Без аргументов **сначала язык** (English / Русский; Enter оставляет текущий `RW_LANG`), затем нумерованное меню.
+
+Пропустить выбор: `--lang ru|en` (пишется в `/opt/remnawave/manager.env`, на ноде без панели — в env edge). Внутри сессии — пункт **22**.
 
 ```bash
 bash remnawave-manager.sh --lang ru
@@ -451,7 +453,9 @@ bash remnawave-manager.sh self-update
 bash remnawave-manager.sh community-update
 
 bash remnawave-manager.sh status | doctor | repair | urls
-bash remnawave-manager.sh users list|create|enable|disable|sub
+bash remnawave-manager.sh users list
+bash remnawave-manager.sh users create ИМЯ [ДНИ|ГГГГ-ММ-ДД] [ГБ|512M|10G] [УСТРОЙСТВА]
+bash remnawave-manager.sh users enable|disable|sub UUID_ИЛИ_ИМЯ
 bash remnawave-manager.sh nodes list|disable|enable|restart|address
 bash remnawave-manager.sh telegram enable|disable|test
 bash remnawave-manager.sh backup-remote [rclone:path]
@@ -483,7 +487,7 @@ bash remnawave-manager.sh addon remnawave|remnanode|selfsteal|wtm|netbird|egames
 | `/usr/local/sbin/remnawave-health-notify.sh` | Telegram из 5-минутного healthcheck (пункт **30**) |
 | `/usr/local/bin/remnawave-manager` | Необязательная копия CLI |
 
-Не публикуйте API-токены, `SECRET_KEY`, пароль PostgreSQL и `credentials.txt`. См. [SECURITY.md](../SECURITY.md).
+Не публикуйте API-токены, `SECRET_KEY`, пароль PostgreSQL и `credentials.txt`. См. [SECURITY.ru.md](../SECURITY.ru.md) и [SECURITY.md](../SECURITY.md).
 
 ---
 
@@ -519,4 +523,4 @@ bash remnawave-manager.sh addon remnawave|remnanode|selfsteal|wtm|netbird|egames
 - Не принимайте пункт **14** за обновление этого скрипта с GitHub
 - Не публикуйте `credentials.txt`
 
-Версии: [CHANGELOG.md](../CHANGELOG.md), [релизы](https://github.com/booarkz-cpu/remnawave-manager/releases).
+Версии: [CHANGELOG.md](../CHANGELOG.md) · [CHANGELOG.ru.md](../CHANGELOG.ru.md), [релизы](https://github.com/booarkz-cpu/remnawave-manager/releases).

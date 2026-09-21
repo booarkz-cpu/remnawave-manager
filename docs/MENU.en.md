@@ -2,7 +2,7 @@
 
 [English](MENU.en.md) · [Русский](MENU.ru.md) · [README](../README.md) · [Guide](GUIDE.en.md)
 
-Open the menu with no arguments: `bash remnawave-manager.sh`. Do not type `sudo`. Numbers **1–27** stay; **28–32** were added in 1.5.0. **0** / `q` leaves.
+Open the menu with no arguments: `bash remnawave-manager.sh`. **Language is asked first** (Enter keeps the current one); item **22** switches later. Do not type `sudo`. Numbers **1–27** stay; **28–32** were added in 1.5.0. **0** / `q` leaves.
 
 Two updates that look similar and are not:
 
@@ -213,9 +213,9 @@ Prints Corgi Lusi authorship, Rezzosoft / eGames / DigneZzZ credits, and the ful
 
 ## 22. Language
 
-**English** or **Русский**. Saved as `RW_LANG` in `/opt/remnawave/manager.env` (edge env on a node-only VPS).
+Asked **at every menu start** (before items 1–32). **English** or **Русский**. Enter keeps the current language. Saved as `RW_LANG` in `/opt/remnawave/manager.env` (edge env on a node-only VPS). This item switches again without leaving the session.
 
-CLI: `bash remnawave-manager.sh --lang en|ru`
+Skip the startup picker: `bash remnawave-manager.sh --lang en|ru`
 
 ---
 
@@ -304,7 +304,11 @@ CLI: `bash remnawave-manager.sh add-node`
 **Panel VPS only.** VPN users via API — not the panel admin password.
 
 1. List (username, status, UUID)
-2. Create (3–32 `A–Za-z0-9._-`, starts with a letter; same **CorgiLusi** squad; 10-year expiry, unlimited traffic)
+2. Create — username (3–32 `A–Za-z0-9._-`, starts with a letter), then:
+   - subscription **expiry**: days `1–36500` or `YYYY-MM-DD` (default **365** days)
+   - **traffic** cap: `0` = unlimited, bare integer = GiB, or `512M` / `10G` / `1T`
+   - **device** (HWID) limit: `0` = no cap, else `1–1000`
+   Same **CorgiLusi** squad. API fields: `expireAt`, `trafficLimitBytes`, `trafficLimitStrategy=NO_RESET`, optional `hwidDeviceLimit`.
 3. Enable
 4. Disable
 5. Show **subscription URL** (from API `subscriptionUrl`, or `https://SUB_DOMAIN/shortUuid`)
@@ -314,11 +318,15 @@ CLI:
 
 ```bash
 bash remnawave-manager.sh users list
-bash remnawave-manager.sh users create Alice
+bash remnawave-manager.sh users create Alice 365 0 0
+bash remnawave-manager.sh users create Alice 30 10G 3
+bash remnawave-manager.sh users create Alice 2027-12-31 512M 2
 bash remnawave-manager.sh users enable UUID_OR_NAME
 bash remnawave-manager.sh users disable UUID_OR_NAME
 bash remnawave-manager.sh users sub UUID_OR_NAME
 ```
+
+Non-interactive defaults: `USER_EXPIRE_DAYS`, `USER_TRAFFIC_GB`, `USER_DEVICE_LIMIT`.
 
 ---
 

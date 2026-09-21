@@ -1,5 +1,13 @@
 # v1.5.1
 
+## English
+
+Item **26** no longer dies with “Error at line … (code 1)” after a failed Latest check. The tag is read from the first GitHub redirect, not from a versionless CDN URL. Fallbacks: atom and jsDelivr. `self-update` uses jsDelivr when GitHub is unreachable.
+
+Full journal: [CHANGELOG.md](CHANGELOG.md) · [CHANGELOG.ru.md](CHANGELOG.ru.md).
+
+## Русский
+
 Пункт **26** больше не падает на «Ошибка в строке … (код 1)» после неудачной проверки Latest. Тег читается с первого редиректа GitHub, не с CDN без версии. Запас: atom и jsDelivr. `self-update` при недоступном GitHub берёт jsDelivr.
 
 На 1.5.0 можно сразу:

@@ -2,9 +2,9 @@
 
 [English](GUIDE.en.md) · [Русский](GUIDE.ru.md) · [README](../README.md)
 
-Installer and day-to-day manager for [Remnawave](https://docs.rw) on Debian/Ubuntu. Author: **Corgi Lusi (Корги Люси)**. Current script version: **1.5.3**.
+Installer and day-to-day manager for [Remnawave](https://docs.rw) on Debian/Ubuntu. Author: **Corgi Lusi (Корги Люси)**. Current script version: **1.5.4**.
 
-This page is the full instruction. The GitHub README describes **every menu item** in English and Russian. Historical per-release notes: [INSTALLATION_RU.md](INSTALLATION_RU.md) (bilingual changelog lives in [CHANGELOG.md](../CHANGELOG.md)). License: [MIT](../LICENSE).
+This page is the full instruction. The GitHub README describes **every menu item** in English and Russian. Historical per-release notes: [INSTALLATION_RU.md](INSTALLATION_RU.md). Bilingual changelog: [CHANGELOG.md](../CHANGELOG.md) (English) · [CHANGELOG.ru.md](../CHANGELOG.ru.md) (Русский). Security: [SECURITY.md](../SECURITY.md) · [SECURITY.ru.md](../SECURITY.ru.md). License: [MIT](../LICENSE).
 
 Two different “updates” exist. Do not mix them:
 
@@ -92,14 +92,14 @@ grep ' remnawave-manager.sh$' SHA256SUMS
 
 The two hashes must match. Latest release: <https://github.com/booarkz-cpu/remnawave-manager/releases/latest>
 
-Pinned copy (example for 1.5.3):
+Pinned copy (example for 1.5.4):
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.5.3/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.5.4/remnawave-manager.sh \
   -o remnawave-manager.sh
 sha256sum remnawave-manager.sh
-# 1.5.3: ebfe8913476c0f04a5e13694f30b0bfbb7fa4cd0b81d5d1b9e7018906e9add98
+# 1.5.4: 4a6200b2118c8df6f3a6f38f5efd48a0b2afa9c7358538fb7b5338391b9f7afa
 ```
 
 See [SHA256SUMS](../SHA256SUMS) in the repo for every versioned file.
@@ -114,7 +114,9 @@ bash remnawave-manager.sh
 
 Do **not** type `sudo` in front. If you are not root, the script re-runs through sudo by itself. `--help` stays unprivileged.
 
-No arguments opens the interactive menu. First run asks **English** or **Русский** and stores `RW_LANG` in `/opt/remnawave/manager.env` (or the edge env on a node-only VPS).
+No arguments: **language first** (English / Русский; Enter keeps the current `RW_LANG`), then the numbered menu.
+
+Skip the picker: `--lang en|ru` (stored in `/opt/remnawave/manager.env`, or the edge env on a node-only VPS). Later in the session: menu item **22**.
 
 ```bash
 bash remnawave-manager.sh --lang en
@@ -451,7 +453,9 @@ bash remnawave-manager.sh self-update
 bash remnawave-manager.sh community-update
 
 bash remnawave-manager.sh status | doctor | repair | urls
-bash remnawave-manager.sh users list|create|enable|disable|sub
+bash remnawave-manager.sh users list
+bash remnawave-manager.sh users create NAME [DAYS|YYYY-MM-DD] [GB|512M|10G] [DEVICES]
+bash remnawave-manager.sh users enable|disable|sub UUID_OR_NAME
 bash remnawave-manager.sh nodes list|disable|enable|restart|address
 bash remnawave-manager.sh telegram enable|disable|test
 bash remnawave-manager.sh backup-remote [rclone:path]
@@ -483,7 +487,7 @@ bash remnawave-manager.sh addon remnawave|remnanode|selfsteal|wtm|netbird|egames
 | `/usr/local/sbin/remnawave-health-notify.sh` | Telegram from the 5-minute healthcheck (menu **30**) |
 | `/usr/local/bin/remnawave-manager` | Optional CLI copy |
 
-Never publish API tokens, `SECRET_KEY`, PostgreSQL password, or `credentials.txt`. See [SECURITY.md](../SECURITY.md).
+Never publish API tokens, `SECRET_KEY`, PostgreSQL password, or `credentials.txt`. See [SECURITY.md](../SECURITY.md) and [SECURITY.ru.md](../SECURITY.ru.md).
 
 ---
 
@@ -519,4 +523,4 @@ Optional converter (not required to bind): <https://rezzosoft.ru/converter.html>
 - Do not treat menu **14** as an update of this GitHub script
 - Do not publish `credentials.txt`
 
-Questions about versions: [CHANGELOG.md](../CHANGELOG.md), [releases](https://github.com/booarkz-cpu/remnawave-manager/releases).
+Questions about versions: [CHANGELOG.md](../CHANGELOG.md) · [CHANGELOG.ru.md](../CHANGELOG.ru.md), [releases](https://github.com/booarkz-cpu/remnawave-manager/releases).

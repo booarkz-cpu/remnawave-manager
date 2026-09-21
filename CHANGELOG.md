@@ -1,254 +1,267 @@
 # Changelog
 
+English journal. Русский: [CHANGELOG.ru.md](CHANGELOG.ru.md).
+
+## 1.5.4
+
+Creating a user from the menu (item **28**) and CLI now sets **subscription expiry**, a **traffic cap**, and a **device (HWID) limit**. API fields: `expireAt`, `trafficLimitBytes`, `trafficLimitStrategy=NO_RESET`, and `hwidDeviceLimit` when the limit is greater than 0. Defaults: 365 days, unlimited traffic, no HWID cap. CLI: `users create NAME [DAYS|YYYY-MM-DD] [GB|512M|10G] [DEVICES]`.
+
+Opening the menu asks for **language first** (Enter keeps the current one), not only via item 22. `--lang` and `--yes` skip the picker.
+
+Audit: CLI `KEY=VALUE` no longer overwrites `PATH` / `IFS` / `LD_PRELOAD` (same denylist as `manager.env`). `users_cli` forwards every argument after `create`. Repeat API token names no longer pipe `date | tail` (less SIGPIPE). User/node picks use `10#`. A broken users-list JSON no longer aborts the menu.
+
+SHA256:
+`4a6200b2118c8df6f3a6f38f5efd48a0b2afa9c7358538fb7b5338391b9f7afa`
+
 ## 1.5.3
 
-Второй проход аудита: пункт меню с `die` больше не завершает весь скрипт (`menu_call` в подпроцессе; `self-update` по-прежнему без подпроцесса из‑за `exec`). `curl` к API при обрыве даёт HTTP 000, а не ERR. Ввод `08` в списке пользователей/нод не падает на восьмеричном числе. Флаги из `manager.env` приводятся к 0/1; `DRY_RUN`/`AUTO_YES`/`PATH` из env не читаются.
+Second audit pass: a menu item that `die`s no longer exits the whole script (`menu_call` in a subshell; `self-update` still not in a subshell because of `exec`). A dropped `curl` to the API yields HTTP 000 instead of ERR. Typing `08` in the user/node picker no longer crashes on octal arithmetic. Flags from `manager.env` are coerced to 0/1; `DRY_RUN` / `AUTO_YES` / `PATH` are not loaded from env.
 
 SHA256:
 `ebfe8913476c0f04a5e13694f30b0bfbb7fa4cd0b81d5d1b9e7018906e9add98`
 
 ## 1.5.2
 
-Полный аудит `set -e` / ERR: пункт **13** снова вызывает `restore` (в 1.5.1 вызов потерялся). `ask` на Ctrl+D больше не крутится вечно. `manager.env` не перезаписывает `VERSION`/`PATH`. `upsert` не портит `\` в паролях. Restore не делает `cd` в каталог панели и не вешает RETURN-trap на вложенные функции. Пункты 27–32 на «только нода» возвращают в меню, а не роняют скрипт. `show_result` по-прежнему не печатает пароль.
+Full `set -e` / ERR audit: item **13** calls `restore` again (the call was dropped in 1.5.1). `ask` no longer spins forever on Ctrl+D. `manager.env` does not overwrite `VERSION`/`PATH`. `upsert` keeps `\` in passwords. Restore does not `cd` into the panel directory and does not hang a RETURN trap on nested functions. Items 27–32 on a node-only VPS return to the menu instead of aborting the script. `show_result` still does not print the password.
 
 SHA256:
 `65a1a8ef96d427863c0fdad5fc765dee634f18562b34723a5e6a768acb9bc0ba`
 
 ## 1.5.1
 
-Пункт **26** → **1** больше не роняет скрипт (`set -e` + код 1 от проверки Latest). Тег Latest берётся с первого редиректа GitHub (`/releases/tag/v…`), а не с CDN `release-assets.githubusercontent.com` (там версии нет — из‑за этого 1.5.0 писал «сеть»). Запасные источники: atom и jsDelivr. `self-update` качает с GitHub, затем с jsDelivr. Кэш 6 часов снова действует и когда скрипт уже актуален; живая проверка — пункт 26 / `check-update`.
+Item **26** → **1** no longer aborts the script (`set -e` + exit code 1 from the Latest check). The Latest tag is taken from the first GitHub redirect (`/releases/tag/v…`), not from the CDN host `release-assets.githubusercontent.com` (that URL has no version — 1.5.0 reported “network”). Fallbacks: atom and jsDelivr. `self-update` downloads from GitHub, then jsDelivr. The 6-hour cache applies again when the script is already current; live check: item 26 / `check-update`.
 
 SHA256:
 `445b3fac779236d95e82ea535e7cf365a8e0356249d461f4c2d1c1c0b1d7e918`
 
 ## 1.5.0
 
-Пункты **28–32** (номера **1–27** не съехали):
+Items **28–32** (numbers **1–27** did not shift):
 
-1. **28** / `users` — список, создать, вкл/выкл, ссылка подписки. Пароль админа не показывает.
-2. **29** / `nodes` — список, disable/enable/restart одной ноды, смена адреса (`PATCH /nodes/` с uuid в JSON).
-3. **30** / `telegram` + `backup-remote` — Telegram из меню (токен не в лог); healthcheck не чаще раза в час: API панели, сертификат < 21 дня, нода не Connected; rclone+age в 02:00 или сразу.
-4. **31** / `certs` — срок Let’s Encrypt, `certbot renew` сейчас, force-renew, копия в `/dev/shm`. В шапке меню — ближайший срок.
-5. После пункта **25** на панели — чеклист: UUID и `node-transports apply` на VDS ноды.
-6. **32** / `firewall` — ADMIN_IP, пересборка UFW.
-7. Пункт **23** / `admin-login`: логин панели один раз по слову **SHOW**, только на TTY, в `/var/log/remnawave-manager.log` не пишется.
+1. **28** / `users` — list, create, enable/disable, subscription URL. Does not show the admin password.
+2. **29** / `nodes` — list, disable/enable/restart one node, change address (`PATCH /nodes/` with uuid in JSON).
+3. **30** / `telegram` + `backup-remote` — Telegram from the menu (token not in the log); healthcheck at most once an hour: panel API, certificate < 21 days, node not Connected; rclone+age at 02:00 or immediately.
+4. **31** / `certs` — Let’s Encrypt days left, `certbot renew` now, force-renew, copy into `/dev/shm`. Menu header shows the nearest expiry.
+5. After item **25** on the panel — a checklist: UUID and `node-transports apply` on the node VPS.
+6. **32** / `firewall` — ADMIN_IP, rebuild UFW.
+7. Item **23** / `admin-login`: panel login once, only after the word **SHOW**, only on a TTY, not written to `/var/log/remnawave-manager.log`.
 
 SHA256:
 `72c9cb8ca9ac35bb03b596bb32d68ff507c43f36992d1ee615962da3f44bacdb`
 
 ## 1.4.4
 
-Пункт **25**: после выбора ноды `[0]` снова список нод, а не главное меню. `q` в списке (и в транспортах) — выход в главное меню. UUID выбранной ноды больше не пропускает список при следующем заходе. После add/remove меню транспортов остаётся на этой ноде.
+Item **25**: after picking a node, `[0]` returns to the node list, not the main menu. `q` in the list (and in transports) leaves to the main menu. A selected node UUID no longer skips the list on the next visit. After add/remove the transports menu stays on that node.
 
 SHA256:
 `c94a44bf4c9e5930593bfe2227b14fed1e495efd72d300ba857aa10778d37a0d`
 
-Документация (хеш скрипта не менялся): полный функционал пунктов меню 0–27 на русском и английском в README и `docs/MENU.*`; лицензия репозитория — MIT.
+Docs (script hash unchanged): full menu items 0–27 in English and Russian in the README and `docs/MENU.*`; repository license is MIT.
 
 ## 1.4.3
 
-Пункт **25** всегда предлагает ноду (номер, UUID или 0 = все), а не только если их больше одной. Кэш GitHub больше не прячет новый Latest, если локальная версия совпала с прошлой проверкой (из‑за этого меню писало «актуален 1.4.1» при уже вышедшем 1.4.2). Шапка меню: `sub ● 000000` исправлен. Снятие транспортов — как в 1.4.2.
+Item **25** always offers a node (number, UUID, or 0 = all), not only when there is more than one. The GitHub cache no longer hides a new Latest if the local version matched the previous check (the menu said “up to date 1.4.1” after 1.4.2 was already out). Menu header: `sub ● 000000` fixed. Removing transports behaves as in 1.4.2.
 
 SHA256:
 `90dfaf451da9ec826cef431162ce3f6f59658c7aa7727b563e07a101eef89922`
 
 ## 1.4.2
 
-Пункт **25** снова снимает транспорты. `sync_node_transports` после «удалить Hysteria2» заново читал `manager.env` и возвращал HYSTERIA2=1, поэтому профиль, хосты и sing-box оставались как были. Теперь явный выбор (add/remove) сохраняется и пишется в env до hydrate.
+Item **25** actually removes transports. `sync_node_transports` after “remove Hysteria2” re-read `manager.env` and set HYSTERIA2=1 again, so the profile, hosts and sing-box stayed as they were. An explicit add/remove is now kept and written to env before hydrate.
 
 SHA256:
 `f0ceb92599ccbe8e9427ad3e506938ffcb6f63ef8aee989ce5a951290171205b`
 
 ## 1.4.1
 
-`self-update` после установки больше не падает с «Неизвестная команда: --lang ru». У скрипта `IFS` без пробела, и 1.4.0 склеивал `--lang ru` в один аргумент. 1.4.1 принимает такой argv и передаёт язык двумя словами.
+`self-update` after install no longer fails with “Unknown command: --lang ru”. The script `IFS` has no space, and 1.4.0 glued `--lang ru` into one argument. 1.4.1 accepts that argv and passes the language as two words.
 
 SHA256:
 `89bc7d2c2853925cd4cd18f5bf57a7d83cc2bb3cb73a38fb18a590957e9a1d57`
 
 ## 1.4.0
 
-Неизвестная команда больше не печатает весь `--help` (короткий текст и подсказка `self-update`). `--version` без sudo. Пункт **26** обновляет этот скрипт (пункт **24** — модули авторов). Пункт **27** / `add-node` регистрирует ноду в панели через API без `apt full-upgrade`. Предпроверка DNS/80/443/диска/Docker перед установкой. Пункт **25** предлагает UUID ноды, если их несколько (`0` = все). Doctor: версия скрипта vs GitHub Latest, срок Let’s Encrypt, UDP/443 и TCP/8443/4443, Connected нод через API. Сообщения ok/warn/die в `t()`.
+An unknown command no longer dumps the whole `--help` (short text plus a `self-update` hint). `--version` without sudo. Item **26** updates this script (item **24** is author modules). Item **27** / `add-node` registers a node on the panel via API without `apt full-upgrade`. Preflight DNS/80/443/disk/Docker before install. Item **25** offers a node UUID when there are several (`0` = all). Doctor: script version vs GitHub Latest, Let’s Encrypt days left, UDP/443 and TCP/8443/4443, Connected nodes via API. ok/warn/die messages go through `t()`.
 
 SHA256:
 `fe91e431c96d54efed1a1d7219349578733d5fd30d9ab744f1436c3602be24de`
 
 ## 1.3.0
 
-Автопроверка обновления скрипта: при открытии меню сравнивается `VERSION` с GitHub Latest. Если есть новее — предлагается установить. Кэш 6 часов в `manager.env`. CLI: `check-update`, `check-update --apply`, `--no-update-check`. Пункт 24 → «3) проверить обновление».
+Automatic script update check: opening the menu compares `VERSION` with GitHub Latest. If a newer one exists, it offers to install. 6-hour cache in `manager.env`. CLI: `check-update`, `check-update --apply`, `--no-update-check`. Item 24 → “3) check for an update”.
 
 SHA256:
 `dd7ece932c3dd26a93dacc0c24249dfa1b15bb8f7bd475b5b846a6d6a933c152`
 
 ## 1.2.0
 
-Пункт меню **25** / `node-transports`: добавить или снять xHTTP, gRPC и Hysteria2 на уже установленной ноде, в том числе на другом сервере. На панели обновляются профиль, inbound’ы, хосты и сквад (лишние хосты удаляются). На ноде — UFW, сертификаты в `/dev/shm` и стек sing-box. Добавление одного транспорта не включает остальные заново. Пункт 4 (`protocols` / `bind`) по-прежнему полная автопривязка.
+Menu item **25** / `node-transports`: add or remove xHTTP, gRPC and Hysteria2 on an already installed node, including a node on another server. On the panel the profile, inbounds, hosts and squad are updated (extra hosts are pruned). On the node — UFW, certificates in `/dev/shm` and the sing-box stack. Adding one transport does not turn the others back on. Item 4 (`protocols` / `bind`) is still a full auto-bind.
 
 SHA256:
 `f5fe62ececf0fe5261a801bde4be0b325273b1761d7ee731df138a7fa19ca3b2`
 
 ## 1.1.0
 
-Автор — **Корги Люси**. Весь функционал в одном скрипте. Меню в синих тонах. Пункт **24** / `community-update` скачивает оригиналы Rezzosoft, eGames и DigneZzZ (авторство сохранено); `self-update` берёт этот скрипт с GitHub Latest.
+Author — **Corgi Lusi**. All features in one script. Blue menu. Item **24** / `community-update` downloads the original Rezzosoft, eGames and DigneZzZ files (authorship kept); `self-update` takes this script from GitHub Latest.
 
 SHA256:
 `82f4c523ef22167c83b841c7631bc7fd82ff798a7ef2f0681f0515406ca7817f`
 
 ## 1.0.0
 
-Первый стабильный релиз без суффикса `-prod`. Тот же установщик, что 25.2.7: Reality с отпечатком firefox, сквад CorgiLusi, отдельный профиль на ноду, запуск без `sudo`.
+First stable release without a `-prod` suffix. Same installer as 25.2.7: Reality with firefox fingerprint, CorgiLusi squad, a dedicated profile per node, run without `sudo` in the command.
 
 SHA256:
 `79cec67577feb666bc89a35452909457dba169540cecf909d8b2932f552fbe07`
 
 ## 25.2.7-prod
 
-Хосты Reality (VLESS TCP, gRPC, xHTTP) создаются с uTLS-отпечатком **firefox**, не chrome. Hysteria2 отпечаток не ставит. На уже установленной панели: пункт 4 / `bash remnawave-manager.sh protocols`.
+Reality hosts (VLESS TCP, gRPC, xHTTP) are created with uTLS fingerprint **firefox**, not chrome. Hysteria2 does not set a fingerprint. On an already installed panel: item 4 / `bash remnawave-manager.sh protocols`.
 
 SHA256:
 `14704ad33250669ac1d9d95d5677cc53fb007dc87932d655843a68be4a2ac875`
 
 ## 25.2.6-prod
 
-Запуск без `sudo` в команде: `bash remnawave-manager.sh`. Если нет root, скрипт сам перезапускается через sudo. `--help` пароль не спрашивает.
+Run without `sudo` in the command: `bash remnawave-manager.sh`. If you are not root, the script re-execs via sudo. `--help` does not ask for a password.
 
 SHA256:
 `5116f5be95419515f63d9546ce626ad425c3a216648a99964d5244a86ee4cedd`
 
 ## 25.2.5-prod
 
-Сквад и профили называются **CorgiLusi**, не AUTO. У каждой ноды свой config-профиль. Сразу после установки **Default-Profile** (и сквад с таким именем) удаляется. Старый AUTO-PROFILE переименовывается в CorgiLusi при `protocols` / пункте 4.
+Squad and profiles are named **CorgiLusi**, not AUTO. Each node has its own config profile. Right after install **Default-Profile** (and a squad with that name) is removed. An old AUTO-PROFILE is renamed to CorgiLusi on `protocols` / item 4.
 
 SHA256:
 `d428f8fac02c9904a8dec07b585fc8f0ecafd561482b1a72c8be756c101e65e2`
 
 ## 25.2.4-prod
 
-`repair` больше не требует заполненный `manager.env`. Домены поднимаются из `.env` панели, `credentials.txt`, nginx и Let's Encrypt. `--lang` не создаёт пустой env, из‑за которого пункт 7 падал с «нет DOMAIN_PANEL». `manager.env` больше не `source` — пароли с `$` и `&` больше не ломают загрузку доменов.
+`repair` no longer requires a filled `manager.env`. Domains are recovered from the panel `.env`, `credentials.txt`, nginx and Let's Encrypt. `--lang` does not create an empty env that made item 7 fail with “no DOMAIN_PANEL”. `manager.env` is no longer `source`d — passwords with `$` and `&` no longer break domain loading.
 
 SHA256:
 `0bb8ed6ec6c46a8fc02947f3a1fe45c1a3dbc2de9555cc63e5989336e4c229da`
 
 ## 25.2.3-prod
 
-Красивое двуязычное меню с живым статусом и исправления с живого VDS: 502 подписки, `curl: (52) Empty reply`, `"-":0: bad minute` в crontab.
+Bilingual menu with live status and live-VPS fixes: subscription 502, `curl: (52) Empty reply`, `"-":0: bad minute` in crontab.
 
-- меню: рамка, цвет на TTY, две строки на пункт, шапка panel/sub/node, пункт 23 «Адреса»;
-- повторный выбор «полная установка» на уже стоящей панели предлагает repair / bind, а не `apt full-upgrade`;
-- страница подписки ходит в панель через `https://DOMAIN_PANEL` + `extra_hosts` (ProxyCheck больше не рвёт сокет);
-- `wait_subscription` не спамит curl 52 и не валит установку;
-- сертификаты Hysteria2 копируются systemd-таймером, а не `crontab -` (пустой stdin при `set -e` давал bad minute и обрывал `protocols`).
+- menu: frame, TTY color, two lines per item, panel/sub/node header, item 23 “URLs”;
+- choosing “full install” again on an existing panel offers repair / bind, not `apt full-upgrade`;
+- the subscription page talks to the panel via `https://DOMAIN_PANEL` + `extra_hosts` (ProxyCheck no longer tears the socket);
+- `wait_subscription` does not spam curl 52 and does not abort the install;
+- Hysteria2 certificates are copied by a systemd timer, not `crontab -` (empty stdin under `set -e` caused bad minute and aborted `protocols`).
 
 SHA256:
 `728536ee926faba23dbb642383e9320c7d37a2e3c3eb275081edce2c55cef8a8`
 
 ## 25.2.2-prod
 
-Интерактивное меню с описанием каждой функции и выбор языка интерфейса (английский / русский). На GitHub два README: [English](README.md) и [Русский](README.ru.md).
+Interactive menu with a description of every function and UI language (English / Russian). GitHub has two READMEs: [English](README.md) and [Русский](README.ru.md).
 
-- пункт 22 меню, `--lang en|ru` и `RW_LANG` в `manager.env`;
-- меню покрывает установку, bind, status/doctor/repair, up/down/restart, backup/restore, update, uninstall, ядро Xray, модули, stealth, CLI и конвертер;
-- справка `--help` печатается на выбранном языке.
+- menu item 22, `--lang en|ru` and `RW_LANG` in `manager.env`;
+- the menu covers install, bind, status/doctor/repair, up/down/restart, backup/restore, update, uninstall, Xray core, add-ons, stealth, CLI and the converter;
+- `--help` is printed in the selected language.
 
 SHA256:
 `989c56497e2fbf8877b5e43deb3c771bfa78a402d79b9548791cd13b6299f7c9`
 
 ## 25.2.1-prod
 
-Полностью автоматическая привязка без правок в панели и без конвертера.
+Fully automatic bind with no panel UI edits and no converter.
 
-- UPDATE профиля/ноды/хоста идёт на коллекцию (`PATCH /config-profiles/`, `PATCH /nodes/`, `PATCH /hosts/`) с `uuid` в JSON, как в backend-contract 3.4.x;
-- после обновления профиля все inbound UUID вешаются на ноды (`POST /nodes/bulk-actions/profile-modification`, запасной путь — PATCH каждой ноды);
-- хосты создаются с `path`/`host` для gRPC и xHTTP, `alpn=h3` для Hysteria2 и массивом `nodes`;
-- сквад AUTO получает все inbound’ы; пользователь AUTO и URL подписки появляются без UI;
-- по умолчанию включаются Reality + Hysteria2 + gRPC + xHTTP (`--reality-only`, если нужен только Reality).
+- profile/node/host UPDATE goes to the collection (`PATCH /config-profiles/`, `PATCH /nodes/`, `PATCH /hosts/`) with `uuid` in JSON, as in backend-contract 3.4.x;
+- after a profile update every inbound UUID is attached to nodes (`POST /nodes/bulk-actions/profile-modification`, fallback — PATCH each node);
+- hosts are created with `path`/`host` for gRPC and xHTTP, `alpn=h3` for Hysteria2 and a `nodes` array;
+- the AUTO squad gets every inbound; the AUTO user and subscription URL appear without the UI;
+- by default Reality + Hysteria2 + gRPC + xHTTP are on (`--reality-only` for Reality only).
 
-На уже установленном 25.2.0: скачайте `@v25.2.1-prod` и выполните `sudo bash remnawave-manager.sh protocols`.
+On an existing 25.2.0: download `@v25.2.1-prod` and run `bash remnawave-manager.sh protocols`.
 
 SHA256:
 `534353340dc8987375f5bc45242f01a97327c8d8713bfc5628f1884f891e7e60`
 
 ## 25.2.0-prod
 
-Русское меню и мультипротокол. Панель и нода ставятся на разные серверы. В установщик добавлены функции Rezzosoft KVN, eGamesAPI и DigneZzZ (авторство сохранено).
+Russian menu and multi-protocol. Panel and node can be installed on separate servers. Rezzosoft KVN, eGamesAPI and DigneZzZ features are in the installer (authorship kept).
 
-- меню без аргументов; `install panel` / `install node`; Reality, Hysteria2, gRPC, xHTTP;
-- конвертер https://rezzosoft.ru/converter.html в меню и справке;
-- `/dev/shm` и Let's Encrypt в compose ноды, cron сертификатов Hysteria2;
-- `up`/`down`/`restart`/`logs`, `stealth`, `install-script`, Cloudflare DNS при `CLOUDFLARE_API_TOKEN`.
+- menu with no arguments; `install panel` / `install node`; Reality, Hysteria2, gRPC, xHTTP;
+- converter https://rezzosoft.ru/converter.html in the menu and help;
+- `/dev/shm` and Let's Encrypt in the node compose, Hysteria2 certificate cron;
+- `up`/`down`/`restart`/`logs`, `stealth`, `install-script`, Cloudflare DNS when `CLOUDFLARE_API_TOKEN` is set.
 
 SHA256:
 `86ffcb6e7ff764125ccf2f38feb9c737e9b7ae579d86519f9ce8019adad06211`
 
 ## 25.1.16-prod
 
-Панель после 25.1.15 отвечает 200, страница подписки оставалась на 502: `repair` не поднимал `remnawave-subscription-page`. Контейнер падает на старте, если API token не читает `/system/metadata` (`exit(1)`). `CUSTOM_SUB_PREFIX=sub` прятал UI с корня домена.
+After 25.1.15 the panel answers 200, the subscription page stayed on 502: `repair` did not bring up `remnawave-subscription-page`. The container exits on start if the API token cannot read `/system/metadata` (`exit(1)`). `CUSTOM_SUB_PREFIX=sub` hid the UI from the domain root.
 
-- `repair` проверяет token через `/system/metadata`, при необходимости создаёт новый, переписывает `.env` и `docker compose up --force-recreate --wait`;
-- `CUSTOM_SUB_PREFIX` пустой, `SUB_PUBLIC_DOMAIN` = домен подписки без `/sub` (как в официальном bundled);
-- `curl -I https://sub.example.com` должен быть HTTP 200.
+- `repair` checks the token via `/system/metadata`, creates a new one if needed, rewrites `.env` and `docker compose up --force-recreate --wait`;
+- `CUSTOM_SUB_PREFIX` is empty, `SUB_PUBLIC_DOMAIN` = subscription domain without `/sub` (same as the official bundled layout);
+- `curl -I https://sub.example.com` should be HTTP 200.
 
 SHA256:
 `b3d8293bb4735f48b21e456860585a80e9c9a8102f33c5b8917b8bac259197b8`
 
 ## 25.1.15-prod
 
-Ubuntu nginx 1.24 не знает директиву `http2 on;` (она появилась в 1.25.1). Vhost снова используют `listen ... ssl http2;`.
+Ubuntu nginx 1.24 does not know the `http2 on;` directive (it appeared in 1.25.1). Vhosts use `listen ... ssl http2;` again.
 
 SHA256:
 `15ad868699b467264ffda6354b94cf9fc6961b02569adcce36c480c131464835`
 
 ## 25.1.14-prod
 
-`repair` больше не может сломать nginx: `/etc/nginx/conf.d/ssl-params.conf` сразу восстанавливается как пустой stub, если 25.1.12 его удалил. Скачивайте релиз с GitHub Releases, не с закэшированного `raw.githubusercontent.com`.
+`repair` can no longer break nginx: `/etc/nginx/conf.d/ssl-params.conf` is restored immediately as an empty stub if 25.1.12 deleted it. Download the release from GitHub Releases, not from a cached `raw.githubusercontent.com`.
 
 SHA256:
 `e94215cc2dfb6e829ee8af449569d43b0d2f1e910017c8ebc40a1766d9f0e6a0`
 
 ## 25.1.13-prod
 
-Hotfix `repair` после 25.1.12: файл `/etc/nginx/conf.d/ssl-params.conf` удалялся до перезаписи `reality-site.conf`, `nginx -t` падал, панель оставалась на 502.
+`repair` hotfix after 25.1.12: `/etc/nginx/conf.d/ssl-params.conf` was deleted before `reality-site.conf` was rewritten, `nginx -t` failed, the panel stayed on 502.
 
-- старые `include .../ssl-params.conf` переписываются на snippet **до** удаления файла;
-- `repair` применяет nginx только после записи всех vhost.
+- old `include .../ssl-params.conf` lines are rewritten to the snippet **before** the file is removed;
+- `repair` applies nginx only after every vhost is written.
 
 SHA256:
 `c868a4970404dc9ae37d687f49e780a6de9ee8698115604cde1999c816b7148b`
 
 ## 25.1.12-prod
 
-Исправление HTTP 502 на панели и странице подписки, маскировка Reality SNI под сайт о корги.
+HTTP 502 fix on the panel and subscription page; Reality SNI camouflage is a Corgi kennel site.
 
-- nginx больше не использует Ubuntu `proxy_params`: в upstream уходят официальные заголовки Remnawave (`Host`, `X-Real-IP`, `X-Forwarded-For`, `X-Forwarded-Proto: https`, `X-Forwarded-Host`) и `proxy_http_version 1.1`, иначе ProxyCheckMiddleware панели и subscription-page рвёт сокет → nginx 502;
-- TLS-параметры вынесены в `/etc/nginx/snippets/`, чтобы Ubuntu не подключала их дважды из `conf.d/` (duplicate TLSv1.2/1.3 и раздутый `proxy_headers_hash`);
-- шаблон SelfSteal по умолчанию — сайт питомника **Corgi Lusi** (`corgi|simple|business|nothing`);
-- команда `repair` переписывает nginx и маскировочный сайт на уже установленном VDS без Docker/БД;
-- `ssh_ports | head` больше не роняет install через SIGPIPE/`set -o pipefail`.
+- nginx no longer uses Ubuntu `proxy_params`: official Remnawave headers go upstream (`Host`, `X-Real-IP`, `X-Forwarded-For`, `X-Forwarded-Proto: https`, `X-Forwarded-Host`) and `proxy_http_version 1.1`, otherwise ProxyCheckMiddleware on the panel and subscription-page tears the socket → nginx 502;
+- TLS parameters live in `/etc/nginx/snippets/` so Ubuntu does not include them twice from `conf.d/` (duplicate TLSv1.2/1.3 and a bloated `proxy_headers_hash`);
+- default SelfSteal template is the **Corgi Lusi** kennel site (`corgi|simple|business|nothing`);
+- `repair` rewrites nginx and the camouflage site on an already installed VPS without Docker/DB;
+- `ssh_ports | head` no longer aborts install via SIGPIPE/`set -o pipefail`.
 
-На уже установленном `25.1.11-prod`: `sudo bash remnawave-manager.sh repair`.
+On an existing `25.1.11-prod`: `bash remnawave-manager.sh repair`.
 
 SHA256:
 `45e5029aa29f21b587a2726bdf191305ab4fd855e85548b73e010e8982bec3bb`
 
 ## 25.1.11-prod
 
-Исправления установщика поверх `25.1.10-prod` (автообновление ОС сохранено).
+Installer fixes on top of `25.1.10-prod` (automatic OS upgrade kept).
 
-- Node на одном VDS регистрируется через gateway Docker-сети `remnawave-network`, а не `127.0.0.1` (панель в контейнере не достучится до host-network remnanode по loopback);
-- UFW в режиме `single` открывает порт Node 2222 только с Docker-подсети;
-- режим `install panel` поднимает SNI-router на TCP/443;
-- `ssl_reject_handshake` используется на nginx ≥ 1.19.4, иначе dummy-сертификат и `return 444`;
+- On one VPS the Node is registered via the `remnawave-network` Docker gateway, not `127.0.0.1` (the panel container cannot reach host-network remnanode on loopback);
+- UFW in `single` mode opens Node port 2222 only from the Docker subnet;
+- `install panel` brings up the SNI router on TCP/443;
+- `ssl_reject_handshake` is used on nginx ≥ 1.19.4, otherwise a dummy certificate and `return 444`;
 - Hysteria2: `sing-box run -c /etc/sing-box/config.json`;
-- Prometheus scrapes host-network node-exporter как `host.docker.internal:9100`;
-- в `.env` панели явно задаётся `REDIS_SOCKET=/var/run/valkey/valkey.sock`;
-- `manager.env` обновляется по ключам (upsert);
-- создание API token устойчиво к занятому имени (`name <= 30`);
-- username администратора больше не берётся как полный email;
-- пароль администратора проверяется по правилам backend (24+ / буква / цифра);
-- restore `.age` определяется по расширению;
-- `--admin-ip` и fail2ban учитывают все SSH-порты;
-- кастомное ядро Xray монтируется в уже существующий `volumes:` node compose;
-- сохранён `apt-get full-upgrade` из 25.1.10 (без авторебута).
+- Prometheus scrapes host-network node-exporter as `host.docker.internal:9100`;
+- panel `.env` sets `REDIS_SOCKET=/var/run/valkey/valkey.sock` explicitly;
+- `manager.env` is updated by key (upsert);
+- API token creation is resilient to a taken name (`name <= 30`);
+- admin username is no longer taken as the full email;
+- admin password is checked against backend rules (24+ / letter / digit);
+- restore `.age` is detected by extension;
+- `--admin-ip` and fail2ban account for every SSH port;
+- a custom Xray core is mounted into the existing node compose `volumes:`;
+- `apt-get full-upgrade` from 25.1.10 is kept (no automatic reboot).
 
 SHA256:
 `e10193fd771c386af76697b0bc42c1eddb831b21cf1d60341f6f6fe43269d239`

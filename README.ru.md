@@ -6,7 +6,7 @@
 
 Production-установщик [Remnawave](https://docs.rw) на Debian/Ubuntu. Интерактивное меню с описанием каждой функции. Язык: **русский** или **English**.
 
-**Текущая версия:** `1.5.3`
+**Текущая версия:** `1.5.4`
 
 **Лицензия:** [MIT](LICENSE) — можно использовать, копировать, менять и распространять с сохранением копирайта. Оригиналы, которые качает пункт **24**, остаются на условиях их авторов — [CREDITS.md](CREDITS.md).
 
@@ -59,15 +59,15 @@ grep ' remnawave-manager.sh$' SHA256SUMS
 bash remnawave-manager.sh
 ```
 
-Без аргументов открывается меню. `sudo` в команде писать не нужно — скрипт сам поднимает root. При первом запуске спрашивает **English** или **Русский** (сохраняется в `/opt/remnawave/manager.env`). Позже — пункт 22 или `--lang ru|en`.
+Без аргументов сначала **выбор языка** (English / Русский), затем меню. `sudo` в команде писать не нужно — скрипт сам поднимает root. Enter оставляет текущий язык (`RW_LANG` в `/opt/remnawave/manager.env`). Позже — пункт 22; пропуск выбора: `--lang ru|en`.
 
-Фиксированная 1.5.3 через jsDelivr (по желанию):
+Фиксированная 1.5.4 через jsDelivr (по желанию):
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.5.3/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.5.4/remnawave-manager.sh \
   -o remnawave-manager.sh
-# sha256: ebfe8913476c0f04a5e13694f30b0bfbb7fa4cd0b81d5d1b9e7018906e9add98
+# sha256: 4a6200b2118c8df6f3a6f38f5efd48a0b2afa9c7358538fb7b5338391b9f7afa
 ```
 
 По умолчанию включаются все транспорты: Reality, Hysteria2, gRPC и xHTTP.
@@ -301,7 +301,7 @@ GitHub **Latest этого установщика**, не образы Docker. (
 
 ### 28. Пользователи
 
-Только панель. Список, создать (3–32 `A–Za-z0-9._-`), вкл/выкл, **ссылка подписки** (не пароль админа). Сквад как у CorgiLusi. CLI: `users list|create ИМЯ|enable UUID|disable UUID|sub UUID`.
+Только панель. Список, создать со **сроком / лимитом трафика / лимитом устройств**, вкл/выкл, **ссылка подписки** (не пароль админа). Сквад как у CorgiLusi. CLI: `users create ИМЯ [ДНИ|ГГГГ-ММ-ДД] [ГБ|512M|10G] [УСТРОЙСТВА]`.
 
 ### 29. Управление нодами
 
@@ -395,7 +395,9 @@ CLI: `status`, `doctor`, `repair`, `backup`, `restore`, `update`, `up`, `down`, 
 | --- | --- | --- |
 | Полная инструкция | [docs/GUIDE.en.md](docs/GUIDE.en.md) | [docs/GUIDE.ru.md](docs/GUIDE.ru.md) |
 | Меню (каждый пункт) | [docs/MENU.en.md](docs/MENU.en.md) | [docs/MENU.ru.md](docs/MENU.ru.md) |
-| Журнал версий | [CHANGELOG.md](CHANGELOG.md) | [docs/INSTALLATION_RU.md](docs/INSTALLATION_RU.md) |
+| Журнал версий | [CHANGELOG.md](CHANGELOG.md) | [CHANGELOG.ru.md](CHANGELOG.ru.md) |
+| Безопасность | [SECURITY.md](SECURITY.md) | [SECURITY.ru.md](SECURITY.ru.md) |
+| Заметки по установке | [docs/INSTALLATION_RU.md](docs/INSTALLATION_RU.md) | то же |
 | Лицензия | [LICENSE](LICENSE) (MIT) | то же |
 | Контрольные суммы | [SHA256SUMS](SHA256SUMS) | то же |
 | Авторство | [CREDITS.md](CREDITS.md) | то же |
@@ -411,4 +413,4 @@ CLI: `status`, `doctor`, `repair`, `backup`, `restore`, `update`, `up`, `down`, 
 
 Лицензия покрывает **этот репозиторий** (`remnawave-manager.sh` и документацию). Она совместима с MIT у [DigneZzZ/remnawave-scripts](https://github.com/DigneZzZ/remnawave-scripts) и [eGamesAPI/remnawave-reverse-proxy](https://github.com/eGamesAPI/remnawave-reverse-proxy). Пункт **24** кладёт оригиналы авторов в `/opt/remnawave-addons` — они остаются на **их** условиях. У Rezzosoft в публичном репозитории нет SPDX: мы его не перелицензируем, авторство сохраняем, конвертер — необязательная ссылка.
 
-Гарантий нет. Секреты из `credentials.txt` не публикуйте. См. [SECURITY.md](SECURITY.md).
+Гарантий нет. Секреты из `credentials.txt` не публикуйте. См. [SECURITY.ru.md](SECURITY.ru.md) и [SECURITY.md](SECURITY.md).

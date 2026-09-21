@@ -3,11 +3,12 @@ set -Eeuo pipefail
 
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
-SCRIPT=remnawave-manager-v1.5.3.sh
+SCRIPT=remnawave-manager-v1.5.4.sh
 
 echo "[1/18] bash -n current + historical"
 bash -n "$SCRIPT"
 bash -n remnawave-manager.sh
+bash -n remnawave-manager-v1.5.4.sh
 bash -n remnawave-manager-v1.5.3.sh
 bash -n remnawave-manager-v1.5.2.sh
 bash -n remnawave-manager-v1.5.1.sh
@@ -251,7 +252,7 @@ if grep -nE 'remawve-manager' README.md README.ru.md docs/GUIDE.en.md docs/GUIDE
   exit 1
 fi
 bash "$SCRIPT" --lang en --help >/tmp/rw-help-en.txt
-grep -Fq 'interactive menu with descriptions' /tmp/rw-help-en.txt
+grep -Fq 'choose language, then the interactive menu' /tmp/rw-help-en.txt
 grep -Fq -- '--lang en|ru' /tmp/rw-help-en.txt
 grep -Fq 'urls | health' /tmp/rw-help-en.txt
 grep -Fq 'Do not prefix the command with sudo' /tmp/rw-help-en.txt
@@ -265,7 +266,7 @@ grep -Fq -- '--version' /tmp/rw-help-en.txt
 grep -Fq 'add-node' /tmp/rw-help-en.txt
 grep -Fq 'users list' /tmp/rw-help-en.txt
 grep -Fq 'admin-login' /tmp/rw-help-en.txt
-bash "$SCRIPT" --version | grep -Fq '1.5.3'
+bash "$SCRIPT" --version | grep -Fq '1.5.4'
 set +e
 bash "$SCRIPT" --lang en nosuchcmd >/tmp/rw-unk.txt 2>&1
 unk_rc=$?
@@ -278,7 +279,7 @@ if grep -Fq 'panel + node on one server' /tmp/rw-unk.txt; then
 fi
 # 1.4.0 self-update restart glued `--lang ru` into one argv because IFS has no space.
 bash "$SCRIPT" '--lang ru' --no-update-check --version >/tmp/rw-lang-glue.txt 2>&1
-grep -Fq '1.5.3' /tmp/rw-lang-glue.txt
+grep -Fq '1.5.4' /tmp/rw-lang-glue.txt
 if grep -Fq 'Unknown command' /tmp/rw-lang-glue.txt; then
   echo 'FAIL: glued --lang ru treated as unknown command' >&2
   exit 1
@@ -353,7 +354,8 @@ grep -Fq 'restore "$arch"' "$SCRIPT"
 awk '/^ask\(\)/,/^check_os\(\)/' "$SCRIPT" | grep -Fq err_cancelled
 grep -Fq 'RW_UPSERT_KEY' "$SCRIPT"
 grep -Fq 'ENVIRON["RW_UPSERT_KEY"]' "$SCRIPT"
-awk '/^load_kv_file\(\)/,/^if \[\[ -r "\$ENV_FILE" \]\]/' "$SCRIPT" | grep -Fq 'VERSION|PATH|HOME|IFS'
+awk '/^is_protected_kv_key\(\)/,/^load_kv_file\(\)/' "$SCRIPT" | grep -Fq 'VERSION|PATH|HOME|IFS'
+awk '/^load_kv_file\(\)/,/^if \[\[ -r "\$ENV_FILE" \]\]/' "$SCRIPT" | grep -Fq 'is_protected_kv_key'
 if awk '/^show_result\(\)/,/^status\(\)/' "$SCRIPT" | grep -q ADMIN_PASSWORD; then
   echo 'FAIL: show_result must not print ADMIN_PASSWORD' >&2
   exit 1
@@ -379,12 +381,39 @@ if awk '/^script_update_menu\(\)/,/^show_result\(\)/' "$SCRIPT" | grep -q 'menu_
   echo 'FAIL: self_update must not run in a subshell (exec would not replace the menu)' >&2
   exit 1
 fi
+if awk '/^interactive_menu\(\)/,/^main\(\)/' "$SCRIPT" | grep -q 'RW_LANG_SAVED -eq 0'; then
+  echo 'FAIL: language picker must run at every menu start, not only the first run' >&2
+  exit 1
+fi
+awk '/^interactive_menu\(\)/,/^main\(\)/' "$SCRIPT" | grep -Fq choose_language
+grep -Fq 'user_expire_iso()' "$SCRIPT"
+grep -Fq 'user_traffic_bytes()' "$SCRIPT"
+grep -Fq 'user_device_limit()' "$SCRIPT"
+grep -Fq 'users_payload()' "$SCRIPT"
+grep -Fq 'hwidDeviceLimit' "$SCRIPT"
+grep -Fq 'trafficLimitStrategy' "$SCRIPT"
+grep -Fq 'is_protected_kv_key()' "$SCRIPT"
+grep -Fq 'users create NAME' /tmp/rw-help-en.txt
+test -f SECURITY.md
+test -f SECURITY.ru.md
+test -f CHANGELOG.md
+test -f CHANGELOG.ru.md
+test -f RELEASE_NOTES_1.5.4.md
+grep -Fq '[SECURITY.md](SECURITY.md)' README.md
+grep -Fq '[SECURITY.ru.md](SECURITY.ru.md)' README.ru.md
+grep -Fq 'CHANGELOG.ru.md' README.md README.ru.md
+grep -Fq 'Language / Язык' "$SCRIPT"
+grep -Fq 'usr_expire' "$SCRIPT"
+if grep -nE 'export "\$1"' "$SCRIPT"; then
+  echo 'FAIL: CLI KEY=VALUE must not export \$1 blindly' >&2
+  exit 1
+fi
 
 echo "[14/18] current script copies match"
 cmp -s remnawave-manager.sh "$SCRIPT"
 
 echo "[15/18] VERSION string"
-grep -Fq "VERSION='1.5.3'" "$SCRIPT"
+grep -Fq "VERSION='1.5.4'" "$SCRIPT"
 if grep -nE "^VERSION='[^']*-prod'" remnawave-manager.sh; then
   echo 'FAIL: current VERSION must not use a -prod suffix' >&2
   exit 1
@@ -407,26 +436,46 @@ echo "[18/18] dry-run repair help text"
 grep -Fq repair /tmp/rw-help.txt
 grep -Fq 'install node' /tmp/rw-help.txt
 
-echo "[extra] load_kv_file ignores VERSION/PATH; upsert_kv keeps backslashes"
+echo "[extra] load_kv_file ignores VERSION/PATH; upsert_kv keeps backslashes; user limits"
 tmpd="$(mktemp -d)"
+awk '/^is_protected_kv_key\(\)/{p=1} p{print} /^load_kv_file\(\)/{exit}' "$SCRIPT" | sed '$d' > "$tmpd/prot.inc"
 awk '/^load_kv_file\(\)/{p=1} p{print} p && /^}$/{exit}' "$SCRIPT" > "$tmpd/kv.inc"
 awk '/^upsert_kv\(\)/{p=1} p{print} /^persist_manager\(\)/{exit}' "$SCRIPT" | sed '$d' > "$tmpd/up.inc"
+awk '/^user_expire_iso\(\)/{p=1} p{print} /^users_create_named\(\)/{exit}' "$SCRIPT" | sed '$d' > "$tmpd/user.inc"
 cat > "$tmpd/t.sh" <<'EOF'
 set -Eeuo pipefail
 # shellcheck disable=SC1091
+. ./prot.inc
 . ./kv.inc
 . ./up.inc
-VERSION='1.5.3'
+. ./user.inc
+VERSION='1.5.4'
 PATH_SAVE="$PATH"
 DRY_RUN=0
 printf '%s\n' 'VERSION=9.9.9' 'PATH=/evil' 'DRY_RUN=1' 'ADMIN_PASSWORD=ab\cd$ef' > env.test
 load_kv_file env.test
-[[ "$VERSION" == 1.5.3 ]]
+[[ "$VERSION" == 1.5.4 ]]
 [[ "$PATH" == "$PATH_SAVE" ]]
 [[ "$DRY_RUN" == 0 ]]
 [[ "$ADMIN_PASSWORD" == 'ab\cd$ef' ]]
 upsert_kv out.env SECRET 'x\y&z'
 grep -Fx 'SECRET=x\y&z' out.env >/dev/null
+is_protected_kv_key PATH
+is_protected_kv_key LD_PRELOAD
+! is_protected_kv_key USER_EXPIRE_DAYS
+[[ "$(user_expire_iso 30)" == *T*Z ]]
+[[ "$(user_traffic_bytes 0)" == 0 ]]
+[[ "$(user_traffic_bytes 1)" == 1073741824 ]]
+[[ "$(user_traffic_bytes 512M)" == 536870912 ]]
+[[ "$(user_traffic_bytes 10G)" == 10737418240 ]]
+[[ "$(user_device_limit 0)" == 0 ]]
+[[ "$(user_device_limit 3)" == 3 ]]
+! user_device_limit 1001
+SQUAD_UUID=''
+body="$(users_payload Alice "$(user_expire_iso 365)" 0 0)"
+echo "$body" | jq -e '.expireAt and .trafficLimitBytes==0 and (.hwidDeviceLimit|not) and .trafficLimitStrategy=="NO_RESET"' >/dev/null
+body="$(users_payload Bob "$(user_expire_iso 10)" "$(user_traffic_bytes 2)" 4)"
+echo "$body" | jq -e '.hwidDeviceLimit==4 and .trafficLimitBytes==2147483648' >/dev/null
 EOF
 ( cd "$tmpd" && bash t.sh )
 

@@ -1,5 +1,13 @@
 # v1.5.3
 
+## English
+
+Second audit after 1.5.2. A failing menu item (`die`, API, certbot) returns to the menu instead of killing the process. `self-update` still runs in the same process (`exec`). Typing `08` in the node/user picker no longer crashes bash. A failed `curl` to the panel is HTTP 000, not the ERR trap.
+
+Full journal: [CHANGELOG.md](CHANGELOG.md) · [CHANGELOG.ru.md](CHANGELOG.ru.md).
+
+## Русский
+
 Повторный аудит после 1.5.2. Пункты меню с ошибкой (`die`, API, certbot) возвращают в меню, а не гасят процесс. `self-update` по-прежнему в том же процессе (`exec`). Ввод `08` в выборе ноды/пользователя больше не роняет bash. Сбой `curl` к панели — HTTP 000, не ловушка ERR.
 
 ```bash
