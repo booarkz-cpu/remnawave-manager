@@ -1,0 +1,10 @@
+*.env
+*.env.*
+credentials.txt
+bootstrap.env
+*.key
+*.pem
+*.tgz
+*.tar.gz
+*.age
+xray-custom
