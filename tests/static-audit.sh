@@ -3,11 +3,12 @@ set -Eeuo pipefail
 
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
-SCRIPT=remnawave-manager-v25.2.2-prod.sh
+SCRIPT=remnawave-manager-v25.2.3-prod.sh
 
 echo "[1/18] bash -n current + historical"
 bash -n "$SCRIPT"
 bash -n remnawave-manager.sh
+bash -n remnawave-manager-v25.2.2-prod.sh
 bash -n remnawave-manager-v25.2.1-prod.sh
 bash -n remnawave-manager-v25.2.0-prod.sh
 for f in remnawave-manager-v25.1.{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16}-prod.sh; do
@@ -130,11 +131,19 @@ if grep -n 'привяжите inbound' "$SCRIPT"; then
   exit 1
 fi
 
-echo "[13/18] bilingual menu + README"
+echo "[13/18] bilingual menu + README + 25.2.3 fixes"
 grep -Fq 'print_menu()' "$SCRIPT"
 grep -Fq 'choose_language()' "$SCRIPT"
 grep -Fq -- '--lang|--language' "$SCRIPT"
 grep -Fq 'RW_LANG' "$SCRIPT"
+grep -Fq 'remnawave-hysteria-certs' "$SCRIPT"
+grep -Fq 'extra_hosts' "$SCRIPT"
+grep -Fq 'existing_install_choice' "$SCRIPT"
+grep -Fq 'host.docker.internal:host-gateway' "$SCRIPT"
+if grep -nE '\(crontab -l .*; echo' "$SCRIPT"; then
+  echo 'FAIL: user crontab pipe under set -e installs an empty crontab' >&2
+  exit 1
+fi
 test -f README.md
 test -f README.ru.md
 grep -Fq '[English](README.md)' README.md
@@ -143,12 +152,13 @@ grep -Fq '[English](README.md)' README.ru.md
 bash "$SCRIPT" --lang en --help >/tmp/rw-help-en.txt
 grep -Fq 'interactive menu with descriptions' /tmp/rw-help-en.txt
 grep -Fq -- '--lang en|ru' /tmp/rw-help-en.txt
+grep -Fq 'urls | health' /tmp/rw-help-en.txt
 
 echo "[14/18] current script copies match"
 cmp -s remnawave-manager.sh "$SCRIPT"
 
 echo "[15/18] VERSION string"
-grep -Fq "VERSION='25.2.2-prod'" "$SCRIPT"
+grep -Fq "VERSION='25.2.3-prod'" "$SCRIPT"
 
 echo "[16/18] SHA256SUMS covers every versioned script"
 missing=0

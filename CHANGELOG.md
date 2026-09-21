@@ -1,5 +1,18 @@
 # Changelog
 
+## 25.2.3-prod
+
+Красивое двуязычное меню с живым статусом и исправления с живого VDS: 502 подписки, `curl: (52) Empty reply`, `"-":0: bad minute` в crontab.
+
+- меню: рамка, цвет на TTY, две строки на пункт, шапка panel/sub/node, пункт 23 «Адреса»;
+- повторный выбор «полная установка» на уже стоящей панели предлагает repair / bind, а не `apt full-upgrade`;
+- страница подписки ходит в панель через `https://DOMAIN_PANEL` + `extra_hosts` (ProxyCheck больше не рвёт сокет);
+- `wait_subscription` не спамит curl 52 и не валит установку;
+- сертификаты Hysteria2 копируются systemd-таймером, а не `crontab -` (пустой stdin при `set -e` давал bad minute и обрывал `protocols`).
+
+SHA256:
+`728536ee926faba23dbb642383e9320c7d37a2e3c3eb275081edce2c55cef8a8`
+
 ## 25.2.2-prod
 
 Интерактивное меню с описанием каждой функции и выбор языка интерфейса (английский / русский). На GitHub два README: [English](README.md) и [Русский](README.ru.md).

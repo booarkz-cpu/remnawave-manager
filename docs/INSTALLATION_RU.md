@@ -1,4 +1,4 @@
-# Установка Remnawave Manager 25.2.2-prod
+# Установка Remnawave Manager 25.2.3-prod
 
 ## 1. Подготовка
 
@@ -14,7 +14,7 @@ chmod +x remnawave-manager.sh
 sha256sum remnawave-manager.sh
 ```
 
-Сверьте сумму с файлом `SHA256SUMS`. Актуальный файл также называется `remnawave-manager-v25.2.2-prod.sh`. Скачивайте через jsDelivr `@v25.2.2-prod`, не с `raw.githubusercontent.com/main`.
+Сверьте сумму с файлом `SHA256SUMS`. Актуальный файл также называется `remnawave-manager-v25.2.3-prod.sh`. Скачивайте через jsDelivr `@v25.2.3-prod`, не с `raw.githubusercontent.com/main`.
 
 Без аргументов скрипт открывает меню с описанием всех функций и предлагает язык (English / русский). Профиль, ноды, хосты и сквад привязываются через API — панель и конвертер править не нужно.
 
@@ -146,3 +146,17 @@ sudo bash remnawave-manager.sh --lang ru
 ```
 
 Меню описывает все функции. Язык: пункт 22 или `--lang en|ru`.
+
+## 13. Обновление до 25.2.3-prod (меню, 502 подписки, crontab)
+
+```bash
+curl -fL --retry 5 --retry-all-errors \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v25.2.3-prod/remnawave-manager.sh \
+  -o remnawave-manager.sh
+chmod +x remnawave-manager.sh
+sha256sum remnawave-manager.sh
+# нужно: 728536ee926faba23dbb642383e9320c7d37a2e3c3eb275081edce2c55cef8a8
+sudo bash remnawave-manager.sh --lang ru
+```
+
+Если панель уже стоит: в пункте 1 выберите **1) Repair** (для 502 на `sb.*`) или **2) привязка протоколов**. Не запускайте полную установку повторно без нужды. PowerShell-скрипты на этот Linux VDS не относятся.

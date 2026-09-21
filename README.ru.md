@@ -4,7 +4,7 @@
 
 Production-установщик [Remnawave](https://docs.rw) на Debian/Ubuntu. Интерактивное меню с описанием каждой функции. Язык интерфейса: **русский** или **English**.
 
-**Текущая версия:** `25.2.2-prod`
+**Текущая версия:** `25.2.3-prod`
 
 Автор основной линии: **booarkz-cpu**. В скрипт добавлены функции из [Rezzosoft KVN](https://github.com/Rrezzak09VPN/remnanode-VLESS-Reality-Hysteria2), [eGamesAPI](https://github.com/eGamesAPI/remnawave-reverse-proxy) и [DigneZzZ](https://github.com/DigneZzZ/remnawave-scripts). Авторство исходных проектов сохранено — см. [CREDITS.md](CREDITS.md).
 
@@ -14,7 +14,7 @@ Production-установщик [Remnawave](https://docs.rw) на Debian/Ubuntu.
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v25.2.2-prod/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v25.2.3-prod/remnawave-manager.sh \
   -o remnawave-manager.sh
 chmod +x remnawave-manager.sh
 sudo bash remnawave-manager.sh
@@ -55,6 +55,7 @@ sudo bash remnawave-manager.sh --lang en
 | 20 | Конвертер | Необязательный JSON-помощник Rezzosoft (для привязки не нужен) |
 | 21 | Авторство / справка | Авторы и полная справка CLI |
 | 22 | Язык | Русский или English |
+| 23 | Адреса | Панель / подписка / SNI и ссылка AUTO (пароли остаются в `credentials.txt`) |
 | 0 | Выход | — |
 
 ## Режимы установки
@@ -95,6 +96,10 @@ sudo bash remnawave-manager.sh --lang ru install node --yes \
 
 ## Обслуживание
 
-`status`, `doctor`, `repair`, `backup`, `restore`, `update`, `up`, `down`, `restart`, `logs`, `core-update`, `stealth`, `addon remnawave|remnanode|selfsteal|wtm|netbird|egames`.
+В шапке меню — живое состояние панели, подписки (`:3010`) и remnanode. Если Remnawave уже стоит, пункты 1–3 предлагают **repair**, **повторную привязку** или полную переустановку и больше не гоняют `apt full-upgrade` без нужды.
+
+При HTTP 502 на странице подписки: пункт **7 (repair)** или `sudo bash remnawave-manager.sh repair`. Скрипты PowerShell на Linux VDS не запускайте.
+
+`status`, `doctor`, `repair`, `backup`, `restore`, `update`, `up`, `down`, `restart`, `logs`, `urls`, `health`, `core-update`, `stealth`, `addon remnawave|remnanode|selfsteal|wtm|netbird|egames`.
 
 Подробности: [docs/INSTALLATION_RU.md](docs/INSTALLATION_RU.md), [CHANGELOG.md](CHANGELOG.md), [SHA256SUMS](SHA256SUMS).

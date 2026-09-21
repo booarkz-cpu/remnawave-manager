@@ -4,7 +4,7 @@
 
 Production installer for [Remnawave](https://docs.rw) on Debian/Ubuntu. Interactive menu with a description of every function. UI language: **English** or **Russian**.
 
-**Current version:** `25.2.2-prod`
+**Current version:** `25.2.3-prod`
 
 Main line: **booarkz-cpu**. Extra behaviour comes from [Rezzosoft KVN](https://github.com/Rrezzak09VPN/remnanode-VLESS-Reality-Hysteria2), [eGamesAPI](https://github.com/eGamesAPI/remnawave-reverse-proxy) and [DigneZzZ](https://github.com/DigneZzZ/remnawave-scripts). Original authorship is kept — see [CREDITS.md](CREDITS.md).
 
@@ -14,7 +14,7 @@ The Xray profile, inbounds, nodes, hosts, AUTO squad and AUTO user are created t
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v25.2.2-prod/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v25.2.3-prod/remnawave-manager.sh \
   -o remnawave-manager.sh
 chmod +x remnawave-manager.sh
 sudo bash remnawave-manager.sh
@@ -55,6 +55,7 @@ By default every transport is enabled: Reality, Hysteria2, gRPC and xHTTP.
 | 20 | Converter | Optional Rezzosoft JSON helper (not required to bind) |
 | 21 | Credits / help | Authorship and full CLI help |
 | 22 | Language | English or Русский |
+| 23 | URLs | Panel / subscription / SNI and AUTO user link (passwords stay in `credentials.txt`) |
 | 0 | Exit | — |
 
 ## Install modes
@@ -95,6 +96,10 @@ On an existing system: `sudo bash remnawave-manager.sh protocols` (alias: `bind`
 
 ## Maintenance CLI
 
-`status`, `doctor`, `repair`, `backup`, `restore`, `update`, `up`, `down`, `restart`, `logs`, `core-update`, `stealth`, `addon remnawave|remnanode|selfsteal|wtm|netbird|egames`.
+The header of the menu shows live local health (panel API, subscription `:3010`, remnanode). If the VPS already has Remnawave, items 1–3 offer **repair**, **re-bind**, or full reinstall instead of blindly running `apt full-upgrade` again.
+
+On HTTP 502 for the subscription page: menu **7 (repair)** or `sudo bash remnawave-manager.sh repair`. Do not paste PowerShell scripts onto the Linux VPS.
+
+`status`, `doctor`, `repair`, `backup`, `restore`, `update`, `up`, `down`, `restart`, `logs`, `urls`, `health`, `core-update`, `stealth`, `addon remnawave|remnanode|selfsteal|wtm|netbird|egames`.
 
 Details: [docs/INSTALLATION_RU.md](docs/INSTALLATION_RU.md), [CHANGELOG.md](CHANGELOG.md), [SHA256SUMS](SHA256SUMS).
