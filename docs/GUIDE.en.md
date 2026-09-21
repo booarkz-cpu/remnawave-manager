@@ -2,7 +2,7 @@
 
 [English](GUIDE.en.md) · [Русский](GUIDE.ru.md) · [README](../README.md)
 
-Installer and day-to-day manager for [Remnawave](https://docs.rw) on Debian/Ubuntu. Author: **Corgi Lusi (Корги Люси)**. Current script version: **1.5.4**.
+Installer and day-to-day manager for [Remnawave](https://docs.rw) on Debian/Ubuntu. Author: **Corgi Lusi (Корги Люси)**. Current script version: **1.5.5**.
 
 This page is the full instruction. The GitHub README describes **every menu item** in English and Russian. Historical per-release notes: [INSTALLATION_RU.md](INSTALLATION_RU.md). Bilingual changelog: [CHANGELOG.md](../CHANGELOG.md) (English) · [CHANGELOG.ru.md](../CHANGELOG.ru.md) (Русский). Security: [SECURITY.md](../SECURITY.md) · [SECURITY.ru.md](../SECURITY.ru.md). License: [MIT](../LICENSE).
 
@@ -92,14 +92,14 @@ grep ' remnawave-manager.sh$' SHA256SUMS
 
 The two hashes must match. Latest release: <https://github.com/booarkz-cpu/remnawave-manager/releases/latest>
 
-Pinned copy (example for 1.5.4):
+Pinned copy (example for 1.5.5):
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.5.4/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.5.5/remnawave-manager.sh \
   -o remnawave-manager.sh
 sha256sum remnawave-manager.sh
-# 1.5.4: 4a6200b2118c8df6f3a6f38f5efd48a0b2afa9c7358538fb7b5338391b9f7afa
+# 1.5.5: 42a912d3f3bdf8a7a0cbc7a30db2a989bd7cdb77094bc72b3267aaf81b9a1635
 ```
 
 See [SHA256SUMS](../SHA256SUMS) in the repo for every versioned file.
@@ -461,6 +461,7 @@ bash remnawave-manager.sh telegram enable|disable|test
 bash remnawave-manager.sh backup-remote [rclone:path]
 bash remnawave-manager.sh certs [renew|force]
 bash remnawave-manager.sh firewall [IPv4]
+bash remnawave-manager.sh sub-stub on|off|status|refresh
 bash remnawave-manager.sh admin-login SHOW
 bash remnawave-manager.sh backup | restore FILE | update
 bash remnawave-manager.sh up | down | restart | logs [container]
@@ -486,6 +487,7 @@ bash remnawave-manager.sh addon remnawave|remnanode|selfsteal|wtm|netbird|egames
 | `/var/backups/remnawave/` | Backups |
 | `/usr/local/sbin/remnawave-health-notify.sh` | Telegram from the 5-minute healthcheck (menu **30**) |
 | `/usr/local/bin/remnawave-manager` | Optional CLI copy |
+| `/var/www/sub-site/` | Corgi kennel stub on the SUB domain root (menu **33**) |
 
 Never publish API tokens, `SECRET_KEY`, PostgreSQL password, or `credentials.txt`. See [SECURITY.md](../SECURITY.md) and [SECURITY.ru.md](../SECURITY.ru.md).
 
@@ -511,6 +513,8 @@ Optional converter (not required to bind): <https://rezzosoft.ru/converter.html>
 | Menu does not see a new script | menu **26**, `self-update` or `check-update --apply` (from 1.3.0); 6 hour cache |
 | Hash mismatch | Delete the file; download Latest again; do not run it |
 | `"-":0: bad minute` on old 25.2.2 | Update the **script** (section 10), then `protocols` — Hysteria certs use systemd, not crontab |
+| SUB root is still the subscription page | menu **33** → 2 or `sub-stub on`, then `repair` |
+| Kennel shows SVG only, no photos | `sub-stub refresh` (needs `sub-stub-photos.tgz` from GitHub Latest) |
 
 ---
 

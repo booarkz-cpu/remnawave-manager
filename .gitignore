@@ -5,6 +5,7 @@ bootstrap.env
 *.key
 *.pem
 *.tgz
+!assets/sub-stub-photos.tgz
 *.tar.gz
 *.age
 xray-custom

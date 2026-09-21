@@ -2,7 +2,7 @@
 
 [English](GUIDE.en.md) · [Русский](GUIDE.ru.md) · [README](../README.ru.md)
 
-Установщик и повседневный менеджер [Remnawave](https://docs.rw) на Debian/Ubuntu. Автор: **Корги Люси (Corgi Lusi)**. Текущая версия скрипта: **1.5.4**.
+Установщик и повседневный менеджер [Remnawave](https://docs.rw) на Debian/Ubuntu. Автор: **Корги Люси (Corgi Lusi)**. Текущая версия скрипта: **1.5.5**.
 
 Это полная инструкция. На GitHub в README — **полный разбор каждого пункта меню** на русском и английском. Журнал обновлений по версиям: [INSTALLATION_RU.md](INSTALLATION_RU.md), [CHANGELOG.md](../CHANGELOG.md) (English) · [CHANGELOG.ru.md](../CHANGELOG.ru.md) (русский). Безопасность: [SECURITY.md](../SECURITY.md) · [SECURITY.ru.md](../SECURITY.ru.md). Лицензия: [MIT](../LICENSE).
 
@@ -92,14 +92,14 @@ grep ' remnawave-manager.sh$' SHA256SUMS
 
 Две суммы должны совпасть. Latest: <https://github.com/booarkz-cpu/remnawave-manager/releases/latest>
 
-Фиксированная копия (пример для 1.5.4):
+Фиксированная копия (пример для 1.5.5):
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.5.4/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.5.5/remnawave-manager.sh \
   -o remnawave-manager.sh
 sha256sum remnawave-manager.sh
-# 1.5.4: 4a6200b2118c8df6f3a6f38f5efd48a0b2afa9c7358538fb7b5338391b9f7afa
+# 1.5.5: 42a912d3f3bdf8a7a0cbc7a30db2a989bd7cdb77094bc72b3267aaf81b9a1635
 ```
 
 Все суммы версий — в [SHA256SUMS](../SHA256SUMS).
@@ -461,6 +461,7 @@ bash remnawave-manager.sh telegram enable|disable|test
 bash remnawave-manager.sh backup-remote [rclone:path]
 bash remnawave-manager.sh certs [renew|force]
 bash remnawave-manager.sh firewall [IPv4]
+bash remnawave-manager.sh sub-stub on|off|status|refresh
 bash remnawave-manager.sh admin-login SHOW
 bash remnawave-manager.sh backup | restore FILE | update
 bash remnawave-manager.sh up | down | restart | logs [контейнер]
@@ -486,6 +487,7 @@ bash remnawave-manager.sh addon remnawave|remnanode|selfsteal|wtm|netbird|egames
 | `/var/backups/remnawave/` | Backup |
 | `/usr/local/sbin/remnawave-health-notify.sh` | Telegram из 5-минутного healthcheck (пункт **30**) |
 | `/usr/local/bin/remnawave-manager` | Необязательная копия CLI |
+| `/var/www/sub-site/` | Заглушка питомника корги на корне домена SUB (пункт **33**) |
 
 Не публикуйте API-токены, `SECRET_KEY`, пароль PostgreSQL и `credentials.txt`. См. [SECURITY.ru.md](../SECURITY.ru.md) и [SECURITY.md](../SECURITY.md).
 
@@ -511,6 +513,8 @@ bash remnawave-manager.sh addon remnawave|remnanode|selfsteal|wtm|netbird|egames
 | Меню не видит новый скрипт | пункт **26**, `self-update` или `check-update --apply` (с 1.3.0); кэш 6 часов |
 | Хеш не совпал | Удалите файл, скачайте Latest снова, не запускайте |
 | `"-":0: bad minute` на старом 25.2.2 | Обновите **скрипт** (раздел 10), затем `protocols` — сертификаты Hysteria идут через systemd, не crontab |
+| Корень SUB по-прежнему страница подписки | пункт **33** → 2 или `sub-stub on`, затем `repair` |
+| На заглушке только SVG, без фото | `sub-stub refresh` (нужен `sub-stub-photos.tgz` из GitHub Latest) |
 
 ---
 

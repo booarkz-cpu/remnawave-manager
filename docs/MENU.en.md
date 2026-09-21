@@ -2,7 +2,7 @@
 
 [English](MENU.en.md) · [Русский](MENU.ru.md) · [README](../README.md) · [Guide](GUIDE.en.md)
 
-Open the menu with no arguments: `bash remnawave-manager.sh`. **Language is asked first** (Enter keeps the current one); item **22** switches later. Do not type `sudo`. Numbers **1–27** stay; **28–32** were added in 1.5.0. **0** / `q` leaves.
+Open the menu with no arguments: `bash remnawave-manager.sh`. **Language is asked first** (Enter keeps the current one); item **22** switches later. Do not type `sudo`. Numbers **1–27** stay; **28–32** were added in 1.5.0; **33** is the SUB-domain Corgi stub (1.5.5). **0** / `q` leaves.
 
 Two updates that look similar and are not:
 
@@ -394,6 +394,33 @@ CLI: `certs` · `certs renew` · `certs force`
 0. Back
 
 CLI: `firewall` · `firewall 203.0.113.10`
+
+---
+
+## 33. Subscription stub
+
+**Panel / single VPS.** A Corgi Lusi kennel site (photos, about, breed, gallery, contacts) is served at **https://DOMAIN_SUB/**. Visiting the domain looks like a normal kennel website. A user subscription URL `https://DOMAIN_SUB/<shortUuid>` is still proxied to `remnawave-subscription-page` on `:3010`.
+
+Enabled by default on install and `repair`. Menu:
+
+1. Status
+2. Enable
+3. Disable (SUB root proxies to subscription-page again)
+4. Refresh HTML/CSS and re-download photos
+0. Back
+
+Photos come from `assets/sub-stub-photos.tgz` next to the script, or GitHub Latest / jsDelivr. If the archive is missing, SVG illustrations are used. Enable and refresh both go through `sub_stub_apply`: a node-only VPS prints that there is no SUB domain and does not rewrite panel nginx.
+
+CLI:
+
+```bash
+bash remnawave-manager.sh sub-stub status
+bash remnawave-manager.sh sub-stub on
+bash remnawave-manager.sh sub-stub off
+bash remnawave-manager.sh sub-stub refresh
+```
+
+Install without the stub: `--no-sub-stub`.
 
 ---
 

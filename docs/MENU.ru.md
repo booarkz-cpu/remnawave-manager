@@ -2,7 +2,7 @@
 
 [English](MENU.en.md) · [Русский](MENU.ru.md) · [README](../README.ru.md) · [Инструкция](GUIDE.ru.md)
 
-Меню без аргументов: `bash remnawave-manager.sh`. **Сначала язык** (Enter оставляет текущий); пункт **22** переключает позже. Префикс `sudo` не пишите. Номера **1–27** не съезжают; **28–32** добавлены в 1.5.0. **0** / `q` — выход.
+Меню без аргументов: `bash remnawave-manager.sh`. **Сначала язык** (Enter оставляет текущий); пункт **22** переключает позже. Префикс `sudo` не пишите. Номера **1–27** не съезжают; **28–32** добавлены в 1.5.0; **33** — заглушка корги на домене SUB (1.5.5). **0** / `q` — выход.
 
 Два обновления, которые путают:
 
@@ -394,6 +394,33 @@ CLI: `certs` · `certs renew` · `certs force`
 0. Назад
 
 CLI: `firewall` · `firewall 203.0.113.10`
+
+---
+
+## 33. Заглушка подписки
+
+**Панель / один VDS.** На **https://ДОМЕН_SUB/** отдаётся сайт питомника Corgi Lusi (фото, о питомнике, порода, галерея, контакты). Заход на домен выглядит как обычный сайт. Ссылка пользователя `https://ДОМЕН_SUB/<shortUuid>` по-прежнему идёт в `remnawave-subscription-page` на `:3010`.
+
+По умолчанию включено при установке и `repair`. Меню:
+
+1. Состояние
+2. Включить
+3. Выключить (корень SUB снова на subscription-page)
+4. Обновить HTML/CSS и заново скачать фото
+0. Назад
+
+Фото из `assets/sub-stub-photos.tgz` рядом со скриптом или с GitHub Latest / jsDelivr. Если архива нет — SVG-иллюстрации. Включение и обновление идут через `sub_stub_apply`: на VDS только с нодой скрипт пишет, что домена SUB нет, и не переписывает nginx панели.
+
+CLI:
+
+```bash
+bash remnawave-manager.sh sub-stub status
+bash remnawave-manager.sh sub-stub on
+bash remnawave-manager.sh sub-stub off
+bash remnawave-manager.sh sub-stub refresh
+```
+
+Установка без заглушки: `--no-sub-stub`.
 
 ---
 

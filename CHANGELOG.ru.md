@@ -2,6 +2,15 @@
 
 Русская версия. English: [CHANGELOG.md](CHANGELOG.md).
 
+## 1.5.5
+
+Заглушка питомника Corgi Lusi на **корне домена подписки** (пункт **33** / `sub-stub`). `https://SUB/` — сайт с фото; `https://SUB/shortUuid` по-прежнему открывает Remnawave. По умолчанию вкл при установке/`repair`. `--no-sub-stub` отключает. Фото: `assets/sub-stub-photos.tgz` (GitHub Latest + jsDelivr); если архива нет — SVG. Точные location nginx, чтобы `/img/` не уходил на `:3010`.
+
+Аудит: `.gitignore` больше не выкидывает архив фото (`!assets/sub-stub-photos.tgz`). Пункт **33** → 4 и `sub-stub refresh` идут через `sub_stub_apply` (на VDS только с нодой vhost панели не переписывается). Скачивание фото не падает на `cd`, если путь скрипта неизвестен.
+
+SHA256:
+`42a912d3f3bdf8a7a0cbc7a30db2a989bd7cdb77094bc72b3267aaf81b9a1635`
+
 ## 1.5.4
 
 Создание пользователя из меню (пункт **28**) и CLI спрашивает **срок подписки**, **лимит трафика** и **лимит устройств**. Поля API: `expireAt`, `trafficLimitBytes`, `trafficLimitStrategy=NO_RESET`, при лимите > 0 — `hwidDeviceLimit`. По умолчанию 365 дней, трафик безлимитный, устройства без HWID-капа. CLI: `users create NAME [ДНИ|ГГГГ-ММ-ДД] [ГБ|512M|10G] [УСТРОЙСТВА]`.

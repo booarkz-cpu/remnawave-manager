@@ -3,11 +3,12 @@ set -Eeuo pipefail
 
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
-SCRIPT=remnawave-manager-v1.5.4.sh
+SCRIPT=remnawave-manager-v1.5.5.sh
 
 echo "[1/18] bash -n current + historical"
 bash -n "$SCRIPT"
 bash -n remnawave-manager.sh
+bash -n remnawave-manager-v1.5.5.sh
 bash -n remnawave-manager-v1.5.4.sh
 bash -n remnawave-manager-v1.5.3.sh
 bash -n remnawave-manager-v1.5.2.sh
@@ -226,12 +227,16 @@ grep -Fq '### 25. Node transports' README.md
 grep -Fq '### 25. Транспорты ноды' README.ru.md
 grep -Fq '### 28. Users' README.md
 grep -Fq '### 32. Firewall' README.md
+grep -Fq '### 33. Subscription stub' README.md
 grep -Fq '### 28. Пользователи' README.ru.md
 grep -Fq '### 32. Файрвол' README.ru.md
+grep -Fq '### 33. Заглушка подписки' README.ru.md
 grep -Fq '## 28. Users' docs/MENU.en.md
 grep -Fq '## 32. Firewall' docs/MENU.en.md
+grep -Fq '## 33. Subscription stub' docs/MENU.en.md
 grep -Fq '## 28. Пользователи' docs/MENU.ru.md
 grep -Fq '## 32. Файрвол' docs/MENU.ru.md
+grep -Fq '## 33. Заглушка подписки' docs/MENU.ru.md
 grep -Fq 'admin-login SHOW' docs/MENU.en.md docs/GUIDE.en.md
 grep -Fq '## License' README.md
 grep -Fq '## Лицензия' README.ru.md
@@ -266,7 +271,8 @@ grep -Fq -- '--version' /tmp/rw-help-en.txt
 grep -Fq 'add-node' /tmp/rw-help-en.txt
 grep -Fq 'users list' /tmp/rw-help-en.txt
 grep -Fq 'admin-login' /tmp/rw-help-en.txt
-bash "$SCRIPT" --version | grep -Fq '1.5.4'
+grep -Fq 'sub-stub on|off|status|refresh' /tmp/rw-help-en.txt
+bash "$SCRIPT" --version | grep -Fq '1.5.5'
 set +e
 bash "$SCRIPT" --lang en nosuchcmd >/tmp/rw-unk.txt 2>&1
 unk_rc=$?
@@ -279,7 +285,7 @@ if grep -Fq 'panel + node on one server' /tmp/rw-unk.txt; then
 fi
 # 1.4.0 self-update restart glued `--lang ru` into one argv because IFS has no space.
 bash "$SCRIPT" '--lang ru' --no-update-check --version >/tmp/rw-lang-glue.txt 2>&1
-grep -Fq '1.5.4' /tmp/rw-lang-glue.txt
+grep -Fq '1.5.5' /tmp/rw-lang-glue.txt
 if grep -Fq 'Unknown command' /tmp/rw-lang-glue.txt; then
   echo 'FAIL: glued --lang ru treated as unknown command' >&2
   exit 1
@@ -326,6 +332,24 @@ grep -Fq 'menu_row 26' "$SCRIPT"
 grep -Fq 'menu_row 27' "$SCRIPT"
 grep -Fq 'menu_row 28' "$SCRIPT"
 grep -Fq 'menu_row 32' "$SCRIPT"
+grep -Fq 'menu_row 33' "$SCRIPT"
+grep -Fq 'write_sub_stub_site()' "$SCRIPT"
+grep -Fq 'sub_stub_menu()' "$SCRIPT"
+grep -Fq 'SUB_STUB' "$SCRIPT"
+grep -Fq 'alias /var/www/sub-site/img/' "$SCRIPT"
+test -f assets/sub-stub-photos.tgz
+test -f assets/sub-stub/hero.jpg
+grep -Fq '!assets/sub-stub-photos.tgz' .gitignore
+if git check-ignore -q assets/sub-stub-photos.tgz; then
+  echo 'FAIL: assets/sub-stub-photos.tgz must not be gitignored' >&2
+  exit 1
+fi
+grep -Fq 'sub-stub-photos.tgz' SHA256SUMS
+awk '/^sub_stub_cli\(\)/,/^show_admin_login_once\(\)/' "$SCRIPT" | grep -Fq 'refresh|rewrite) sub_stub_apply 1'
+if awk '/^sub_stub_cli\(\)/,/^show_admin_login_once\(\)/' "$SCRIPT" | grep -q 'write_panel_vhosts'; then
+  echo 'FAIL: sub_stub refresh must go through sub_stub_apply' >&2
+  exit 1
+fi
 grep -Fq 'users_menu()' "$SCRIPT"
 grep -Fq 'node_control_menu()' "$SCRIPT"
 grep -Fq 'alerts_backup_menu()' "$SCRIPT"
@@ -399,6 +423,7 @@ test -f SECURITY.ru.md
 test -f CHANGELOG.md
 test -f CHANGELOG.ru.md
 test -f RELEASE_NOTES_1.5.4.md
+test -f RELEASE_NOTES_1.5.5.md
 grep -Fq '[SECURITY.md](SECURITY.md)' README.md
 grep -Fq '[SECURITY.ru.md](SECURITY.ru.md)' README.ru.md
 grep -Fq 'CHANGELOG.ru.md' README.md README.ru.md
@@ -413,7 +438,7 @@ echo "[14/18] current script copies match"
 cmp -s remnawave-manager.sh "$SCRIPT"
 
 echo "[15/18] VERSION string"
-grep -Fq "VERSION='1.5.4'" "$SCRIPT"
+grep -Fq "VERSION='1.5.5'" "$SCRIPT"
 if grep -nE "^VERSION='[^']*-prod'" remnawave-manager.sh; then
   echo 'FAIL: current VERSION must not use a -prod suffix' >&2
   exit 1
@@ -449,12 +474,12 @@ set -Eeuo pipefail
 . ./kv.inc
 . ./up.inc
 . ./user.inc
-VERSION='1.5.4'
+VERSION='1.5.5'
 PATH_SAVE="$PATH"
 DRY_RUN=0
 printf '%s\n' 'VERSION=9.9.9' 'PATH=/evil' 'DRY_RUN=1' 'ADMIN_PASSWORD=ab\cd$ef' > env.test
 load_kv_file env.test
-[[ "$VERSION" == 1.5.4 ]]
+[[ "$VERSION" == 1.5.5 ]]
 [[ "$PATH" == "$PATH_SAVE" ]]
 [[ "$DRY_RUN" == 0 ]]
 [[ "$ADMIN_PASSWORD" == 'ab\cd$ef' ]]
@@ -478,5 +503,23 @@ body="$(users_payload Bob "$(user_expire_iso 10)" "$(user_traffic_bytes 2)" 4)"
 echo "$body" | jq -e '.hwidDeviceLimit==4 and .trafficLimitBytes==2147483648' >/dev/null
 EOF
 ( cd "$tmpd" && bash t.sh )
+
+echo "[extra] subscription stub site + local photos"
+ok(){ :; }; warn(){ :; }; persist_manager(){ :; }
+t(){ shift || true; printf '%s' "$*"; }
+script_path(){ printf '%s' "$ROOT/remnawave-manager.sh"; }
+ADDONS_DIR="$tmpd/addons"
+SUB_STUB_TGZ_URL=http://127.0.0.1:1/x
+JSDELIVR_STUB_TGZ_URL=http://127.0.0.1:1/x
+SUB_SITE="$tmpd/site"
+eval "$(awk '/^fetch_sub_stub_photos\(\)/,/^write_panel_vhosts\(\)/' "$SCRIPT" | sed '$d')"
+write_sub_stub_site
+[[ -f "$SUB_SITE/index.html" ]]
+[[ -f "$SUB_SITE/gallery.html" ]]
+[[ -f "$SUB_SITE/img/hero.jpg" ]]
+[[ -f "$SUB_SITE/img/hero.svg" ]]
+grep -Fq '/img/hero.jpg' "$SUB_SITE/index.html"
+grep -Fq 'Corgi Lusi' "$SUB_SITE/index.html"
+awk '/^sub_stub_nginx_locations\(\)/,/^write_panel_vhosts\(\)/' "$SCRIPT" | grep -Fq 'alias /var/www/sub-site/img/'
 
 echo "STATIC AUDIT OK"

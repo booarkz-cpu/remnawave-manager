@@ -6,7 +6,7 @@
 
 Production-установщик [Remnawave](https://docs.rw) на Debian/Ubuntu. Интерактивное меню с описанием каждой функции. Язык: **русский** или **English**.
 
-**Текущая версия:** `1.5.4`
+**Текущая версия:** `1.5.5`
 
 **Лицензия:** [MIT](LICENSE) — можно использовать, копировать, менять и распространять с сохранением копирайта. Оригиналы, которые качает пункт **24**, остаются на условиях их авторов — [CREDITS.md](CREDITS.md).
 
@@ -61,13 +61,13 @@ bash remnawave-manager.sh
 
 Без аргументов сначала **выбор языка** (English / Русский), затем меню. `sudo` в команде писать не нужно — скрипт сам поднимает root. Enter оставляет текущий язык (`RW_LANG` в `/opt/remnawave/manager.env`). Позже — пункт 22; пропуск выбора: `--lang ru|en`.
 
-Фиксированная 1.5.4 через jsDelivr (по желанию):
+Фиксированная 1.5.5 через jsDelivr (по желанию):
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.5.4/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.5.5/remnawave-manager.sh \
   -o remnawave-manager.sh
-# sha256: 4a6200b2118c8df6f3a6f38f5efd48a0b2afa9c7358538fb7b5338391b9f7afa
+# sha256: 42a912d3f3bdf8a7a0cbc7a30db2a989bd7cdb77094bc72b3267aaf81b9a1635
 ```
 
 По умолчанию включаются все транспорты: Reality, Hysteria2, gRPC и xHTTP.
@@ -318,6 +318,10 @@ Telegram: токен + chat, тест. Healthcheck не чаще раза в ч�
 ### 32. Файрвол
 
 Показать UFW, задать или снять **ADMIN_IP**, пересобрать правила. Снятие ADMIN_IP открывает SSH с любого IPv4.
+
+### 33. Заглушка подписки
+
+Сайт питомника Corgi Lusi на **https://ДОМЕН_SUB/** (фото и страницы). Ссылки подписки `https://ДОМЕН_SUB/shortUuid` по-прежнему открывают Remnawave. По умолчанию **вкл** после установки/`repair`. CLI: `sub-stub on|off|status|refresh`. Выключить: `--no-sub-stub`.
 
 ### 0. Выход
 

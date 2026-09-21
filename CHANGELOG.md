@@ -2,6 +2,15 @@
 
 English journal. Русский: [CHANGELOG.ru.md](CHANGELOG.ru.md).
 
+## 1.5.5
+
+Corgi Lusi kennel stub on the **subscription domain root** (menu **33** / `sub-stub`). `https://SUB/` shows a kennel site with photos; `https://SUB/shortUuid` still opens Remnawave. Default on for install/`repair`. `--no-sub-stub` skips it. Photos: `assets/sub-stub-photos.tgz` (GitHub Latest + jsDelivr); SVG fallback if the archive is missing. nginx exact locations so `/img/` never hits `:3010`.
+
+Audit: `.gitignore` no longer drops the photo archive (`!assets/sub-stub-photos.tgz`). Menu **33** → 4 and `sub-stub refresh` go through `sub_stub_apply` (node-only VPS does not rewrite panel vhosts). Photo fetch does not `cd` abort if the script path is missing.
+
+SHA256:
+`42a912d3f3bdf8a7a0cbc7a30db2a989bd7cdb77094bc72b3267aaf81b9a1635`
+
 ## 1.5.4
 
 Creating a user from the menu (item **28**) and CLI now sets **subscription expiry**, a **traffic cap**, and a **device (HWID) limit**. API fields: `expireAt`, `trafficLimitBytes`, `trafficLimitStrategy=NO_RESET`, and `hwidDeviceLimit` when the limit is greater than 0. Defaults: 365 days, unlimited traffic, no HWID cap. CLI: `users create NAME [DAYS|YYYY-MM-DD] [GB|512M|10G] [DEVICES]`.
