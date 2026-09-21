@@ -1,4 +1,4 @@
-# Установка Remnawave Manager 25.1.12-prod
+# Установка Remnawave Manager 25.1.13-prod
 
 ## 1. Подготовка
 
@@ -14,7 +14,7 @@ chmod +x remnawave-manager.sh
 sha256sum remnawave-manager.sh
 ```
 
-Сверьте сумму с файлом `SHA256SUMS`. Актуальный файл также называется `remnawave-manager-v25.1.12-prod.sh`.
+Сверьте сумму с файлом `SHA256SUMS`. Актуальный файл также называется `remnawave-manager-v25.1.13-prod.sh`.
 
 Во время `install` скрипт выполняет `apt-get full-upgrade`. Автоматически VDS не перезагружается; если появится `/var/run/reboot-required`, перезагрузите сервер после завершения установки.
 
@@ -82,9 +82,13 @@ sudo bash remnawave-manager.sh restore /var/backups/remnawave/ARCHIVE.tgz
 
 ## 9. HTTP 502 после 25.1.11
 
-Панель и subscription-page требуют `X-Forwarded-For` и `X-Forwarded-Proto: https`. Без них backend рвёт сокет, nginx отвечает 502. На уже установленном VDS:
+Панель и subscription-page требуют `X-Forwarded-For` и `X-Forwarded-Proto: https`. Без них backend рвёт сокет, nginx отвечает 502.
+
+Скачайте **25.1.13+** (не 25.1.12: там `repair` падал на удалении `ssl-params.conf`) и выполните:
 
 ```bash
+curl -fsSL https://raw.githubusercontent.com/booarkz-cpu/remnawave-manager/main/remnawave-manager.sh -o remnawave-manager.sh
+chmod +x remnawave-manager.sh
 sudo bash remnawave-manager.sh repair
 ```
 

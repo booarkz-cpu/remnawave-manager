@@ -1,5 +1,15 @@
 # Changelog
 
+## 25.1.13-prod
+
+Hotfix `repair` после 25.1.12: файл `/etc/nginx/conf.d/ssl-params.conf` удалялся до перезаписи `reality-site.conf`, `nginx -t` падал, панель оставалась на 502.
+
+- старые `include .../ssl-params.conf` переписываются на snippet **до** удаления файла;
+- `repair` применяет nginx только после записи всех vhost.
+
+SHA256:
+`c868a4970404dc9ae37d687f49e780a6de9ee8698115604cde1999c816b7148b`
+
 ## 25.1.12-prod
 
 Исправление HTTP 502 на панели и странице подписки, маскировка Reality SNI под сайт о корги.
