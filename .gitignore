@@ -12,4 +12,6 @@ bootstrap.env
 xray-custom
 cabinet/data/*.sqlite
 cabinet/data/*.sqlite-*
+__pycache__/
+*.pyc
 
