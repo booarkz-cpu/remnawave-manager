@@ -7,6 +7,12 @@
 
 Ниже — заметки по конкретным релизам (хеши, что менять после скачивания старой версии). Для повседневной работы используйте Latest и раздел 10 в GUIDE.
 
+# Установка Remnawave Manager 1.6.2
+
+Админ-кабинет Material You + Web 3.0. Аудит `/admin/`, X-Frame-Options, WAL. Сначала `self-update`.
+
+jsDelivr: `@v1.6.2` / `64afdec784ba3ff468dcc46e0a982914d4697e2c7cdae05cf671ede775306543`.
+
 # Установка Remnawave Manager 1.6.1
 
 Аудит личного кабинета (пункт **34**): Telegram widget, правка вкладок в админке, `/lk` → `/lk/`. Тест без шлюзов: `remnawave-cabinet-test.sh`. Сначала `self-update`.

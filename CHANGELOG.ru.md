@@ -2,6 +2,13 @@
 
 Русская версия. English: [CHANGELOG.md](CHANGELOG.md).
 
+## 1.6.2
+
+Дизайн админ-кабинета: Material You + Web 3.0 (rail, glass, чипы, пустые состояния). Аудит: `/admin/` со слэшем; `X-Frame-Options`; WAL; IntegrityError → 409.
+
+SHA256:
+`64afdec784ba3ff468dcc46e0a982914d4697e2c7cdae05cf671ede775306543`
+
 ## 1.6.1
 
 Аудит кабинета: callback виджета Telegram больше не требует OAuth `state`; проверяется `auth_date`. HTML и названия вкладок очищаются; CSP; админ редактирует существующие вкладки и тарифы. `https://PANEL/lk` редиректит на `/lk/`. Неверный id в URL — 400. Удаление тарифа с заказами отключает его (FK). Refresh не переписывает `CABINET_SECRET`. Тест: `bash remnawave-cabinet-test.sh`.

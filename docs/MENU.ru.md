@@ -428,7 +428,7 @@ bash remnawave-manager.sh sub-stub refresh
 
 **Панель / один VDS.** Личный кабинет Material Design + Web 3.0 на **https://DOMAIN_PANEL/lk/**. Регистрация и вход: email+пароль, Telegram, VK, Яндекс. Тарифы, пробный период, покупка (**без SDK платёжных шлюзов** — mock или отметка админом), ссылка подписки Remnawave, инструкции Android / iOS / ТВ / ПК.
 
-Админ: **https://DOMAIN_PANEL/lk/admin** (пароль панели, если не задан `CABINET_ADMIN_PASSWORD`). Там **редактируются существующие вкладки**, страницы, тарифы, инструкции и OAuth. Секреты API настроек не отдаёт. Telegram в проде — Login Widget.
+Админ: **https://DOMAIN_PANEL/lk/admin** (пароль панели, если не задан `CABINET_ADMIN_PASSWORD`). Material You + Web 3.0. Там **редактируются существующие вкладки**, страницы, тарифы, инструкции и OAuth. Секреты API настроек не отдаёт. Telegram в проде — Login Widget.
 
 Локальный тест без Remnawave, Docker и шлюзов:
 

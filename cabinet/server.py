@@ -137,9 +137,11 @@ def rate_ok(ip: str) -> bool:
 
 def db() -> sqlite3.Connection:
     DATA_DIR.mkdir(parents=True, exist_ok=True)
-    con = sqlite3.connect(DB_PATH, check_same_thread=False)
+    con = sqlite3.connect(DB_PATH, check_same_thread=False, timeout=10)
     con.row_factory = sqlite3.Row
     con.execute("PRAGMA foreign_keys=ON")
+    con.execute("PRAGMA journal_mode=WAL")
+    con.execute("PRAGMA busy_timeout=5000")
     return con
 
 
@@ -441,7 +443,7 @@ def user_public(u: dict) -> dict:
 
 
 class Handler(BaseHTTPRequestHandler):
-    server_version = "CorgiCabinet/1.6.1"
+    server_version = "CorgiCabinet/1.6.2"
 
     def log_message(self, fmt, *args):
         path = self.path.split("?")[0]
@@ -454,7 +456,9 @@ class Handler(BaseHTTPRequestHandler):
         raw = urllib.parse.urlparse(self.path).path
         if PREFIX and (raw == PREFIX or raw.startswith(PREFIX + "/")):
             raw = raw[len(PREFIX) :] or "/"
-        return raw
+        if not raw.startswith("/static/") and len(raw) > 1 and raw.endswith("/"):
+            raw = raw[:-1]
+        return raw or "/"
 
     def _qs(self) -> dict:
         return dict(urllib.parse.parse_qsl(urllib.parse.urlparse(self.path).query))
@@ -482,6 +486,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", ctype)
         self.send_header("Content-Length", str(len(body)))
         self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("X-Frame-Options", "SAMEORIGIN")
         self.send_header("Referrer-Policy", "same-origin")
         self.send_header(
             "Content-Security-Policy",
@@ -489,7 +494,8 @@ class Handler(BaseHTTPRequestHandler):
             "style-src 'self' 'unsafe-inline'; img-src 'self' data: https://telegram.org; "
             "connect-src 'self'; frame-src https://oauth.telegram.org; base-uri 'none'",
         )
-        self.send_header("Cache-Control", "no-store" if ctype.startswith("application/json") else "public, max-age=120")
+        no_store = ctype.startswith("application/json") or "html" in ctype
+        self.send_header("Cache-Control", "no-store" if no_store else "public, max-age=120")
         if extra_headers:
             for k, v in extra_headers:
                 self.send_header(k, v)
@@ -737,10 +743,13 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(*json_bytes({"error": "invalid"}, 400))
         if query("SELECT id FROM users WHERE email=?", (email,), one=True):
             return self._send(*json_bytes({"error": "exists"}, 409))
-        uid = query(
-            "INSERT INTO users(email,password_hash,display_name,created) VALUES(?,?,?,?)",
-            (email, pbkdf2(password), name, now()),
-        )
+        try:
+            uid = query(
+                "INSERT INTO users(email,password_hash,display_name,created) VALUES(?,?,?,?)",
+                (email, pbkdf2(password), name, now()),
+            )
+        except sqlite3.IntegrityError:
+            return self._send(*json_bytes({"error": "exists"}, 409))
         tok = session_put(uid, 0)
         u = query("SELECT * FROM users WHERE id=?", (uid,), one=True)
         return self._send(*json_bytes({"user": user_public(u)}), extra_headers=[self._set_cookie("lk_sid", tok)])
@@ -768,10 +777,18 @@ class Handler(BaseHTTPRequestHandler):
         if not u:
             u = query("SELECT * FROM users WHERE email=?", (email,), one=True)
         if not u:
-            uid = query(
-                f"INSERT INTO users(email,{col},display_name,created) VALUES(?,?,?,?)",
-                (email, ext_id, provider.title(), now()),
-            )
+            try:
+                uid = query(
+                    f"INSERT INTO users(email,{col},display_name,created) VALUES(?,?,?,?)",
+                    (email, ext_id, provider.title(), now()),
+                )
+            except sqlite3.IntegrityError:
+                row = query(f"SELECT * FROM users WHERE {col}=?", (ext_id,), one=True) or query(
+                    "SELECT * FROM users WHERE email=?", (email,), one=True
+                )
+                if not row:
+                    return self._send(*json_bytes({"error": "exists"}, 409))
+                uid = row["id"]
         else:
             uid = u["id"]
             query(f"UPDATE users SET {col}=? WHERE id=?", (ext_id, uid))
@@ -858,7 +875,8 @@ class Handler(BaseHTTPRequestHandler):
                 with urllib.request.urlopen(info_req, timeout=15) as resp:
                     info = json.loads(resp.read().decode())
                 ext_id = str(info.get("id") or "")
-                email = (info.get("default_email") or (info.get("emails") or [f"ya{ext_id}@yandex.local"])[0]).lower()
+                emails = info.get("emails") or []
+                email = (info.get("default_email") or (emails[0] if emails else f"ya{ext_id}@yandex.local")).lower()
                 name = info.get("real_name") or info.get("login") or "Yandex"
             else:
                 return self._send(*json_bytes({"error": "provider"}, 400))
@@ -869,10 +887,18 @@ class Handler(BaseHTTPRequestHandler):
             "SELECT * FROM users WHERE email=?", (email,), one=True
         )
         if not u:
-            uid = query(
-                f"INSERT INTO users(email,{col},display_name,created) VALUES(?,?,?,?)",
-                (email, ext_id, name[:64], now()),
-            )
+            try:
+                uid = query(
+                    f"INSERT INTO users(email,{col},display_name,created) VALUES(?,?,?,?)",
+                    (email, ext_id, name[:64], now()),
+                )
+            except sqlite3.IntegrityError:
+                row = query(f"SELECT * FROM users WHERE {col}=?", (ext_id,), one=True) or query(
+                    "SELECT * FROM users WHERE email=?", (email,), one=True
+                )
+                if not row:
+                    return self._send(*json_bytes({"error": "exists"}, 409))
+                uid = row["id"]
         else:
             uid = u["id"]
             query(f"UPDATE users SET {col}=?, email=COALESCE(email,?) WHERE id=?", (ext_id, email, uid))
@@ -901,10 +927,16 @@ class Handler(BaseHTTPRequestHandler):
         email = f"tg{ext_id}@telegram.local"
         u = query("SELECT * FROM users WHERE telegram_id=?", (ext_id,), one=True)
         if not u:
-            uid = query(
-                "INSERT INTO users(email,telegram_id,display_name,created) VALUES(?,?,?,?)",
-                (email, ext_id, name[:64], now()),
-            )
+            try:
+                uid = query(
+                    "INSERT INTO users(email,telegram_id,display_name,created) VALUES(?,?,?,?)",
+                    (email, ext_id, name[:64], now()),
+                )
+            except sqlite3.IntegrityError:
+                row = query("SELECT * FROM users WHERE telegram_id=?", (ext_id,), one=True)
+                if not row:
+                    return self._send(*json_bytes({"error": "exists"}, 409))
+                uid = row["id"]
         else:
             uid = u["id"]
         tok = session_put(uid, 0)
@@ -1082,10 +1114,13 @@ class Handler(BaseHTTPRequestHandler):
             )
             mid = as_int(body["id"])
         else:
-            mid = query(
-                "INSERT INTO menu_items(slug,title_ru,title_en,kind,icon,sort,enabled,body) VALUES(?,?,?,?,?,?,?,?)",
-                fields,
-            )
+            try:
+                mid = query(
+                    "INSERT INTO menu_items(slug,title_ru,title_en,kind,icon,sort,enabled,body) VALUES(?,?,?,?,?,?,?,?)",
+                    fields,
+                )
+            except sqlite3.IntegrityError:
+                return self._send(*json_bytes({"error": "exists"}, 409))
         return self._send(*json_bytes({"id": mid, "ok": True}))
 
     def _admin_menu_del(self, mid: int):
@@ -1124,10 +1159,13 @@ class Handler(BaseHTTPRequestHandler):
             )
             tid = as_int(body["id"])
         else:
-            tid = query(
-                "INSERT INTO tariffs(slug,title_ru,title_en,days,traffic_gb,devices,price_rub,is_trial,sort,enabled) VALUES(?,?,?,?,?,?,?,?,?,?)",
-                fields,
-            )
+            try:
+                tid = query(
+                    "INSERT INTO tariffs(slug,title_ru,title_en,days,traffic_gb,devices,price_rub,is_trial,sort,enabled) VALUES(?,?,?,?,?,?,?,?,?,?)",
+                    fields,
+                )
+            except sqlite3.IntegrityError:
+                return self._send(*json_bytes({"error": "exists"}, 409))
         return self._send(*json_bytes({"id": tid, "ok": True}))
 
     def _admin_tariff_del(self, tid: int):
@@ -1148,6 +1186,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(*json_bytes({"error": "order"}, 404))
         user = query("SELECT * FROM users WHERE id=?", (order["user_id"],), one=True)
         tariff = query("SELECT * FROM tariffs WHERE id=?", (order["tariff_id"],), one=True)
+        if not user or not tariff:
+            return self._send(*json_bytes({"error": "missing"}, 404))
         try:
             payload = rw_create_user(user, tariff)
         except RuntimeError as exc:

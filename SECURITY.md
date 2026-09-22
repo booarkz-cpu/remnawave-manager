@@ -21,9 +21,9 @@ Do not put any of the following in Git, issues, PRs, chat, screenshots, or paste
 
 Menu **23** / `admin-login SHOW` prints the panel login **once on a TTY**. That password is **not** written to `/var/log/remnawave-manager.log`. Telegram tokens are not printed in the log.
 
-## User cabinet (1.6.1)
+## User cabinet (1.6.2)
 
-The cabinet at `/lk/` stores accounts in SQLite (`/opt/remnawave/cabinet/data`). Passwords use PBKDF2. Session cookies are HttpOnly. Custom page HTML is sanitized (allow-list). Admin settings **do not** return OAuth secrets or Remnawave tokens. Checkout does **not** load payment-gateway SDKs (mock or manual). Production Telegram login uses the official Login Widget (`auth_date` + HMAC), not an OAuth `state`. Test mode (`remnawave-cabinet-test.sh`) never talks to real Telegram/VK/Yandex apps. Put OAuth client secrets only in the cabinet `.env` or the admin form; do not paste them into issues.
+The cabinet at `/lk/` stores accounts in SQLite (`/opt/remnawave/cabinet/data`). Passwords use PBKDF2. Session cookies are HttpOnly. Custom page HTML is sanitized (allow-list). Admin settings **do not** return OAuth secrets or Remnawave tokens. Checkout does **not** load payment-gateway SDKs (mock or manual). Production Telegram login uses the official Login Widget (`auth_date` + HMAC), not an OAuth `state`. HTML responses send `X-Frame-Options: SAMEORIGIN`. Test mode (`remnawave-cabinet-test.sh`) never talks to real Telegram/VK/Yandex apps. Put OAuth client secrets only in the cabinet `.env` or the admin form; do not paste them into issues.
 
 ## Who may change this repository
 

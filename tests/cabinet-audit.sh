@@ -22,6 +22,10 @@ curl -fsS "http://127.0.0.1:${PORT}/api/health" | grep -Fq '"mode":"test"'
 curl -fsS "http://127.0.0.1:${PORT}/api/health" | grep -Fq '"payments":"none"'
 curl -fsS "http://127.0.0.1:${PORT}/" | grep -Fq 'Corgi Lusi'
 curl -fsS "http://127.0.0.1:${PORT}/admin" | grep -Fq 'Админ'
+curl -fsS "http://127.0.0.1:${PORT}/admin/" | grep -Fq 'Админ'
+curl -fsS "http://127.0.0.1:${PORT}/admin" | grep -Fq 'admin-rail'
+curl -fsS "http://127.0.0.1:${PORT}/static/app.css" | grep -Fq 'admin-rail'
+curl -sS -D - -o /dev/null "http://127.0.0.1:${PORT}/admin" | grep -Fi 'X-Frame-Options: SAMEORIGIN'
 curl -fsS "http://127.0.0.1:${PORT}/static/app.css" | grep -Fq -- '--md-sys-color-primary'
 curl -fsS "http://127.0.0.1:${PORT}/api/public/config" | grep -Fq '"mock_payments":true'
 curl -fsS "http://127.0.0.1:${PORT}/api/tariffs" | grep -Fq trial
@@ -119,5 +123,11 @@ PY
 curl -fsS -c "$cj" -b "$cj" -H 'Content-Type: application/json' \
   -d "{\"tariff_id\":$paid_tid}" "http://127.0.0.1:${PORT}/api/orders" >/dev/null
 curl -fsS -c "$aj" -b "$aj" -X DELETE "http://127.0.0.1:${PORT}/api/admin/tariffs/${paid_tid}" | grep -Fq '"ok":true'
+
+# duplicate email must be 409, not 500
+code="$(curl -sS -o /dev/null -w '%{http_code}' -H 'Content-Type: application/json' \
+  -d "{\"email\":\"$email\",\"password\":\"correcthorse\",\"name\":\"X\"}" \
+  "http://127.0.0.1:${PORT}/api/auth/register")"
+[[ "$code" == 409 ]]
 
 echo "CABINET AUDIT OK"

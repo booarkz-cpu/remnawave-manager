@@ -2,6 +2,13 @@
 
 English journal. Русский: [CHANGELOG.ru.md](CHANGELOG.ru.md).
 
+## 1.6.2
+
+Admin cabinet UI: Material You + Web 3.0 (navigation rail, glass, chips, empty states). Audit: trailing slash on `/admin/`; `X-Frame-Options`; WAL; IntegrityError → 409; missing user/tariff on mark-paid → 404.
+
+SHA256:
+`64afdec784ba3ff468dcc46e0a982914d4697e2c7cdae05cf671ede775306543`
+
 ## 1.6.1
 
 Cabinet audit: Telegram widget callback no longer requires an OAuth `state`; `auth_date` is checked. HTML/titles sanitized; CSP; admin can edit existing menu tabs and tariffs. `https://PANEL/lk` redirects to `/lk/`. Invalid URL ids return 400. Deleting a used tariff disables it (FK). Refresh keeps `CABINET_SECRET`. Test: `bash remnawave-cabinet-test.sh`.

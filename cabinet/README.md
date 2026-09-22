@@ -1,6 +1,6 @@
 # Corgi Lusi user cabinet
 
-Python 3 stdlib. **No payment-gateway SDKs.** Version **1.6.1**.
+Python 3 stdlib. **No payment-gateway SDKs.** Version **1.6.2**.
 
 ## Test (no Remnawave, no OAuth apps)
 
@@ -11,7 +11,7 @@ bash remnawave-cabinet-test.sh
 ```
 
 - User: http://127.0.0.1:43291/
-- Admin: http://127.0.0.1:43291/admin  (`corgi-test`)
+- Admin: http://127.0.0.1:43291/admin  (`corgi-test`) — Material You + Web 3.0 rail
 - Telegram / VK / Yandex buttons use mock login
 - Buy/trial uses mock checkout
 

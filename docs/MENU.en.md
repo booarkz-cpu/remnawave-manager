@@ -428,7 +428,7 @@ Install without the stub: `--no-sub-stub`.
 
 **Panel / single VPS.** A Material Design + Web 3.0 personal cabinet at **https://DOMAIN_PANEL/lk/**. Users register or sign in with email and password, Telegram, VK or Yandex Mail. They browse plans, start a trial, buy a plan (mock checkout — **no payment-gateway SDKs**), receive a Remnawave subscription URL, and read setup instructions for Android, iOS, TV and PC.
 
-Admin UI: **https://DOMAIN_PANEL/lk/admin** (same password as the panel admin unless `CABINET_ADMIN_PASSWORD` is set). From there you **edit existing tabs**, add pages, tariffs, device instructions and OAuth client ids. Secrets are not returned by the settings API. Production Telegram uses the Login Widget.
+Admin UI: **https://DOMAIN_PANEL/lk/admin** (same password as the panel admin unless `CABINET_ADMIN_PASSWORD` is set). Material You + Web 3.0. From there you **edit existing tabs**, add pages, tariffs, device instructions and OAuth client ids. Secrets are not returned by the settings API. Production Telegram uses the Login Widget.
 
 Local test without Remnawave, Docker, or payment gateways:
 
