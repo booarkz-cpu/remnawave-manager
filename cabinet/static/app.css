@@ -1,0 +1,79 @@
+:root{
+  --md-sys-color-primary:#7c5cff;
+  --md-sys-color-on-primary:#f4f0ff;
+  --md-sys-color-secondary:#3ee0c8;
+  --md-sys-color-surface:#0e1118;
+  --md-sys-color-surface-2:#161b26;
+  --md-sys-color-surface-3:#1e2533;
+  --md-sys-color-outline:#2c3548;
+  --md-sys-color-on-surface:#e8edf7;
+  --md-sys-color-muted:#93a0b8;
+  --md-sys-color-error:#ff6b8a;
+  --md-sys-color-ok:#3ee0c8;
+  --radius:20px;
+  --shadow:0 18px 50px rgba(0,0,0,.35);
+  --font:"Manrope","Segoe UI",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--md-sys-color-surface);color:var(--md-sys-color-on-surface);font:16px/1.55 var(--font)}
+body::before{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(900px 500px at 10% -10%,rgba(124,92,255,.28),transparent 55%),
+    radial-gradient(700px 420px at 100% 0%,rgba(62,224,200,.16),transparent 50%),
+    linear-gradient(180deg,#090b11 0%,#10151f 100%);
+}
+a{color:var(--md-sys-color-secondary);text-decoration:none}
+a:hover{text-decoration:underline}
+.shell{max-width:1120px;margin:0 auto;padding:20px}
+.top{
+  display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+  padding:14px 18px;border:1px solid var(--md-sys-color-outline);border-radius:999px;
+  background:rgba(22,27,38,.72);backdrop-filter:blur(18px);box-shadow:var(--shadow)
+}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.02em}
+.mark{width:34px;height:34px;border-radius:12px;background:linear-gradient(135deg,#7c5cff,#3ee0c8)}
+.nav{display:flex;gap:8px;flex-wrap:wrap}
+.nav a,.chip,button,.btn{
+  border:0;cursor:pointer;font:inherit;color:inherit;
+}
+.nav a,.chip{
+  padding:8px 12px;border-radius:999px;color:var(--md-sys-color-muted)
+}
+.nav a.active,.nav a:hover{color:var(--md-sys-color-on-surface);background:rgba(124,92,255,.18)}
+.actions{display:flex;gap:8px;align-items:center}
+.btn{
+  background:linear-gradient(135deg,#7c5cff,#5b8cff);color:#fff;padding:10px 16px;border-radius:999px;font-weight:700
+}
+.btn.ghost{background:transparent;border:1px solid var(--md-sys-color-outline);color:var(--md-sys-color-on-surface)}
+.btn.ok{background:linear-gradient(135deg,#2bb8a4,#3ee0c8);color:#06251f}
+.btn.warn{background:#3a2230;color:#ffd0da}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin:28px 0}
+.card{
+  background:linear-gradient(180deg,rgba(30,37,51,.92),rgba(22,27,38,.88));
+  border:1px solid var(--md-sys-color-outline);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)
+}
+.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:center;margin:28px 0}
+h1{font-size:42px;line-height:1.1;margin:0 0 10px}
+h2{margin:0 0 8px}
+.muted{color:var(--md-sys-color-muted)}
+.price{font-size:32px;font-weight:800}
+.price small{font-size:14px;color:var(--md-sys-color-muted);font-weight:600}
+label{display:block;margin:12px 0 6px;color:var(--md-sys-color-muted);font-size:13px}
+input,textarea,select{
+  width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--md-sys-color-outline);
+  background:#0f141e;color:var(--md-sys-color-on-surface);font:inherit
+}
+.err{color:var(--md-sys-color-error);min-height:1.2em}
+.ok{color:var(--md-sys-color-ok)}
+.sub-url{word-break:break-all;padding:12px;border-radius:14px;background:#0b1018;border:1px dashed var(--md-sys-color-outline)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 18px}
+.oauth{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+.oauth a{display:block;text-align:center;padding:10px;border-radius:14px;border:1px solid var(--md-sys-color-outline)}
+.table{width:100%;border-collapse:collapse;font-size:14px}
+.table th,.table td{border-bottom:1px solid var(--md-sys-color-outline);padding:8px;text-align:left}
+.toast{position:fixed;bottom:20px;right:20px;background:#1b2230;border:1px solid var(--md-sys-color-outline);padding:12px 16px;border-radius:14px}
+@media (max-width:800px){
+  .hero{grid-template-columns:1fr}h1{font-size:30px}
+  .top{border-radius:24px}
+}

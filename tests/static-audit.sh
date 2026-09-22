@@ -3,11 +3,12 @@ set -Eeuo pipefail
 
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
-SCRIPT=remnawave-manager-v1.5.5.sh
+SCRIPT=remnawave-manager-v1.6.0.sh
 
 echo "[1/18] bash -n current + historical"
 bash -n "$SCRIPT"
 bash -n remnawave-manager.sh
+bash -n remnawave-manager-v1.6.0.sh
 bash -n remnawave-manager-v1.5.5.sh
 bash -n remnawave-manager-v1.5.4.sh
 bash -n remnawave-manager-v1.5.3.sh
@@ -228,15 +229,19 @@ grep -Fq '### 25. Транспорты ноды' README.ru.md
 grep -Fq '### 28. Users' README.md
 grep -Fq '### 32. Firewall' README.md
 grep -Fq '### 33. Subscription stub' README.md
+grep -Fq '### 34. User cabinet' README.md
 grep -Fq '### 28. Пользователи' README.ru.md
 grep -Fq '### 32. Файрвол' README.ru.md
 grep -Fq '### 33. Заглушка подписки' README.ru.md
+grep -Fq '### 34. Личный кабинет' README.ru.md
 grep -Fq '## 28. Users' docs/MENU.en.md
 grep -Fq '## 32. Firewall' docs/MENU.en.md
 grep -Fq '## 33. Subscription stub' docs/MENU.en.md
+grep -Fq '## 34. User cabinet' docs/MENU.en.md
 grep -Fq '## 28. Пользователи' docs/MENU.ru.md
 grep -Fq '## 32. Файрвол' docs/MENU.ru.md
 grep -Fq '## 33. Заглушка подписки' docs/MENU.ru.md
+grep -Fq '## 34. Личный кабинет' docs/MENU.ru.md
 grep -Fq 'admin-login SHOW' docs/MENU.en.md docs/GUIDE.en.md
 grep -Fq '## License' README.md
 grep -Fq '## Лицензия' README.ru.md
@@ -272,7 +277,8 @@ grep -Fq 'add-node' /tmp/rw-help-en.txt
 grep -Fq 'users list' /tmp/rw-help-en.txt
 grep -Fq 'admin-login' /tmp/rw-help-en.txt
 grep -Fq 'sub-stub on|off|status|refresh' /tmp/rw-help-en.txt
-bash "$SCRIPT" --version | grep -Fq '1.5.5'
+grep -Fq 'cabinet on|off|status|url' /tmp/rw-help-en.txt
+bash "$SCRIPT" --version | grep -Fq '1.6.0'
 set +e
 bash "$SCRIPT" --lang en nosuchcmd >/tmp/rw-unk.txt 2>&1
 unk_rc=$?
@@ -285,7 +291,7 @@ if grep -Fq 'panel + node on one server' /tmp/rw-unk.txt; then
 fi
 # 1.4.0 self-update restart glued `--lang ru` into one argv because IFS has no space.
 bash "$SCRIPT" '--lang ru' --no-update-check --version >/tmp/rw-lang-glue.txt 2>&1
-grep -Fq '1.5.5' /tmp/rw-lang-glue.txt
+grep -Fq '1.6.0' /tmp/rw-lang-glue.txt
 if grep -Fq 'Unknown command' /tmp/rw-lang-glue.txt; then
   echo 'FAIL: glued --lang ru treated as unknown command' >&2
   exit 1
@@ -333,11 +339,19 @@ grep -Fq 'menu_row 27' "$SCRIPT"
 grep -Fq 'menu_row 28' "$SCRIPT"
 grep -Fq 'menu_row 32' "$SCRIPT"
 grep -Fq 'menu_row 33' "$SCRIPT"
+grep -Fq 'menu_row 34' "$SCRIPT"
 grep -Fq 'write_sub_stub_site()' "$SCRIPT"
+grep -Fq 'cabinet_menu()' "$SCRIPT"
+grep -Fq 'install_cabinet()' "$SCRIPT"
+test -f cabinet/server.py
+test -f remnawave-cabinet-test.sh
+test -f tests/cabinet-audit.sh
 grep -Fq 'sub_stub_menu()' "$SCRIPT"
 grep -Fq 'SUB_STUB' "$SCRIPT"
 grep -Fq 'alias /var/www/sub-site/img/' "$SCRIPT"
 test -f assets/sub-stub-photos.tgz
+test -f assets/cabinet.tgz
+test -f cabinet/server.py
 test -f assets/sub-stub/hero.jpg
 grep -Fq '!assets/sub-stub-photos.tgz' .gitignore
 if git check-ignore -q assets/sub-stub-photos.tgz; then
@@ -345,8 +359,14 @@ if git check-ignore -q assets/sub-stub-photos.tgz; then
   exit 1
 fi
 grep -Fq 'sub-stub-photos.tgz' SHA256SUMS
-awk '/^sub_stub_cli\(\)/,/^show_admin_login_once\(\)/' "$SCRIPT" | grep -Fq 'refresh|rewrite) sub_stub_apply 1'
-if awk '/^sub_stub_cli\(\)/,/^show_admin_login_once\(\)/' "$SCRIPT" | grep -q 'write_panel_vhosts'; then
+grep -Fq 'cabinet.tgz' SHA256SUMS
+grep -Fq '!assets/cabinet.tgz' .gitignore
+if git check-ignore -q assets/cabinet.tgz; then
+  echo 'FAIL: assets/cabinet.tgz must not be gitignored' >&2
+  exit 1
+fi
+awk '/^sub_stub_cli\(\)/,/^cabinet_url\(\)/' "$SCRIPT" | grep -Fq 'refresh|rewrite) sub_stub_apply 1'
+if awk '/^sub_stub_cli\(\)/,/^cabinet_url\(\)/' "$SCRIPT" | grep -q 'write_panel_vhosts'; then
   echo 'FAIL: sub_stub refresh must go through sub_stub_apply' >&2
   exit 1
 fi
@@ -428,6 +448,7 @@ test -f CHANGELOG.md
 test -f CHANGELOG.ru.md
 test -f RELEASE_NOTES_1.5.4.md
 test -f RELEASE_NOTES_1.5.5.md
+test -f RELEASE_NOTES_1.6.0.md
 grep -Fq '[SECURITY.md](SECURITY.md)' README.md
 grep -Fq '[SECURITY.ru.md](SECURITY.ru.md)' README.ru.md
 grep -Fq 'CHANGELOG.ru.md' README.md README.ru.md
@@ -442,7 +463,7 @@ echo "[14/18] current script copies match"
 cmp -s remnawave-manager.sh "$SCRIPT"
 
 echo "[15/18] VERSION string"
-grep -Fq "VERSION='1.5.5'" "$SCRIPT"
+grep -Fq "VERSION='1.6.0'" "$SCRIPT"
 if grep -nE "^VERSION='[^']*-prod'" remnawave-manager.sh; then
   echo 'FAIL: current VERSION must not use a -prod suffix' >&2
   exit 1
@@ -478,12 +499,12 @@ set -Eeuo pipefail
 . ./kv.inc
 . ./up.inc
 . ./user.inc
-VERSION='1.5.5'
+VERSION='1.6.0'
 PATH_SAVE="$PATH"
 DRY_RUN=0
 printf '%s\n' 'VERSION=9.9.9' 'PATH=/evil' 'DRY_RUN=1' 'ADMIN_PASSWORD=ab\cd$ef' > env.test
 load_kv_file env.test
-[[ "$VERSION" == 1.5.5 ]]
+[[ "$VERSION" == 1.6.0 ]]
 [[ "$PATH" == "$PATH_SAVE" ]]
 [[ "$DRY_RUN" == 0 ]]
 [[ "$ADMIN_PASSWORD" == 'ab\cd$ef' ]]
@@ -525,5 +546,8 @@ write_sub_stub_site
 grep -Fq '/img/hero.jpg' "$SUB_SITE/index.html"
 grep -Fq 'Corgi Lusi' "$SUB_SITE/index.html"
 awk '/^sub_stub_nginx_locations\(\)/,/^write_panel_vhosts\(\)/' "$SCRIPT" | grep -Fq 'alias /var/www/sub-site/img/'
+
+echo "[extra] cabinet without payment gateways"
+bash tests/cabinet-audit.sh
 
 echo "STATIC AUDIT OK"

@@ -2,6 +2,13 @@
 
 Русская версия. English: [CHANGELOG.md](CHANGELOG.md).
 
+## 1.6.0
+
+Личный кабинет (пункт **34** / `cabinet`) на `https://DOMAIN_PANEL/lk/`: email+пароль, Telegram, VK, Яндекс; тарифы; пробный период; mock/ручная оплата **без SDK платёжных шлюзов**; ссылка подписки; инструкции Android/iOS/ТВ/ПК. Админ правит вкладки меню, страницы, тарифы и OAuth. Тест: `bash remnawave-cabinet-test.sh` (без Remnawave и шлюзов). Выключить: `--no-cabinet`.
+
+SHA256:
+`e194c5cfed6efc84361fd00dc4d62492cb06395a452af236e73316cd12791416`
+
 ## 1.5.5
 
 Заглушка питомника Corgi Lusi на **корне домена подписки** (пункт **33** / `sub-stub`). `https://SUB/` — сайт с фото; `https://SUB/shortUuid` по-прежнему открывает Remnawave. По умолчанию вкл при установке/`repair`. `--no-sub-stub` отключает. Фото: `assets/sub-stub-photos.tgz` (GitHub Latest + jsDelivr); если архива нет — SVG. Точные location nginx, чтобы `/img/` не уходил на `:3010`.

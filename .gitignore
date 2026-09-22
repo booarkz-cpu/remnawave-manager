@@ -6,7 +6,10 @@ bootstrap.env
 *.pem
 *.tgz
 !assets/sub-stub-photos.tgz
+!assets/cabinet.tgz
 *.tar.gz
 *.age
 xray-custom
+cabinet/data/*.sqlite
+cabinet/data/*.sqlite-*
 

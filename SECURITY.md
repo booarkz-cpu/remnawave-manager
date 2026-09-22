@@ -21,6 +21,10 @@ Do not put any of the following in Git, issues, PRs, chat, screenshots, or paste
 
 Menu **23** / `admin-login SHOW` prints the panel login **once on a TTY**. That password is **not** written to `/var/log/remnawave-manager.log`. Telegram tokens are not printed in the log.
 
+## User cabinet (1.6.0)
+
+The cabinet at `/lk/` stores accounts in SQLite (`/opt/remnawave/cabinet/data`). Passwords use PBKDF2. Session cookies are HttpOnly. Admin settings **do not** return OAuth secrets or Remnawave tokens. Checkout does **not** load payment-gateway SDKs (mock or manual). Test mode (`remnawave-cabinet-test.sh`) never talks to real Telegram/VK/Yandex apps. Put OAuth client secrets only in the cabinet `.env` or the admin form; do not paste them into issues.
+
 ## Who may change this repository
 
 Official branches, tags and GitHub Releases are written only by **Corgi Lusi (`booarkz-cpu`)** and by the Cursor agent using that account. GitHub rulesets block everyone else from creating, updating, force-pushing or deleting branches and tags. Do not merge pull requests from people you do not know. A public repository can still be forked; forks cannot write back here. Wiki editing is off. GitHub Actions may use GitHub-owned actions only, with a read-only default token.

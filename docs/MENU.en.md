@@ -2,7 +2,7 @@
 
 [English](MENU.en.md) · [Русский](MENU.ru.md) · [README](../README.md) · [Guide](GUIDE.en.md)
 
-Open the menu with no arguments: `bash remnawave-manager.sh`. **Language is asked first** (Enter keeps the current one); item **22** switches later. Do not type `sudo`. Numbers **1–27** stay; **28–32** were added in 1.5.0; **33** is the SUB-domain Corgi stub (1.5.5). **0** / `q` leaves.
+Open the menu with no arguments: `bash remnawave-manager.sh`. **Language is asked first** (Enter keeps the current one); item **22** switches later. Do not type `sudo`. Numbers **1–27** stay; **28–32** were added in 1.5.0; **33** is the SUB-domain Corgi stub (1.5.5); **34** is the user cabinet (1.6.0). **0** / `q` leaves.
 
 Two updates that look similar and are not:
 
@@ -421,6 +421,30 @@ bash remnawave-manager.sh sub-stub refresh
 ```
 
 Install without the stub: `--no-sub-stub`.
+
+---
+
+## 34. User cabinet
+
+**Panel / single VPS.** A Material Design + Web 3.0 personal cabinet at **https://DOMAIN_PANEL/lk/**. Users register or sign in with email and password, Telegram, VK or Yandex Mail. They browse plans, start a trial, buy a plan (mock checkout — **no payment-gateway SDKs**), receive a Remnawave subscription URL, and read setup instructions for Android, iOS, TV and PC.
+
+Admin UI: **https://DOMAIN_PANEL/lk/admin** (same password as the panel admin unless `CABINET_ADMIN_PASSWORD` is set). From there you edit cabinet menu tabs, add pages, tariffs, device instructions and OAuth client ids. Secrets are not returned by the settings API.
+
+Local test without Remnawave, Docker, or payment gateways:
+
+```bash
+bash remnawave-cabinet-test.sh
+# http://127.0.0.1:43291/        user cabinet
+# http://127.0.0.1:43291/admin   admin (password corgi-test)
+```
+
+```bash
+bash remnawave-manager.sh cabinet status
+bash remnawave-manager.sh cabinet on
+bash remnawave-manager.sh cabinet off
+```
+
+Install without the cabinet: `--no-cabinet`.
 
 ---
 

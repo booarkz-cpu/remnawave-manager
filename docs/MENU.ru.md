@@ -2,7 +2,7 @@
 
 [English](MENU.en.md) · [Русский](MENU.ru.md) · [README](../README.ru.md) · [Инструкция](GUIDE.ru.md)
 
-Меню без аргументов: `bash remnawave-manager.sh`. **Сначала язык** (Enter оставляет текущий); пункт **22** переключает позже. Префикс `sudo` не пишите. Номера **1–27** не съезжают; **28–32** добавлены в 1.5.0; **33** — заглушка корги на домене SUB (1.5.5). **0** / `q` — выход.
+Меню без аргументов: `bash remnawave-manager.sh`. **Сначала язык** (Enter оставляет текущий); пункт **22** переключает позже. Префикс `sudo` не пишите. Номера **1–27** не съезжают; **28–32** добавлены в 1.5.0; **33** — заглушка корги на домене SUB (1.5.5); **34** — личный кабинет (1.6.0). **0** / `q` — выход.
 
 Два обновления, которые путают:
 
@@ -421,6 +421,30 @@ bash remnawave-manager.sh sub-stub refresh
 ```
 
 Установка без заглушки: `--no-sub-stub`.
+
+---
+
+## 34. Личный кабинет
+
+**Панель / один VDS.** Личный кабинет Material Design + Web 3.0 на **https://DOMAIN_PANEL/lk/**. Регистрация и вход: email+пароль, Telegram, VK, Яндекс. Тарифы, пробный период, покупка (**без SDK платёжных шлюзов** — mock или отметка админом), ссылка подписки Remnawave, инструкции Android / iOS / ТВ / ПК.
+
+Админ: **https://DOMAIN_PANEL/lk/admin** (пароль панели, если не задан `CABINET_ADMIN_PASSWORD`). Там правятся вкладки меню, страницы, тарифы, инструкции и OAuth. Секреты API настроек не отдаёт.
+
+Локальный тест без Remnawave, Docker и шлюзов:
+
+```bash
+bash remnawave-cabinet-test.sh
+# http://127.0.0.1:43291/        кабинет
+# http://127.0.0.1:43291/admin   админ (пароль corgi-test)
+```
+
+```bash
+bash remnawave-manager.sh cabinet status
+bash remnawave-manager.sh cabinet on
+bash remnawave-manager.sh cabinet off
+```
+
+Установка без кабинета: `--no-cabinet`.
 
 ---
 

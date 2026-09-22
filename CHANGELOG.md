@@ -2,6 +2,13 @@
 
 English journal. Русский: [CHANGELOG.ru.md](CHANGELOG.ru.md).
 
+## 1.6.0
+
+User cabinet (menu **34** / `cabinet`) at `https://DOMAIN_PANEL/lk/`: email+password, Telegram, VK, Yandex; plans; trial; mock/manual checkout **without payment-gateway SDKs**; subscription URL; Android/iOS/TV/PC instructions. Admin UI edits menu tabs, pages, tariffs and OAuth. Standalone test: `bash remnawave-cabinet-test.sh` (no Remnawave, no gateways). Disable: `--no-cabinet`.
+
+SHA256:
+`e194c5cfed6efc84361fd00dc4d62492cb06395a452af236e73316cd12791416`
+
 ## 1.5.5
 
 Corgi Lusi kennel stub on the **subscription domain root** (menu **33** / `sub-stub`). `https://SUB/` shows a kennel site with photos; `https://SUB/shortUuid` still opens Remnawave. Default on for install/`repair`. `--no-sub-stub` skips it. Photos: `assets/sub-stub-photos.tgz` (GitHub Latest + jsDelivr); SVG fallback if the archive is missing. nginx exact locations so `/img/` never hits `:3010`.
