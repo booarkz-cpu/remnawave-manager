@@ -2,7 +2,7 @@
 
 [English](GUIDE.en.md) · [Русский](GUIDE.ru.md) · [README](../README.ru.md)
 
-Установщик и повседневный менеджер [Remnawave](https://docs.rw) на Debian/Ubuntu. Автор: **Корги Люси (Corgi Lusi)**. Текущая версия скрипта: **1.6.2**.
+Установщик и повседневный менеджер [Remnawave](https://docs.rw) на Debian/Ubuntu. Автор: **Корги Люси (Corgi Lusi)**. Текущая версия скрипта: **1.6.3**.
 
 Это полная инструкция. На GitHub в README — **полный разбор каждого пункта меню** на русском и английском. Журнал обновлений по версиям: [INSTALLATION_RU.md](INSTALLATION_RU.md), [CHANGELOG.md](../CHANGELOG.md) (English) · [CHANGELOG.ru.md](../CHANGELOG.ru.md) (русский). Безопасность: [SECURITY.md](../SECURITY.md) · [SECURITY.ru.md](../SECURITY.ru.md). Лицензия: [MIT](../LICENSE).
 
@@ -92,14 +92,14 @@ grep ' remnawave-manager.sh$' SHA256SUMS
 
 Две суммы должны совпасть. Latest: <https://github.com/booarkz-cpu/remnawave-manager/releases/latest>
 
-Фиксированная копия (пример для 1.6.2):
+Фиксированная копия (пример для 1.6.3):
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.6.2/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.6.3/remnawave-manager.sh \
   -o remnawave-manager.sh
 sha256sum remnawave-manager.sh
-# 1.6.2: 64afdec784ba3ff468dcc46e0a982914d4697e2c7cdae05cf671ede775306543
+# 1.6.3: 695fb25f93e80be3583a1dc002ea01a1a952a30dadf9ec87aecea690b90634e5
 ```
 
 Все суммы версий — в [SHA256SUMS](../SHA256SUMS).

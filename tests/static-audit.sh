@@ -3,11 +3,12 @@ set -Eeuo pipefail
 
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
-SCRIPT=remnawave-manager-v1.6.2.sh
+SCRIPT=remnawave-manager-v1.6.3.sh
 
 echo "[1/18] bash -n current + historical"
 bash -n "$SCRIPT"
 bash -n remnawave-manager.sh
+bash -n remnawave-manager-v1.6.3.sh
 bash -n remnawave-manager-v1.6.2.sh
 bash -n remnawave-manager-v1.6.1.sh
 bash -n remnawave-manager-v1.6.0.sh
@@ -280,7 +281,7 @@ grep -Fq 'users list' /tmp/rw-help-en.txt
 grep -Fq 'admin-login' /tmp/rw-help-en.txt
 grep -Fq 'sub-stub on|off|status|refresh' /tmp/rw-help-en.txt
 grep -Fq 'cabinet on|off|status|url' /tmp/rw-help-en.txt
-bash "$SCRIPT" --version | grep -Fq '1.6.2'
+bash "$SCRIPT" --version | grep -Fq '1.6.3'
 set +e
 bash "$SCRIPT" --lang en nosuchcmd >/tmp/rw-unk.txt 2>&1
 unk_rc=$?
@@ -293,7 +294,7 @@ if grep -Fq 'panel + node on one server' /tmp/rw-unk.txt; then
 fi
 # 1.4.0 self-update restart glued `--lang ru` into one argv because IFS has no space.
 bash "$SCRIPT" '--lang ru' --no-update-check --version >/tmp/rw-lang-glue.txt 2>&1
-grep -Fq '1.6.2' /tmp/rw-lang-glue.txt
+grep -Fq '1.6.3' /tmp/rw-lang-glue.txt
 if grep -Fq 'Unknown command' /tmp/rw-lang-glue.txt; then
   echo 'FAIL: glued --lang ru treated as unknown command' >&2
   exit 1
@@ -453,6 +454,7 @@ test -f RELEASE_NOTES_1.5.5.md
 test -f RELEASE_NOTES_1.6.0.md
 test -f RELEASE_NOTES_1.6.1.md
 test -f RELEASE_NOTES_1.6.2.md
+test -f RELEASE_NOTES_1.6.3.md
 grep -Fq '[SECURITY.md](SECURITY.md)' README.md
 grep -Fq '[SECURITY.ru.md](SECURITY.ru.md)' README.ru.md
 grep -Fq 'CHANGELOG.ru.md' README.md README.ru.md
@@ -467,7 +469,7 @@ echo "[14/18] current script copies match"
 cmp -s remnawave-manager.sh "$SCRIPT"
 
 echo "[15/18] VERSION string"
-grep -Fq "VERSION='1.6.2'" "$SCRIPT"
+grep -Fq "VERSION='1.6.3'" "$SCRIPT"
 if grep -nE "^VERSION='[^']*-prod'" remnawave-manager.sh; then
   echo 'FAIL: current VERSION must not use a -prod suffix' >&2
   exit 1
@@ -503,12 +505,12 @@ set -Eeuo pipefail
 . ./kv.inc
 . ./up.inc
 . ./user.inc
-VERSION='1.6.2'
+VERSION='1.6.3'
 PATH_SAVE="$PATH"
 DRY_RUN=0
 printf '%s\n' 'VERSION=9.9.9' 'PATH=/evil' 'DRY_RUN=1' 'ADMIN_PASSWORD=ab\cd$ef' > env.test
 load_kv_file env.test
-[[ "$VERSION" == 1.6.2 ]]
+[[ "$VERSION" == 1.6.3 ]]
 [[ "$PATH" == "$PATH_SAVE" ]]
 [[ "$DRY_RUN" == 0 ]]
 [[ "$ADMIN_PASSWORD" == 'ab\cd$ef' ]]

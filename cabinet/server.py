@@ -443,7 +443,7 @@ def user_public(u: dict) -> dict:
 
 
 class Handler(BaseHTTPRequestHandler):
-    server_version = "CorgiCabinet/1.6.2"
+    server_version = "CorgiCabinet/1.6.3"
 
     def log_message(self, fmt, *args):
         path = self.path.split("?")[0]

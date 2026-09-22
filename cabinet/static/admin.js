@@ -107,17 +107,25 @@ async function renderMenu() {
       <form id="f">
         <input type="hidden" name="id" value="">
         <div class="form-grid">
-          <div><label>slug</label><input name="slug" required placeholder="faq"></div>
+          <div><label>slug (латиница)</label>
+            <input name="slug" required pattern="[a-z0-9][a-z0-9-]{0,47}" maxlength="48"
+                   autocomplete="off" autocapitalize="off" spellcheck="false"
+                   title="Только a-z, 0-9 и дефис, например faq">
+            <p class="muted">Не название вкладки. Пример: <code>faq</code></p>
+          </div>
           <div><label>sort</label><input name="sort" type="number" value="50"></div>
-          <div><label>Название RU</label><input name="title_ru" required></div>
-          <div><label>Title EN</label><input name="title_en" required></div>
+          <div><label>Название RU</label><input name="title_ru" required placeholder="Вопросы"></div>
+          <div><label>Title EN</label><input name="title_en" required placeholder="FAQ"></div>
           <div><label>kind</label><select name="kind"><option>page</option><option>home</option><option>tariffs</option><option>subscription</option><option>instructions</option></select></div>
-          <div><label>icon</label><input name="icon" placeholder="info"></div>
+          <div><label>icon</label><input name="icon"></div>
           <div class="span-2"><label>HTML вкладки</label><textarea name="body" rows="5"></textarea></div>
         </div>
         <label class="switch"><input name="enabled" type="checkbox" checked> показывать во вкладках</label>
         <p class="err" id="e"></p>
-        <button class="btn" type="submit">Сохранить вкладку</button>
+        <div class="row-actions">
+          <button class="btn" type="submit">Сохранить вкладку</button>
+          <button class="btn ghost" type="button" id="resetMenu">Новая вкладка</button>
+        </div>
       </form>
     </article>`;
   $("#list").innerHTML = items.length ? items.map((m) => `<article class="card glass">
@@ -130,24 +138,39 @@ async function renderMenu() {
     </div>
   </article>`).join("") : `<div class="empty card glass"><strong>Вкладок нет</strong>Добавьте первую ниже.</div>`;
   const form = $("#f");
+  const slugInput = form.elements.slug;
+  slugInput.addEventListener("input", () => {
+    const next = String(slugInput.value || "").toLowerCase().replace(/[^a-z0-9-]/g, "");
+    if (slugInput.value !== next) slugInput.value = next;
+  });
+  const resetMenu = () => {
+    form.reset();
+    form.elements.id.value = "";
+    form.elements.enabled.checked = true;
+    $("#formTitle").textContent = "Новая вкладка";
+    slugInput.focus();
+  };
+  $("#resetMenu").onclick = resetMenu;
   form.onsubmit = async (ev) => {
     ev.preventDefault();
     const fd = new FormData(ev.target);
     const body = Object.fromEntries(fd);
+    body.slug = String(body.slug || "").toLowerCase().trim();
     body.sort = Number(body.sort || 50);
     body.enabled = fd.get("enabled") ? 1 : 0;
     if (!body.id) delete body.id; else body.id = Number(body.id);
     try { await api("/api/admin/menu", { method: "POST", body: JSON.stringify(body) }); render(); }
     catch (e) { $("#e").textContent = e.data && e.data.error || e.message; }
   };
-  app().onclick = async (ev) => {
+  const list = $("#list");
+  list.onclick = async (ev) => {
     const del = ev.target.getAttribute("data-del");
     const edit = ev.target.getAttribute("data-edit");
     if (del) { await api("/api/admin/menu/" + del, { method: "DELETE" }); render(); return; }
     if (edit) {
       const item = items.find((x) => String(x.id) === String(edit));
       if (!item) return;
-      $("#formTitle").textContent = "Изменить вкладку";
+      $("#formTitle").textContent = "Изменить вкладку · " + item.slug;
       fillForm(form, item);
       form.elements.enabled.checked = Boolean(Number(item.enabled));
       form.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -199,10 +222,11 @@ async function renderTariffs() {
     await api("/api/admin/tariffs", { method: "POST", body: JSON.stringify(body) });
     render();
   };
-  app().onclick = async (ev) => {
+  const list = $("#g");
+  list.onclick = async (ev) => {
     const id = ev.target.getAttribute("data-del");
     const edit = ev.target.getAttribute("data-edit");
-    if (id) { await api("/api/admin/tariffs/" + id, { method: "DELETE" }); render(); }
+    if (id) { await api("/api/admin/tariffs/" + id, { method: "DELETE" }); render(); return; }
     if (edit) {
       const item = tariffs.find((x) => String(x.id) === String(edit));
       if (!item) return;

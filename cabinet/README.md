@@ -1,6 +1,6 @@
 # Corgi Lusi user cabinet
 
-Python 3 stdlib. **No payment-gateway SDKs.** Version **1.6.2**.
+Python 3 stdlib. **No payment-gateway SDKs.** Version **1.6.3**.
 
 ## Test (no Remnawave, no OAuth apps)
 

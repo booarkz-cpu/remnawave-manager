@@ -2,6 +2,13 @@
 
 Русская версия. English: [CHANGELOG.md](CHANGELOG.md).
 
+## 1.6.3
+
+Кабинет заново читает меню на каждом экране. Форма вкладок в админке: без ложного placeholder slug, нижний регистр, кнопка «Новая вкладка».
+
+SHA256:
+`695fb25f93e80be3583a1dc002ea01a1a952a30dadf9ec87aecea690b90634e5`
+
 ## 1.6.2
 
 Дизайн админ-кабинета: Material You + Web 3.0 (rail, glass, чипы, пустые состояния). Аудит: `/admin/` со слэшем; `X-Frame-Options`; WAL; IntegrityError → 409.

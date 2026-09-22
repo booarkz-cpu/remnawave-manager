@@ -104,6 +104,7 @@ curl -fsS -c "$aj" -b "$aj" -H 'Content-Type: application/json' \
   -d '{"slug":"faq","title_ru":"FAQ2","title_en":"FAQ2","kind":"page","sort":91}' \
   "http://127.0.0.1:${PORT}/api/admin/menu" | grep -Fq '"ok":true'
 curl -fsS "http://127.0.0.1:${PORT}/api/menu" | grep -Fq FAQ2
+curl -fsS "http://127.0.0.1:${PORT}/api/public/config" | grep -Fq FAQ2
 
 # bad checkout id must not 500
 code="$(curl -sS -o /dev/null -w '%{http_code}' -c "$cj" -b "$cj" -H 'Content-Type: application/json' \

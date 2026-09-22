@@ -66,7 +66,15 @@ function nav() {
   $("#authBtn").textContent = S.me ? t("logout") : t("login");
 }
 
-function route() {
+async function refreshCfg() {
+  try {
+    S.cfg = await api("/api/public/config");
+    nav();
+  } catch (_) {}
+}
+
+async function route() {
+  await refreshCfg();
   const hash = (location.hash || "#/home").replace(/^#\/?/, "") || "home";
   const slug = hash.split("/")[0] || "home";
   document.querySelectorAll("#nav a").forEach((a) => a.classList.toggle("active", a.dataset.slug === slug));
@@ -239,7 +247,11 @@ async function boot() {
     if (S.me) { await api("/api/auth/logout", { method: "POST", body: "{}" }); S.me = null; nav(); location.hash = "#/"; }
     else location.hash = "#/login";
   };
-  window.addEventListener("hashchange", route);
+  window.addEventListener("hashchange", () => { route(); });
+  window.addEventListener("pageshow", () => { route(); });
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") route();
+  });
   route();
 }
 boot();

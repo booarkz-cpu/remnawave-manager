@@ -6,7 +6,7 @@
 
 Production installer for [Remnawave](https://docs.rw) on Debian/Ubuntu. Interactive menu with a description of every function. UI: **English** or **Russian**.
 
-**Current version:** `1.6.2`
+**Current version:** `1.6.3`
 
 **License:** [MIT](LICENSE) — use, copy, modify, and redistribute with the copyright notice. Original files downloaded by menu **24** stay under their authors’ terms — [CREDITS.md](CREDITS.md).
 
@@ -61,13 +61,13 @@ bash remnawave-manager.sh
 
 No arguments opens a **language picker** (English / Русский), then the menu. Do not type `sudo` — the script raises root itself. Enter keeps the current language (`RW_LANG` in `/opt/remnawave/manager.env`). Switch later with menu item 22 or skip the picker with `--lang en|ru`.
 
-Pinned 1.6.2 via jsDelivr (optional):
+Pinned 1.6.3 via jsDelivr (optional):
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.6.2/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.6.3/remnawave-manager.sh \
   -o remnawave-manager.sh
-# sha256: 64afdec784ba3ff468dcc46e0a982914d4697e2c7cdae05cf671ede775306543
+# sha256: 695fb25f93e80be3583a1dc002ea01a1a952a30dadf9ec87aecea690b90634e5
 ```
 
 By default every transport is enabled: Reality, Hysteria2, gRPC and xHTTP.

@@ -2,6 +2,13 @@
 
 English journal. Русский: [CHANGELOG.ru.md](CHANGELOG.ru.md).
 
+## 1.6.3
+
+User cabinet refetches menu on each route (admin tab/title edits appear without a stuck cache). Admin menu form: no fake slug placeholder, lowercase slug, **New tab** reset; click handlers no longer sit on the whole page (so Save is not confused with Edit).
+
+SHA256:
+`695fb25f93e80be3583a1dc002ea01a1a952a30dadf9ec87aecea690b90634e5`
+
 ## 1.6.2
 
 Admin cabinet UI: Material You + Web 3.0 (navigation rail, glass, chips, empty states). Audit: trailing slash on `/admin/`; `X-Frame-Options`; WAL; IntegrityError → 409; missing user/tariff on mark-paid → 404.

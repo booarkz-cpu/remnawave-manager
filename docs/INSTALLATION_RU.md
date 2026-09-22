@@ -7,6 +7,12 @@
 
 Ниже — заметки по конкретным релизам (хеши, что менять после скачивания старой версии). Для повседневной работы используйте Latest и раздел 10 в GUIDE.
 
+# Установка Remnawave Manager 1.6.3
+
+Кабинет заново читает меню после правок в админке. Форма slug без ложного placeholder. Сначала `self-update`.
+
+jsDelivr: `@v1.6.3` / `695fb25f93e80be3583a1dc002ea01a1a952a30dadf9ec87aecea690b90634e5`.
+
 # Установка Remnawave Manager 1.6.2
 
 Админ-кабинет Material You + Web 3.0. Аудит `/admin/`, X-Frame-Options, WAL. Сначала `self-update`.
