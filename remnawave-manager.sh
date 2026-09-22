@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Remnawave Manager v1.6.3
+# Remnawave Manager v1.5.5
 # Автор: Корги Люси (Corgi Lusi)
 #   https://github.com/booarkz-cpu/remnawave-manager
 #
@@ -18,7 +18,7 @@
 set -Eeuo pipefail
 IFS=$'\n\t'
 
-VERSION='1.6.3'
+VERSION='1.5.5'
 CONVERTER_URL='https://rezzosoft.ru/converter.html'
 AUTHOR='Корги Люси'
 AUTHOR_EN='Corgi Lusi'
@@ -32,10 +32,6 @@ JSDELIVR_LATEST_URL='https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@l
 SUB_STUB_TGZ_URL='https://github.com/booarkz-cpu/remnawave-manager/releases/latest/download/sub-stub-photos.tgz'
 JSDELIVR_STUB_TGZ_URL='https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@latest/assets/sub-stub-photos.tgz'
 SUB_SITE='/var/www/sub-site'
-CABINET_DIR='/opt/remnawave/cabinet'
-CABINET_PORT=3050
-CABINET_TGZ_URL='https://github.com/booarkz-cpu/remnawave-manager/releases/latest/download/cabinet.tgz'
-JSDELIVR_CABINET_TGZ_URL='https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@latest/assets/cabinet.tgz'
 ADDONS_DIR='/opt/remnawave-addons'
 BRAND='CorgiLusi'
 BASE='/opt/remnawave'
@@ -60,7 +56,6 @@ BBR=1
 DISABLE_IPV6=0
 SELFSTEAL=0
 SUB_STUB=1
-CABINET=1
 XCORE_SOURCE='builtin'
 ADMIN_IP=''
 FORCE_OS_UPGRADE=0
@@ -124,7 +119,6 @@ normalize_runtime_flags(){
   MONITORING="$(coerce_01 "${MONITORING:-0}")"
   SELFSTEAL="$(coerce_01 "${SELFSTEAL:-0}")"
   SUB_STUB="$(coerce_01 "${SUB_STUB:-1}")"
-  CABINET="$(coerce_01 "${CABINET:-1}")"
 }
 
 if [[ -r "$ENV_FILE" ]]; then
@@ -244,7 +238,7 @@ t(){
       menu_sec_install) s='Install' ;;
       menu_sec_ops) s='Operate' ;;
       menu_sec_extra) s='More' ;;
-      menu_hint) s='  0 exit   ·   22 language   ·   25 transports   ·   26 script   ·   28 users   ·   33 stub   ·   34 cabinet' ;;
+      menu_hint) s='  0 exit   ·   22 language   ·   25 transports   ·   26 script   ·   28 users   ·   31 certs   ·   33 sub stub' ;;
       menu_cert) s='cert %s: %s days' ;;
       menu_cert_na) s='cert: no Let’s Encrypt files yet' ;;
       menu_cert_soon) s='cert %s: %s days (renew soon)' ;;
@@ -316,8 +310,6 @@ t(){
       d32) s='ADMIN_IP allowlist and rebuild UFW' ;;
       m33) s='Subscription stub' ;;
       d33) s='Corgi kennel site on the SUB domain; /shortUuid still opens the subscription' ;;
-      m34) s='User cabinet' ;;
-      d34) s='Personal cabinet: email/Telegram/VK/Yandex, plans, trial, subscription link, device setup; admin edits menu tabs' ;;
       nt_title) s='Transports on an already-installed node' ;;
       nt_now) s='Now: %s' ;;
       nt_split) s='Panel: profile, inbounds, hosts, squad via API. Node VPS: then run apply for ports and certs.' ;;
@@ -407,7 +399,6 @@ t(){
       help_certs) s='  %s certs [renew]        show days left; renew = certbot now' ;;
       help_fw) s='  %s firewall [IPv4]      show UFW; optional new ADMIN_IP then rebuild' ;;
       help_substub) s='  %s sub-stub on|off|status|refresh   Corgi site on the SUB domain root' ;;
-      help_cabinet) s='  %s cabinet on|off|status|url   user cabinet (no payment gateways); test: remnawave-cabinet-test.sh' ;;
       help_admin) s='  %s admin-login [SHOW]   print panel login once (SHOW; not written to the log)' ;;
       unknown_cmd) s='Unknown command: %s' ;;
       unknown_cmd_hint) s='Full list: %s --help. If you meant check-update on an old copy, run self-update instead of expecting the whole help dump.' ;;
@@ -512,17 +503,6 @@ t(){
       stub_off_ok) s='Subscription stub disabled. SUB root proxies to :3010.' ;;
       stub_photos_ok) s='Kennel photos: %s' ;;
       stub_photos_miss) s='Kennel photos unavailable; SVG illustrations are used.' ;;
-      cab_title) s='User cabinet' ;;
-      cab_1) s='  [1] Status / URL' ;;
-      cab_2) s='  [2] Enable and deploy cabinet' ;;
-      cab_3) s='  [3] Disable (nginx /lk/ removed)' ;;
-      cab_4) s='  [4] Rewrite files and restart container' ;;
-      cab_0) s='  [0] Back' ;;
-      cab_on) s='On: %s  admin: %s/admin' ;;
-      cab_off) s='User cabinet is off.' ;;
-      cab_ok) s='Cabinet is running. Payments: mock/manual — no gateway SDKs.' ;;
-      cab_none) s='No panel domain on this VPS. Install the panel first.' ;;
-      cab_test) s='Local test without Remnawave or payment gateways: bash remnawave-cabinet-test.sh' ;;
       adm_ask) s='Type SHOW to print the panel login once (not written to the log). Anything else cancels: ' ;;
       adm_login) s='Panel login (once, not logged)' ;;
       adm_user) s='  Username: %s' ;;
@@ -573,7 +553,7 @@ t(){
       single_ok) s='Single VPS installed.' ;;
       panel_ok) s='Panel VPS installed.' ;;
       edge_ok) s='Node on a separate server is up. Node card, inbound, Host and squad are created by API on the panel (install panel / item 25 / node-transports) — no panel UI.' ;;
-      repair_ok) s='Nginx, proxy headers, subscription-page, Corgi SUB stub, user cabinet and SelfSteal site updated. Check panel, subscription and SNI.' ;;
+      repair_ok) s='Nginx, proxy headers, subscription-page, Corgi SUB stub and SelfSteal site updated. Check panel, subscription and SNI.' ;;
       uninst_ok) s='Remnawave services removed; backups kept.' ;;
       backup_ok) s='Backup: %s' ;;
       err_backup) s='Backup helper is not installed yet. Finish install first, or restore from an existing backup.' ;;
@@ -682,7 +662,7 @@ t(){
       menu_sec_install) s='Установка' ;;
       menu_sec_ops) s='Обслуживание' ;;
       menu_sec_extra) s='Ещё' ;;
-      menu_hint) s='  0 выход   ·   22 язык   ·   25 транспорты   ·   26 скрипт   ·   28 пользователи   ·   33 заглушка   ·   34 кабинет' ;;
+      menu_hint) s='  0 выход   ·   22 язык   ·   25 транспорты   ·   26 скрипт   ·   28 пользователи   ·   31 сертификаты   ·   33 заглушка' ;;
       menu_cert) s='серт. %s: %s дн.' ;;
       menu_cert_na) s='серт.: файлов Let’s Encrypt пока нет' ;;
       menu_cert_soon) s='серт. %s: %s дн. (скоро обновить)' ;;
@@ -754,8 +734,6 @@ t(){
       d32) s='Allowlist ADMIN_IP и пересобрать UFW' ;;
       m33) s='Заглушка подписки' ;;
       d33) s='Сайт питомника корги на домене SUB; /shortUuid по-прежнему открывает подписку' ;;
-      m34) s='Личный кабинет' ;;
-      d34) s='Кабинет: email / Telegram / VK / Яндекс, тарифы, пробный период, ссылка, инструкции; админ правит вкладки меню' ;;
       nt_title) s='Транспорты уже установленной ноды' ;;
       nt_now) s='Сейчас: %s' ;;
       nt_split) s='Панель: профиль, inbound’ы, хосты, сквад через API. Нода: затем apply — порты и сертификаты.' ;;
@@ -845,7 +823,6 @@ t(){
       help_certs) s='  %s certs [renew]        срок сертификатов; renew — certbot сейчас' ;;
       help_fw) s='  %s firewall [IPv4]      UFW; необязательно новый ADMIN_IP и пересборка' ;;
       help_substub) s='  %s sub-stub on|off|status|refresh   сайт корги на корне домена подписки' ;;
-      help_cabinet) s='  %s cabinet on|off|status|url   личный кабинет (без платёжных шлюзов); тест: remnawave-cabinet-test.sh' ;;
       help_admin) s='  %s admin-login [SHOW]   один раз показать вход в панель (слово SHOW; в лог не пишется)' ;;
       unknown_cmd) s='Неизвестная команда: %s' ;;
       unknown_cmd_hint) s='Полный список: %s --help. Если ждали check-update на старой копии — выполните self-update, а не ждите всю справку.' ;;
@@ -950,17 +927,6 @@ t(){
       stub_off_ok) s='Заглушка выключена. Корень SUB снова проксируется на :3010.' ;;
       stub_photos_ok) s='Фото питомника: %s' ;;
       stub_photos_miss) s='Фото не скачались; на сайте SVG-иллюстрации.' ;;
-      cab_title) s='Личный кабинет пользователя' ;;
-      cab_1) s='  [1] Состояние / URL' ;;
-      cab_2) s='  [2] Включить и развернуть кабинет' ;;
-      cab_3) s='  [3] Выключить (убрать nginx /lk/)' ;;
-      cab_4) s='  [4] Перезаписать файлы и перезапустить контейнер' ;;
-      cab_0) s='  [0] Назад' ;;
-      cab_on) s='Вкл: %s  админ: %s/admin' ;;
-      cab_off) s='Личный кабинет выключен.' ;;
-      cab_ok) s='Кабинет запущен. Оплата: mock/ручная — без SDK платёжных шлюзов.' ;;
-      cab_none) s='На этом VDS нет домена панели. Сначала поставьте панель.' ;;
-      cab_test) s='Локальный тест без Remnawave и без шлюзов: bash remnawave-cabinet-test.sh' ;;
       adm_ask) s='Чтобы один раз показать вход в панель, напишите SHOW (в лог не попадёт). Иначе отмена: ' ;;
       adm_login) s='Вход в панель (один раз, не логируется)' ;;
       adm_user) s='  Логин:  %s' ;;
@@ -1011,7 +977,7 @@ t(){
       single_ok) s='Single VDS установлен.' ;;
       panel_ok) s='Panel VDS установлен.' ;;
       edge_ok) s='Нода на отдельном сервере запущена. Карточка Node, inbound, Host и сквад создаются API на сервере панели (install panel / пункт 25 / node-transports) — UI панели не нужен.' ;;
-      repair_ok) s='Nginx, proxy-заголовки, subscription-page, заглушка корги на SUB, личный кабинет и маскировочный сайт обновлены. Проверьте панель, подписку и SNI-сайт.' ;;
+      repair_ok) s='Nginx, proxy-заголовки, subscription-page, заглушка корги на SUB и маскировочный сайт обновлены. Проверьте панель, подписку и SNI-сайт.' ;;
       uninst_ok) s='Remnawave сервисы удалены; backups сохранены.' ;;
       backup_ok) s='Backup: %s' ;;
       err_backup) s='Backup helper ещё не установлен. Сначала завершите install или выполните restore из существующего backup.' ;;
@@ -1686,7 +1652,6 @@ write_panel_env(){
   persist_manager NODE_SECRET_KEY "${NODE_SECRET_KEY:-}"
   persist_manager RW_LANG "${RW_LANG:-ru}"
   persist_manager SUB_STUB "${SUB_STUB:-1}"
-  persist_manager CABINET "${CABINET:-1}"
 }
 
 install_panel_compose(){
@@ -3143,26 +3108,11 @@ sub_stub_nginx_locations(){
 EOF
 }
 
-cabinet_nginx_locations(){
-  cat <<'EOF'
-  location = /lk {
-    return 301 /lk/;
-  }
-  location ^~ /lk/ {
-    proxy_pass http://127.0.0.1:3050;
-    include /etc/nginx/snippets/remnawave-proxy.conf;
-  }
-EOF
-}
-
 write_panel_vhosts(){
-  local stub='' cab=''
+  local stub=''
   if [[ ${SUB_STUB:-1} -eq 1 ]]; then
     write_sub_stub_site || true
     stub="$(sub_stub_nginx_locations)"
-  fi
-  if [[ ${CABINET:-1} -eq 1 ]]; then
-    cab="$(cabinet_nginx_locations)"
   fi
   cat > /etc/nginx/conf.d/remnawave-web.conf <<EOF2
 server {
@@ -3171,7 +3121,6 @@ server {
   ssl_certificate /etc/letsencrypt/live/${DOMAIN_PANEL}/fullchain.pem;
   ssl_certificate_key /etc/letsencrypt/live/${DOMAIN_PANEL}/privkey.pem;
   include /etc/nginx/snippets/remnawave-ssl.conf;
-${cab}
   location /api/auth/login { limit_req zone=login_limit burst=3 nodelay; proxy_pass http://127.0.0.1:3000; include /etc/nginx/snippets/remnawave-proxy.conf; }
   location /api/ { limit_req zone=api_limit burst=30 nodelay; proxy_pass http://127.0.0.1:3000; include /etc/nginx/snippets/remnawave-proxy.conf; }
   location / { proxy_pass http://127.0.0.1:3000; include /etc/nginx/snippets/remnawave-proxy.conf; }
@@ -3657,7 +3606,6 @@ finish_config(){
   persist_manager ENABLE_XHTTP "${ENABLE_XHTTP:-0}"
   persist_manager RW_LANG "${RW_LANG:-ru}"
   persist_manager SUB_STUB "${SUB_STUB:-1}"
-  persist_manager CABINET "${CABINET:-1}"
 }
 
 setup_panel_web(){
@@ -4349,7 +4297,6 @@ install_single(){
   [[ $HYSTERIA2 -eq 1 ]] && install_hysteria2
   [[ "${XCORE_SOURCE:-builtin}" != builtin ]] && install_xray_core "$BASE/node" "$XCORE_SOURCE"
   [[ $MONITORING -eq 1 ]] && install_monitoring
-  [[ ${CABINET:-1} -eq 1 ]] && install_cabinet
   write_firewall single
   configure_admin_ip
   configure_remote_backup
@@ -4383,7 +4330,6 @@ EOF2
   write_firewall panel; configure_admin_ip; configure_remote_backup; write_bootstrap; finish_config; write_credentials; install_timers
   [[ $MONITORING -eq 1 ]] && install_monitoring
   install_telegram_alerts
-  [[ ${CABINET:-1} -eq 1 ]] && install_cabinet
   ok "$(t panel_ok)"; show_result
 }
 
@@ -5495,171 +5441,6 @@ sub_stub_cli(){
   esac
 }
 
-cabinet_url(){
-  if [[ -n "${DOMAIN_PANEL:-}" ]]; then
-    printf 'https://%s/lk' "$DOMAIN_PANEL"
-  else
-    printf 'http://127.0.0.1:%s' "${CABINET_PORT:-3050}"
-  fi
-}
-
-fetch_cabinet_tree(){
-  local dest="$1" script_dir tgz tmp
-  mkdir -p "$dest"
-  script_dir="$(cd -- "$(dirname -- "$(script_path 2>/dev/null || true)")" 2>/dev/null && pwd)" || script_dir='/nonexistent-cabinet'
-  if [[ -f "$script_dir/cabinet/server.py" ]]; then
-    cp -a "$script_dir/cabinet/." "$dest/"
-    return 0
-  fi
-  for tgz in \
-      "$script_dir/assets/cabinet.tgz" \
-      "$script_dir/cabinet.tgz" \
-      "$ADDONS_DIR/cabinet.tgz"; do
-    if [[ -f "$tgz" ]] && tar -tzf "$tgz" >/dev/null 2>&1; then
-      tar -xzf "$tgz" -C "$dest" && [[ -f "$dest/server.py" ]] && return 0
-    fi
-  done
-  tmp="$(mktemp)"
-  for url in "$CABINET_TGZ_URL" "$JSDELIVR_CABINET_TGZ_URL"; do
-    if curl -fL --retry 2 --retry-delay 1 --connect-timeout 8 --max-time 25 \
-         -A 'remnawave-manager' -o "$tmp" "$url" 2>/dev/null \
-       && tar -tzf "$tmp" >/dev/null 2>&1; then
-      tar -xzf "$tmp" -C "$dest"
-      mkdir -p "$ADDONS_DIR" 2>/dev/null || true
-      cp -f "$tmp" "$ADDONS_DIR/cabinet.tgz" 2>/dev/null || true
-      rm -f "$tmp"
-      [[ -f "$dest/server.py" ]] && return 0
-    fi
-    rm -f "$tmp"
-  done
-  return 1
-}
-
-write_cabinet_env(){
-  local dir="${CABINET_DIR:-/opt/remnawave/cabinet}" pass secret
-  pass="${CABINET_ADMIN_PASSWORD:-${ADMIN_PASSWORD:-}}"
-  [[ -n "$pass" ]] || pass="$(rand 16)"
-  CABINET_ADMIN_PASSWORD="$pass"
-  persist_manager CABINET_ADMIN_PASSWORD "$pass" 2>/dev/null || true
-  mkdir -p "$dir/data"
-  secret="$(rand 32)"
-  if [[ -f "$dir/.env" ]]; then
-    local old
-    old="$(sed -n 's/^CABINET_SECRET=//p' "$dir/.env" | head -n1)"
-    [[ -n "$old" ]] && secret="$old"
-  fi
-  cat > "$dir/.env" <<EOF
-CABINET_MODE=prod
-CABINET_PREFIX=/lk
-CABINET_HOST=0.0.0.0
-CABINET_PORT=3050
-CABINET_ADMIN_PASSWORD=${pass}
-CABINET_SECRET=${secret}
-CABINET_PUBLIC_URL=https://${DOMAIN_PANEL}/lk
-REMNAWAVE_API=http://host.docker.internal:3000/api
-REMNAWAVE_TOKEN=${API_TOKEN:-${API_JWT:-}}
-REMNAWAVE_HOST=${DOMAIN_PANEL:-localhost}
-DOMAIN_SUB=${DOMAIN_SUB:-}
-SQUAD_UUID=${SQUAD_UUID:-}
-EOF
-  chmod 600 "$dir/.env"
-}
-
-install_cabinet(){
-  local dir="${CABINET_DIR:-/opt/remnawave/cabinet}"
-  [[ ${CABINET:-1} -eq 1 ]] || return 0
-  [[ "${MODE:-single}" == edge ]] && return 0
-  [[ $DRY_RUN -eq 1 ]] && { log '[DRY-RUN] cabinet'; return 0; }
-  fetch_cabinet_tree "$dir" || { warn "$(t cab_none)"; return 0; }
-  write_cabinet_env
-  if command -v docker >/dev/null 2>&1; then
-    (cd "$dir" && docker compose up -d --build) || warn 'cabinet docker compose failed'
-  fi
-  persist_manager CABINET 1
-}
-
-cabinet_apply(){
-  local want="${1:-1}"
-  require_root
-  HYDRATE_QUIET=1 hydrate_install_state
-  detect_install_mode
-  if [[ "${MODE:-single}" == edge || -z "${DOMAIN_PANEL:-}" ]]; then
-    echo "$(t cab_none)"
-    echo "$(t cab_test)"
-    return 0
-  fi
-  CABINET="$want"
-  persist_manager CABINET "$CABINET"
-  if [[ "$want" == 1 ]]; then
-    install_cabinet
-  else
-    if [[ -f "${CABINET_DIR}/docker-compose.yml" ]]; then
-      (cd "$CABINET_DIR" && docker compose down || true)
-    fi
-  fi
-  write_panel_vhosts
-  [[ "${NGINX_SKIP_RELOAD:-0}" == 1 ]] || nginx_apply
-  if [[ "$want" == 1 ]]; then
-    ok "$(t cab_ok)"
-    ok "$(t cab_on "$(cabinet_url)" "$(cabinet_url)")"
-  else
-    ok "$(t cab_off)"
-  fi
-}
-
-cabinet_status(){
-  HYDRATE_QUIET=1 hydrate_install_state
-  echo "$(t cab_test)"
-  if [[ -z "${DOMAIN_PANEL:-}" ]]; then
-    echo "$(t cab_none)"
-    return 0
-  fi
-  if [[ ${CABINET:-1} -eq 1 ]]; then
-    echo "$(t cab_on "$(cabinet_url)" "$(cabinet_url)")"
-  else
-    echo "$(t cab_off)"
-  fi
-}
-
-cabinet_menu(){
-  local choice
-  require_root
-  HYDRATE_QUIET=1 hydrate_install_state
-  while true; do
-    echo
-    echo "${U_BLUE}${U_BOLD}$(t cab_title)${U_RESET}"
-    cabinet_status
-    echo "$(t cab_1)"
-    echo "$(t cab_2)"
-    echo "$(t cab_3)"
-    echo "$(t cab_4)"
-    echo "$(t cab_0)"
-    echo "$(t nt_q)"
-    read -r -p "$(t prompt_choice)" choice || true
-    case "$choice" in
-      1) cabinet_status ;;
-      2) cabinet_apply 1 ;;
-      3) cabinet_apply 0 ;;
-      4) cabinet_apply 1 ;;
-      0|'') return 0 ;;
-      q|Q) return 0 ;;
-      *) echo "$(t err_unknown_item)" ;;
-    esac
-  done
-}
-
-cabinet_cli(){
-  local act="${1:-status}"
-  case "$act" in
-    on|enable|1) cabinet_apply 1 ;;
-    off|disable|0) cabinet_apply 0 ;;
-    refresh|rewrite) cabinet_apply 1 ;;
-    url|status|'' ) cabinet_status ;;
-    menu) cabinet_menu ;;
-    *) die "$(t err_unknown_item)" ;;
-  esac
-}
-
 show_admin_login_once(){
   local ans="${1:-}"
   HYDRATE_QUIET=1 hydrate_install_state
@@ -6073,7 +5854,6 @@ repair(){
       write_panel_vhosts
       write_sni_router 0
       ensure_subscription || warn "$(t wait_sub_fail)"
-      [[ ${CABINET:-1} -eq 1 ]] && install_cabinet || true
       ;;
     edge)
       install_selfsteal
@@ -6107,7 +5887,6 @@ EOF2
       write_sni_router 1
       install_selfsteal
       ensure_subscription || warn "$(t wait_sub_fail)"
-      [[ ${CABINET:-1} -eq 1 ]] && install_cabinet || true
       ;;
   esac
   NGINX_SKIP_RELOAD=0
@@ -6117,7 +5896,7 @@ EOF2
 
 uninstall(){
   [[ $AUTO_YES -eq 1 ]] || { read -r -p "$(t prompt_uninstall)" x || true; [[ "$x" == DELETE ]] || die "$(t err_cancelled)"; }
-  for d in "$BASE" "$BASE/subscription" "$BASE/node" "$BASE/cabinet" "$EDGE_BASE/node" "$BASE/hysteria2" "$BASE/monitoring"; do [[ -f "$d/docker-compose.yml" ]] && (cd "$d" && docker compose down || true); done
+  for d in "$BASE" "$BASE/subscription" "$BASE/node" "$EDGE_BASE/node" "$BASE/hysteria2" "$BASE/monitoring"; do [[ -f "$d/docker-compose.yml" ]] && (cd "$d" && docker compose down || true); done
   systemctl disable --now remnawave-healthcheck.timer remnawave-backup.timer remnawave-cert-renew.timer remnawave-remote-backup.timer remnawave-hysteria-certs.timer 2>/dev/null || true
   rm -f /etc/systemd/system/remnawave-*.service /etc/systemd/system/remnawave-*.timer /usr/local/sbin/remnawave-*.sh
   rm -f /etc/nginx/conf.d/remnawave-*.conf /etc/nginx/conf.d/00-remnawave-http.conf /etc/nginx/conf.d/reality-*.conf /etc/nginx/conf.d/ssl-params.conf /etc/nginx/conf.d/rate-limit.conf /etc/nginx/snippets/remnawave-*.conf "$STREAM_CONF"
@@ -6230,7 +6009,6 @@ $(t help_bremote "$0")
 $(t help_certs "$0")
 $(t help_fw "$0")
 $(t help_substub "$0")
-$(t help_cabinet "$0")
 $(t help_admin "$0")
 
 $(t help_conv)
@@ -6318,7 +6096,6 @@ print_menu(){
   menu_row 31 "$(t m31)" "$(t d31)"
   menu_row 32 "$(t m32)" "$(t d32)"
   menu_row 33 "$(t m33)" "$(t d33)"
-  menu_row 34 "$(t m34)" "$(t d34)"
   menu_row 0 "$(t m0)" ""
   echo
   echo "${U_DIM}$(t menu_hint)${U_RESET}"
@@ -6445,7 +6222,6 @@ interactive_menu(){
       31) menu_call certs_menu; menu_pause ;;
       32) menu_call firewall_menu; menu_pause ;;
       33) menu_call sub_stub_menu; menu_pause ;;
-      34) menu_call cabinet_menu; menu_pause ;;
       0|q|Q) exit 0 ;;
       *) echo "$(t err_unknown_item)" ;;
     esac
@@ -6471,8 +6247,6 @@ main(){
       --selfsteal-template) SELFSTEAL=1; SELFSTEAL_TEMPLATE="${2:?}"; shift 2;;
       --no-sub-stub) SUB_STUB=0; shift;;
       --sub-stub) SUB_STUB=1; shift;;
-      --no-cabinet) CABINET=0; shift;;
-      --cabinet) CABINET=1; shift;;
       --xray-core) XCORE_SOURCE="${2:?}"; shift 2;;
       --admin-ip) ADMIN_IP="${2:?}"; shift 2;;
       --backup-remote) BACKUP_REMOTE="${2:?}"; shift 2;;
@@ -6574,11 +6348,6 @@ main(){
       require_root
       HYDRATE_QUIET=1 hydrate_install_state
       sub_stub_cli "${2:-status}"
-      ;;
-    cabinet|lk|cabinet-ui)
-      require_root
-      HYDRATE_QUIET=1 hydrate_install_state
-      cabinet_cli "${2:-status}"
       ;;
     firewall|ufw)
       require_root

@@ -2,34 +2,6 @@
 
 English journal. Русский: [CHANGELOG.ru.md](CHANGELOG.ru.md).
 
-## 1.6.3
-
-User cabinet refetches menu on each route (admin tab/title edits appear without a stuck cache). Admin menu form: no fake slug placeholder, lowercase slug, **New tab** reset; click handlers no longer sit on the whole page (so Save is not confused with Edit).
-
-SHA256:
-`695fb25f93e80be3583a1dc002ea01a1a952a30dadf9ec87aecea690b90634e5`
-
-## 1.6.2
-
-Admin cabinet UI: Material You + Web 3.0 (navigation rail, glass, chips, empty states). Audit: trailing slash on `/admin/`; `X-Frame-Options`; WAL; IntegrityError → 409; missing user/tariff on mark-paid → 404.
-
-SHA256:
-`64afdec784ba3ff468dcc46e0a982914d4697e2c7cdae05cf671ede775306543`
-
-## 1.6.1
-
-Cabinet audit: Telegram widget callback no longer requires an OAuth `state`; `auth_date` is checked. HTML/titles sanitized; CSP; admin can edit existing menu tabs and tariffs. `https://PANEL/lk` redirects to `/lk/`. Invalid URL ids return 400. Deleting a used tariff disables it (FK). Refresh keeps `CABINET_SECRET`. Test: `bash remnawave-cabinet-test.sh`.
-
-SHA256:
-`0a555fda5111c3bf1ecafdb3f7d9d35a1b8e7ed48516fcc5068660aab18c77fb`
-
-## 1.6.0
-
-User cabinet (menu **34** / `cabinet`) at `https://DOMAIN_PANEL/lk/`: email+password, Telegram, VK, Yandex; plans; trial; mock/manual checkout **without payment-gateway SDKs**; subscription URL; Android/iOS/TV/PC instructions. Admin UI edits menu tabs, pages, tariffs and OAuth. Standalone test: `bash remnawave-cabinet-test.sh` (no Remnawave, no gateways). Disable: `--no-cabinet`.
-
-SHA256:
-`e194c5cfed6efc84361fd00dc4d62492cb06395a452af236e73316cd12791416`
-
 ## 1.5.5
 
 Corgi Lusi kennel stub on the **subscription domain root** (menu **33** / `sub-stub`). `https://SUB/` shows a kennel site with photos; `https://SUB/shortUuid` still opens Remnawave. Default on for install/`repair`. `--no-sub-stub` skips it. Photos: `assets/sub-stub-photos.tgz` (GitHub Latest + jsDelivr); SVG fallback if the archive is missing. nginx exact locations so `/img/` never hits `:3010`.

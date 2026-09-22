@@ -1,0 +1,450 @@
+[
+ {
+ "name": "api-tokens",
+ "path": "libs/contract/commands/api-tokens",
+ "sha": "60670a9ebfa711610109d5555edf1cd9980f83c0",
+ "size": 0,
+ "url": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/api-tokens?ref=main",
+ "html_url": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/api-tokens",
+ "git_url": "https://api.github.com/repos/remnawave/backend/git/trees/60670a9ebfa711610109d5555edf1cd9980f83c0",
+ "download_url": null,
+ "type": "dir",
+ "_links": {
+ "self": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/api-tokens?ref=main",
+ "git": "https://api.github.com/repos/remnawave/backend/git/trees/60670a9ebfa711610109d5555edf1cd9980f83c0",
+ "html": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/api-tokens"
+ }
+ },
+ {
+ "name": "auth",
+ "path": "libs/contract/commands/auth",
+ "sha": "c815a3065bc291a791227fef3fb0791646d158dc",
+ "size": 0,
+ "url": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/auth?ref=main",
+ "html_url": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/auth",
+ "git_url": "https://api.github.com/repos/remnawave/backend/git/trees/c815a3065bc291a791227fef3fb0791646d158dc",
+ "download_url": null,
+ "type": "dir",
+ "_links": {
+ "self": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/auth?ref=main",
+ "git": "https://api.github.com/repos/remnawave/backend/git/trees/c815a3065bc291a791227fef3fb0791646d158dc",
+ "html": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/auth"
+ }
+ },
+ {
+ "name": "bandwidth-stats",
+ "path": "libs/contract/commands/bandwidth-stats",
+ "sha": "4876e2d8d5ef6ced79a64d638ed8c90eb7bf53a0",
+ "size": 0,
+ "url": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/bandwidth-stats?ref=main",
+ "html_url": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/bandwidth-stats",
+ "git_url": "https://api.github.com/repos/remnawave/backend/git/trees/4876e2d8d5ef6ced79a64d638ed8c90eb7bf53a0",
+ "download_url": null,
+ "type": "dir",
+ "_links": {
+ "self": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/bandwidth-stats?ref=main",
+ "git": "https://api.github.com/repos/remnawave/backend/git/trees/4876e2d8d5ef6ced79a64d638ed8c90eb7bf53a0",
+ "html": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/bandwidth-stats"
+ }
+ },
+ {
+ "name": "config-profiles",
+ "path": "libs/contract/commands/config-profiles",
+ "sha": "9bc81c6f4af2bd5d13194021773f594717e06371",
+ "size": 0,
+ "url": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/config-profiles?ref=main",
+ "html_url": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/config-profiles",
+ "git_url": "https://api.github.com/repos/remnawave/backend/git/trees/9bc81c6f4af2bd5d13194021773f594717e06371",
+ "download_url": null,
+ "type": "dir",
+ "_links": {
+ "self": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/config-profiles?ref=main",
+ "git": "https://api.github.com/repos/remnawave/backend/git/trees/9bc81c6f4af2bd5d13194021773f594717e06371",
+ "html": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/config-profiles"
+ }
+ },
+ {
+ "name": "connections",
+ "path": "libs/contract/commands/connections",
+ "sha": "f2b3244bc7fca4de8e212ad85e58faccce40ae7b",
+ "size": 0,
+ "url": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/connections?ref=main",
+ "html_url": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/connections",
+ "git_url": "https://api.github.com/repos/remnawave/backend/git/trees/f2b3244bc7fca4de8e212ad85e58faccce40ae7b",
+ "download_url": null,
+ "type": "dir",
+ "_links": {
+ "self": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/connections?ref=main",
+ "git": "https://api.github.com/repos/remnawave/backend/git/trees/f2b3244bc7fca4de8e212ad85e58faccce40ae7b",
+ "html": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/connections"
+ }
+ },
+ {
+ "name": "external-squads",
+ "path": "libs/contract/commands/external-squads",
+ "sha": "a66b820be38c39dc03e0cd0ad4d4f087ceb8e3d5",
+ "size": 0,
+ "url": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/external-squads?ref=main",
+ "html_url": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/external-squads",
+ "git_url": "https://api.github.com/repos/remnawave/backend/git/trees/a66b820be38c39dc03e0cd0ad4d4f087ceb8e3d5",
+ "download_url": null,
+ "type": "dir",
+ "_links": {
+ "self": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/external-squads?ref=main",
+ "git": "https://api.github.com/repos/remnawave/backend/git/trees/a66b820be38c39dc03e0cd0ad4d4f087ceb8e3d5",
+ "html": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/external-squads"
+ }
+ },
+ {
+ "name": "hosts",
+ "path": "libs/contract/commands/hosts",
+ "sha": "70b0196c6890da2cb17ba8f5d02a839c23ddd507",
+ "size": 0,
+ "url": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/hosts?ref=main",
+ "html_url": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/hosts",
+ "git_url": "https://api.github.com/repos/remnawave/backend/git/trees/70b0196c6890da2cb17ba8f5d02a839c23ddd507",
+ "download_url": null,
+ "type": "dir",
+ "_links": {
+ "self": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/hosts?ref=main",
+ "git": "https://api.github.com/repos/remnawave/backend/git/trees/70b0196c6890da2cb17ba8f5d02a839c23ddd507",
+ "html": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/hosts"
+ }
+ },
+ {
+ "name": "hwid",
+ "path": "libs/contract/commands/hwid",
+ "sha": "304fc5ae9419201a1c7e3783f5445a04c0b5fd58",
+ "size": 0,
+ "url": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/hwid?ref=main",
+ "html_url": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/hwid",
+ "git_url": "https://api.github.com/repos/remnawave/backend/git/trees/304fc5ae9419201a1c7e3783f5445a04c0b5fd58",
+ "download_url": null,
+ "type": "dir",
+ "_links": {
+ "self": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/hwid?ref=main",
+ "git": "https://api.github.com/repos/remnawave/backend/git/trees/304fc5ae9419201a1c7e3783f5445a04c0b5fd58",
+ "html": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/hwid"
+ }
+ },
+ {
+ "name": "index.ts",
+ "path": "libs/contract/commands/index.ts",
+ "sha": "d7c8c5f8b8467c9c9082647eb80e0dd79443fb78",
+ "size": 868,
+ "url": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/index.ts?ref=main",
+ "html_url": "https://github.com/remnawave/backend/blob/main/libs/contract/commands/index.ts",
+ "git_url": "https://api.github.com/repos/remnawave/backend/git/blobs/d7c8c5f8b8467c9c9082647eb80e0dd79443fb78",
+ "download_url": "https://raw.githubusercontent.com/remnawave/backend/main/libs/contract/commands/index.ts",
+ "type": "file",
+ "_links": {
+ "self": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/index.ts?ref=main",
+ "git": "https://api.github.com/repos/remnawave/backend/git/blobs/d7c8c5f8b8467c9c9082647eb80e0dd79443fb78",
+ "html": "https://github.com/remnawave/backend/blob/main/libs/contract/commands/index.ts"
+ }
+ },
+ {
+ "name": "infra-billing",
+ "path": "libs/contract/commands/infra-billing",
+ "sha": "306fe243867606b3e64f7e8ae1d0ffe1fe085644",
+ "size": 0,
+ "url": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/infra-billing?ref=main",
+ "html_url": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/infra-billing",
+ "git_url": "https://api.github.com/repos/remnawave/backend/git/trees/306fe243867606b3e64f7e8ae1d0ffe1fe085644",
+ "download_url": null,
+ "type": "dir",
+ "_links": {
+ "self": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/infra-billing?ref=main",
+ "git": "https://api.github.com/repos/remnawave/backend/git/trees/306fe243867606b3e64f7e8ae1d0ffe1fe085644",
+ "html": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/infra-billing"
+ }
+ },
+ {
+ "name": "internal-squads",
+ "path": "libs/contract/commands/internal-squads",
+ "sha": "9662124bbaa68c6d251ae491ac1fce1ddad62000",
+ "size": 0,
+ "url": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/internal-squads?ref=main",
+ "html_url": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/internal-squads",
+ "git_url": "https://api.github.com/repos/remnawave/backend/git/trees/9662124bbaa68c6d251ae491ac1fce1ddad62000",
+ "download_url": null,
+ "type": "dir",
+ "_links": {
+ "self": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/internal-squads?ref=main",
+ "git": "https://api.github.com/repos/remnawave/backend/git/trees/9662124bbaa68c6d251ae491ac1fce1ddad62000",
+ "html": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/internal-squads"
+ }
+ },
+ {
+ "name": "keygen",
+ "path": "libs/contract/commands/keygen",
+ "sha": "925df79a1ac182e286c1f9a9c3ff657928f9ff77",
+ "size": 0,
+ "url": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/keygen?ref=main",
+ "html_url": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/keygen",
+ "git_url": "https://api.github.com/repos/remnawave/backend/git/trees/925df79a1ac182e286c1f9a9c3ff657928f9ff77",
+ "download_url": null,
+ "type": "dir",
+ "_links": {
+ "self": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/keygen?ref=main",
+ "git": "https://api.github.com/repos/remnawave/backend/git/trees/925df79a1ac182e286c1f9a9c3ff657928f9ff77",
+ "html": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/keygen"
+ }
+ },
+ {
+ "name": "metadata",
+ "path": "libs/contract/commands/metadata",
+ "sha": "86317b828917876a58d06e0e2139825b8e7a773b",
+ "size": 0,
+ "url": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/metadata?ref=main",
+ "html_url": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/metadata",
+ "git_url": "https://api.github.com/repos/remnawave/backend/git/trees/86317b828917876a58d06e0e2139825b8e7a773b",
+ "download_url": null,
+ "type": "dir",
+ "_links": {
+ "self": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/metadata?ref=main",
+ "git": "https://api.github.com/repos/remnawave/backend/git/trees/86317b828917876a58d06e0e2139825b8e7a773b",
+ "html": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/metadata"
+ }
+ },
+ {
+ "name": "node-integrations",
+ "path": "libs/contract/commands/node-integrations",
+ "sha": "abed1f0694221a27c2dde6cb8b3aea1164ce4196",
+ "size": 0,
+ "url": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/node-integrations?ref=main",
+ "html_url": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/node-integrations",
+ "git_url": "https://api.github.com/repos/remnawave/backend/git/trees/abed1f0694221a27c2dde6cb8b3aea1164ce4196",
+ "download_url": null,
+ "type": "dir",
+ "_links": {
+ "self": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/node-integrations?ref=main",
+ "git": "https://api.github.com/repos/remnawave/backend/git/trees/abed1f0694221a27c2dde6cb8b3aea1164ce4196",
+ "html": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/node-integrations"
+ }
+ },
+ {
+ "name": "node-plugins",
+ "path": "libs/contract/commands/node-plugins",
+ "sha": "a7841f28b96a40b4cb90289717b2157f04a2e7ab",
+ "size": 0,
+ "url": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/node-plugins?ref=main",
+ "html_url": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/node-plugins",
+ "git_url": "https://api.github.com/repos/remnawave/backend/git/trees/a7841f28b96a40b4cb90289717b2157f04a2e7ab",
+ "download_url": null,
+ "type": "dir",
+ "_links": {
+ "self": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/node-plugins?ref=main",
+ "git": "https://api.github.com/repos/remnawave/backend/git/trees/a7841f28b96a40b4cb90289717b2157f04a2e7ab",
+ "html": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/node-plugins"
+ }
+ },
+ {
+ "name": "node-ssh",
+ "path": "libs/contract/commands/node-ssh",
+ "sha": "80de4b08773cf7b88bd0fd1f391835dd03dac479",
+ "size": 0,
+ "url": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/node-ssh?ref=main",
+ "html_url": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/node-ssh",
+ "git_url": "https://api.github.com/repos/remnawave/backend/git/trees/80de4b08773cf7b88bd0fd1f391835dd03dac479",
+ "download_url": null,
+ "type": "dir",
+ "_links": {
+ "self": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/node-ssh?ref=main",
+ "git": "https://api.github.com/repos/remnawave/backend/git/trees/80de4b08773cf7b88bd0fd1f391835dd03dac479",
+ "html": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/node-ssh"
+ }
+ },
+ {
+ "name": "nodes",
+ "path": "libs/contract/commands/nodes",
+ "sha": "fd16b6d0fe5c0a1e8a676331c8340cf042ab1490",
+ "size": 0,
+ "url": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/nodes?ref=main",
+ "html_url": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/nodes",
+ "git_url": "https://api.github.com/repos/remnawave/backend/git/trees/fd16b6d0fe5c0a1e8a676331c8340cf042ab1490",
+ "download_url": null,
+ "type": "dir",
+ "_links": {
+ "self": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/nodes?ref=main",
+ "git": "https://api.github.com/repos/remnawave/backend/git/trees/fd16b6d0fe5c0a1e8a676331c8340cf042ab1490",
+ "html": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/nodes"
+ }
+ },
+ {
+ "name": "passkeys",
+ "path": "libs/contract/commands/passkeys",
+ "sha": "a2f87e2e92698d95767be49d9b793f198ebe79b8",
+ "size": 0,
+ "url": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/passkeys?ref=main",
+ "html_url": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/passkeys",
+ "git_url": "https://api.github.com/repos/remnawave/backend/git/trees/a2f87e2e92698d95767be49d9b793f198ebe79b8",
+ "download_url": null,
+ "type": "dir",
+ "_links": {
+ "self": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/passkeys?ref=main",
+ "git": "https://api.github.com/repos/remnawave/backend/git/trees/a2f87e2e92698d95767be49d9b793f198ebe79b8",
+ "html": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/passkeys"
+ }
+ },
+ {
+ "name": "remnawave-settings",
+ "path": "libs/contract/commands/remnawave-settings",
+ "sha": "a72b0e87bd58233077afc3745a821d5b6b4492d9",
+ "size": 0,
+ "url": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/remnawave-settings?ref=main",
+ "html_url": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/remnawave-settings",
+ "git_url": "https://api.github.com/repos/remnawave/backend/git/trees/a72b0e87bd58233077afc3745a821d5b6b4492d9",
+ "download_url": null,
+ "type": "dir",
+ "_links": {
+ "self": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/remnawave-settings?ref=main",
+ "git": "https://api.github.com/repos/remnawave/backend/git/trees/a72b0e87bd58233077afc3745a821d5b6b4492d9",
+ "html": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/remnawave-settings"
+ }
+ },
+ {
+ "name": "snippets",
+ "path": "libs/contract/commands/snippets",
+ "sha": "5f45e1be786e587ac5d38a9296486025a5f089cf",
+ "size": 0,
+ "url": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/snippets?ref=main",
+ "html_url": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/snippets",
+ "git_url": "https://api.github.com/repos/remnawave/backend/git/trees/5f45e1be786e587ac5d38a9296486025a5f089cf",
+ "download_url": null,
+ "type": "dir",
+ "_links": {
+ "self": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/snippets?ref=main",
+ "git": "https://api.github.com/repos/remnawave/backend/git/trees/5f45e1be786e587ac5d38a9296486025a5f089cf",
+ "html": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/snippets"
+ }
+ },
+ {
+ "name": "subscription-page-configs",
+ "path": "libs/contract/commands/subscription-page-configs",
+ "sha": "da8586808a4ca00e2b8690cfe710ca574c2783e2",
+ "size": 0,
+ "url": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/subscription-page-configs?ref=main",
+ "html_url": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/subscription-page-configs",
+ "git_url": "https://api.github.com/repos/remnawave/backend/git/trees/da8586808a4ca00e2b8690cfe710ca574c2783e2",
+ "download_url": null,
+ "type": "dir",
+ "_links": {
+ "self": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/subscription-page-configs?ref=main",
+ "git": "https://api.github.com/repos/remnawave/backend/git/trees/da8586808a4ca00e2b8690cfe710ca574c2783e2",
+ "html": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/subscription-page-configs"
+ }
+ },
+ {
+ "name": "subscription-request-history",
+ "path": "libs/contract/commands/subscription-request-history",
+ "sha": "e5753d3c2386eeb8177c717fad2b46bfecf46543",
+ "size": 0,
+ "url": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/subscription-request-history?ref=main",
+ "html_url": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/subscription-request-history",
+ "git_url": "https://api.github.com/repos/remnawave/backend/git/trees/e5753d3c2386eeb8177c717fad2b46bfecf46543",
+ "download_url": null,
+ "type": "dir",
+ "_links": {
+ "self": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/subscription-request-history?ref=main",
+ "git": "https://api.github.com/repos/remnawave/backend/git/trees/e5753d3c2386eeb8177c717fad2b46bfecf46543",
+ "html": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/subscription-request-history"
+ }
+ },
+ {
+ "name": "subscription-settings",
+ "path": "libs/contract/commands/subscription-settings",
+ "sha": "c39e420acb45a9b189ccf257c563afaa08d37ced",
+ "size": 0,
+ "url": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/subscription-settings?ref=main",
+ "html_url": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/subscription-settings",
+ "git_url": "https://api.github.com/repos/remnawave/backend/git/trees/c39e420acb45a9b189ccf257c563afaa08d37ced",
+ "download_url": null,
+ "type": "dir",
+ "_links": {
+ "self": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/subscription-settings?ref=main",
+ "git": "https://api.github.com/repos/remnawave/backend/git/trees/c39e420acb45a9b189ccf257c563afaa08d37ced",
+ "html": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/subscription-settings"
+ }
+ },
+ {
+ "name": "subscription-template",
+ "path": "libs/contract/commands/subscription-template",
+ "sha": "bdd899cbc8bcb722124cf762b3873a5da1f8d640",
+ "size": 0,
+ "url": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/subscription-template?ref=main",
+ "html_url": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/subscription-template",
+ "git_url": "https://api.github.com/repos/remnawave/backend/git/trees/bdd899cbc8bcb722124cf762b3873a5da1f8d640",
+ "download_url": null,
+ "type": "dir",
+ "_links": {
+ "self": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/subscription-template?ref=main",
+ "git": "https://api.github.com/repos/remnawave/backend/git/trees/bdd899cbc8bcb722124cf762b3873a5da1f8d640",
+ "html": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/subscription-template"
+ }
+ },
+ {
+ "name": "subscription",
+ "path": "libs/contract/commands/subscription",
+ "sha": "98084d899168ffc6fae491924e685c04ffce7c25",
+ "size": 0,
+ "url": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/subscription?ref=main",
+ "html_url": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/subscription",
+ "git_url": "https://api.github.com/repos/remnawave/backend/git/trees/98084d899168ffc6fae491924e685c04ffce7c25",
+ "download_url": null,
+ "type": "dir",
+ "_links": {
+ "self": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/subscription?ref=main",
+ "git": "https://api.github.com/repos/remnawave/backend/git/trees/98084d899168ffc6fae491924e685c04ffce7c25",
+ "html": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/subscription"
+ }
+ },
+ {
+ "name": "subscriptions",
+ "path": "libs/contract/commands/subscriptions",
+ "sha": "853237716ca93d2b18e1f42c9f901dd9532f41a4",
+ "size": 0,
+ "url": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/subscriptions?ref=main",
+ "html_url": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/subscriptions",
+ "git_url": "https://api.github.com/repos/remnawave/backend/git/trees/853237716ca93d2b18e1f42c9f901dd9532f41a4",
+ "download_url": null,
+ "type": "dir",
+ "_links": {
+ "self": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/subscriptions?ref=main",
+ "git": "https://api.github.com/repos/remnawave/backend/git/trees/853237716ca93d2b18e1f42c9f901dd9532f41a4",
+ "html": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/subscriptions"
+ }
+ },
+ {
+ "name": "system",
+ "path": "libs/contract/commands/system",
+ "sha": "af9167ceb9c1cc1d28197f35c4c78b60ede6ada6",
+ "size": 0,
+ "url": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/system?ref=main",
+ "html_url": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/system",
+ "git_url": "https://api.github.com/repos/remnawave/backend/git/trees/af9167ceb9c1cc1d28197f35c4c78b60ede6ada6",
+ "download_url": null,
+ "type": "dir",
+ "_links": {
+ "self": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/system?ref=main",
+ "git": "https://api.github.com/repos/remnawave/backend/git/trees/af9167ceb9c1cc1d28197f35c4c78b60ede6ada6",
+ "html": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/system"
+ }
+ },
+ {
+ "name": "users",
+ "path": "libs/contract/commands/users",
+ "sha": "873d09bfd0fbe1dd98f96ae3aa38fe0c424751c3",
+ "size": 0,
+ "url": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/users?ref=main",
+ "html_url": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/users",
+ "git_url": "https://api.github.com/repos/remnawave/backend/git/trees/873d09bfd0fbe1dd98f96ae3aa38fe0c424751c3",
+ "download_url": null,
+ "type": "dir",
+ "_links": {
+ "self": "https://api.github.com/repos/remnawave/backend/contents/libs/contract/commands/users?ref=main",
+ "git": "https://api.github.com/repos/remnawave/backend/git/trees/873d09bfd0fbe1dd98f96ae3aa38fe0c424751c3",
+ "html": "https://github.com/remnawave/backend/tree/main/libs/contract/commands/users"
+ }
+ }
+]

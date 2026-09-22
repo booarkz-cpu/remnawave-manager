@@ -1,0 +1,598 @@
+{
+  "mode": "namespace",
+  "namespace": "cursor-cloud",
+  "namespaceStatus": "ready",
+  "namespaceDescription": "Cursor-internal cloud-agent diagnostics (server `cursor-cloud`). - `cursor-cloud-run-info` — return the current cloud-agent run identity, basic run metadata (name, repo, branch, model, owners — including the owning user's name and email when resolvable, lifecycle and setup status, created-at), and the URL where the run is available (https://cursor.com/agents/<bcId>). - `cursor-cloud-list-cloud-agents` — list cloud agents accessible to this run's principal in THIS run's environment (or, when this run has no saved environment, agents on the same repository), ordered by creation time (newest first), returning basic run metadata plus URLs. Users and service accounts see their own runs. Team admins can additionally browse teammates' runs only when enabled in team MCP settings. Supports browse filters (source, lifecycle status, setup status, recency/creation windows, archived, self-hosted, whether the agent made code changes, and whether it created a pull request) plus limit/offset paging. When counting or enumerating many runs, page with nextOffset until hasMore is false; use totalMatched only when the accessible scan is complete. - `cursor-cloud-environment-info` — return THIS run's environment (name, environment & version public ids, source, recorded-via/created-at provenance, repos, full environment.json, dashboard URL, and environmentDeleted when the linked environment is soft-deleted), a top-level `repos` list (same canonical URLs as environment.repos / trigger-environment-build refs[].repoUrl; still populated when environment is null from composer.repoUrl), effective egress policy (allow-all, the complete merged allowed-domain list, or unresolved with a reason), the environment build the pod booted from (build id, snapshot id, git-setup mode, warm-fork mode) or null when the run started just-in-time rather than from a build, and (for internal runs) the initiating Cursor client build info (version + commit SHA, same as Help → About). - `cursor-cloud-get-events` — list the events recorded for THIS run (the same events shown on the run's dashboard page), oldest first: run lifecycle and setup outcomes plus soft failures such as MCP authentication errors (kind `mcp_auth_error` — an MCP server rejected this run's credentials, so its tool calls failed while the run continued). Each event carries publicId, createdAtMs, category, logLevel, a stable kind, a user-facing title, and optional detail and linkUrl. - `cursor-cloud-get-message-queue` — return a point-in-time snapshot of THIS run's user-visible pending follow-up queue (the same queue shown on the dashboard). No arguments; always this run. The currently executing message is no longer queued. Defer slow testing/verification while queued messages remain, then verify the cumulative result when the queue is empty. Returns hasQueuedMessages, queuedMessageCount, and queued message metadata (followupId, createdAtMs, source, text). Does not include attachments or internal queue entries. - `cursor-cloud-batch-fetch-details` — fetch details for a batch of specified accessible cloud agents by bcIds. Users and service accounts can fetch their own runs. Team admins can additionally fetch teammates' runs only when enabled in team MCP settings. When matching agents are found, writes basic run info to index.json and optionally writes diff-metadata.json, setup-logs.txt, start-logs.txt, environment-info.json, events.json, and transcript.json under /tmp/cursor/cloud-agent-transcripts/<datetime-id>/<bcId>/. Set includeEvents to include each run's dashboard events. First-class Task results include cloudAgentBcId; pass those ids to another batch-fetch-details call to fetch child transcripts. Transcripts can be very large — read them via subagents, never directly. - `cursor-cloud-get-automation` — look up one Cursor automation by id (UUID) via the AutomationsService GetAutomation API, as the run's principal: returns automation metadata (id, name, enabled state, display owner/creator, owner email, and URL) when readable, the same metadata fields for a teammate's private automation when only a restricted summary is visible, or a not-found error otherwise. - `cursor-cloud-list-self-hosted-workers` — list the self-hosted workers currently connected and accessible to this run, so a cloud agent can pick one to target. Returns workerId, display/machine names, repos, labels, isInUse, plus derived sharedAssignmentAllowed (targeting it runs concurrently instead of queueing) and eligibleForSubagent. Supports status/scope filters and limit/offset paging. - `cursor-cloud-list-environment-builds` — list this run's environment builds (the prebuilt environment snapshots a cloud agent can boot from), newest first, with status/failure outcomes. Returns an empty list when the run has no linked environment. Supports statuses and createdAfter/createdBefore filters plus limit; page older builds by passing nextCursor back as cursor. - `cursor-cloud-environment-build-logs` — fetch the install/setup logs for one environment build by buildId (returned inline; large outputs are spilled to a file automatically). Build logs are retained ~10 days; only builds of this run's own environment are accessible. - `cursor-cloud-trigger-environment-build` — start one DRAFT environment build of this run's own environment and return its buildId. OK to call during environment setup to validate the config before proposing, or when the user asks to trigger a build. Each build boots a pod and runs the full install, so skip it outside those cases. Supports per-repo ref overrides (`refs`) and a custom `environmentJson` config override for testing config changes. For a greenfield run with no linked environment, pass the complete `environmentJson`; the trigger creates and links a personal transitional draft automatically. Draft builds never become the build new agents boot from; track them with list-environment-builds and fetch logs with environment-build-logs. - `cursor-cloud-propose-environment-json` — propose `environmentJson` after setup and validation are complete so the user can review and edit it before saving. Always pass buildId when an environment build completed successfully; omit it only when no successful build exists. This lets Portal Save reuse the source snapshot that build validated. Call the proposal tool again with all final values if the proposal or the selected build changes. - `cursor-cloud-take-environment-snapshot` — start a disk snapshot of this VM after setup is complete. The upload continues in the background; monitor it with check-environment-snapshot. - `cursor-cloud-check-environment-snapshot` — return creating, ready, failed, or unknown for a snapshot created by this run. Wait between checks instead of polling in a tight loop. - `cursor-cloud-request-environment-setup-actions` — only relevant during the Cloud Agent environment-setup workflow (the `/env-setup` skill): record one or more user actions that currently block environment setup. Calls may be made more than once in a turn; successful calls from the completed turn are combined into one request for the user. - `cursor-cloud-set-publish-button-visibility` — the single control for the Publish button (and its Add Vercel setup nudge) Cursor offers in this new-repository conversation. Both start HIDDEN: it only appears after you call this tool with visible=true, and the latest call wins. Make this call BEFORE delivering your final message in any turn where the answer changed — in particular, never end the initial setup turn without having called it: with visible=true when the project is Vercel-deployable (a web app, static site, or serverless-compatible HTTP API — e.g. Next.js, React/Vite, Vue/Nuxt, SvelteKit, Astro, Remix, Angular, SolidStart, Gatsby, Eleventy, plain HTML/CSS/JS, Node.js/Python serverless APIs), or with visible=false when it is not. Also call it with visible=false whenever clicking Publish would accomplish nothing: the project is not deployable (native mobile/desktop apps, CLI tools, libraries, bots/background workers, or anything needing Docker, GPUs, or persistent processes), the project was already published successfully (call it right after a successful /deploy-with-vercel deployment), or the publish is blocked until the user provides something in chat (credentials, env values, a decision). Call it with visible=true again once the blocker is resolved or the project becomes deployable. Pass reconnect=true (implies visible) when Vercel team access is missing: the pill shows Reconnect to Vercel and starts MCP reauth. Omit or pass false to restore Publish. Presenting results: unless the user asks for a specific format or a summary, show a tool call's returned result to the user verbatim as pretty-printed JSON in a `json` code block rather than paraphrasing or summarizing it. This applies only to data returned directly by the tool call, not to detail files written to the filesystem (e.g. batch-fetch-details output). Environment snapshot tools are workflow steps: do not narrate intermediate status checks; briefly report only readiness or failure.",
+  "tools": [
+    {
+      "tool": "batch-fetch-details",
+      "description": "Fetch details for a batch of specified accessible cloud agents by bcIds. Users and service accounts can fetch their own runs. Team admins can additionally fetch teammates' runs only when enabled in team MCP settings. When matching agents are found, writes basic run info to index.json under a unique /tmp/cursor/cloud-agent-transcripts/<datetime-id>/ run directory, and can optionally write per-agent diff-metadata.json, setup-logs.txt, start-logs.txt, environment-info.json, events.json, and transcript.json files. Set includeEvents to include each run's dashboard events. First-class Task results include cloudAgentBcId, which can be passed to another batch-fetch-details call. Returns the run directory and written paths; transcripts can be very large, so read them via subagents, never directly.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "bcIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "maxItems": 50,
+            "description": "Agent ids to fetch as a batch (max 50). Each id is access-checked and constrained to this run's environment (or, when this run has no saved environment, to agents on the same repository)."
+          },
+          "includeDiffMetadata": {
+            "type": "boolean",
+            "description": "Also write each agent's PR link/status and change counts to diff-metadata.json. Defaults to false."
+          },
+          "includeSetupLogs": {
+            "type": "boolean",
+            "description": "Also write each agent's pod setup and image-build logs to setup-logs.txt. Defaults to false."
+          },
+          "includeStartLogs": {
+            "type": "boolean",
+            "description": "Also write each agent's start-command stdout/stderr/exit lines to start-logs.txt (filtered from the same Redis setup stream as includeSetupLogs; includes system starts like exec-daemon interleaved with the user start script). Defaults to false."
+          },
+          "includeEnvironment": {
+            "type": "boolean",
+            "description": "Also write each agent's environment identity/config and egress policy to environment-info.json. Defaults to false."
+          },
+          "includeEvents": {
+            "type": "boolean",
+            "description": "Also write each agent's dashboard events to events.json. Defaults to false."
+          },
+          "includeTranscripts": {
+            "type": "boolean",
+            "description": "Also write each requested agent's full conversation to <bcId>/transcript.json. First-class Task tool results include cloudAgentBcId, which can be passed to a subsequent batch-fetch-details call. Defaults to false."
+          }
+        },
+        "required": [
+          "bcIds"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      }
+    },
+    {
+      "tool": "check-environment-snapshot",
+      "description": "Check a snapshot started by this run. Returns creating, ready, failed, or unknown. Wait between checks instead of polling in a tight loop; if it failed, take a fresh snapshot.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "snapshotId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The snapshot id returned by take-environment-snapshot for this run."
+          }
+        },
+        "required": [
+          "snapshotId"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      }
+    },
+    {
+      "tool": "environment-build-logs",
+      "description": "Fetch the install/setup logs for one environment build by buildId (bld-<YYYYMMDD>-<uuid>, as surfaced by environment-info's build block). Returns the log text inline (large outputs are spilled to a file automatically by the MCP framework). Logs cover the build's Docker image build plus clone/install/setup output and are retained for ~10 days after the build; older builds (or builds from before build-log capture shipped) return a retention note with no log body. Only builds of this run's own environment are accessible.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "buildId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The environment build id to fetch install/setup logs for (e.g. bld-20260709-<uuid>)."
+          }
+        },
+        "required": [
+          "buildId"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      }
+    },
+    {
+      "tool": "environment-info",
+      "description": "Return the current cloud-agent run's environment (name, environment & version public ids, source, how/when it was recorded, repos, the full environment.json, a link to the environment in the cursor.com dashboard, and environmentDeleted when the linked environment is soft-deleted), a top-level `repos` array of canonical repository URLs (the same strings as `environment.repos` and the values `trigger-environment-build` `refs[].repoUrl` must match; still set when `environment` is null, from composer.repoUrl), the effective egress policy (allow-all, the complete merged allowed-domain list, or unresolved with a reason), the environment build the pod booted from (build id, snapshot id, git-setup mode, warm-fork mode) or null when the run started just-in-time rather than from a build, and (for internal runs) the initiating Cursor client build info (version + commit SHA, same as Help → About). Use top-level `repos` when choosing `refs[].repoUrl`. Use `environmentJsonPath` to tell repo-file managed environments from db-backed ones: a present path (defaulting to `.cursor/environment.json`) means the config is read from that repository environment.json (repo-file managed), while a null/absent path means a db-backed snapshot config (db-managed). When environmentDeleted is true, treat the environment as historical only — do not trigger new builds or treat the environment id as live.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      }
+    },
+    {
+      "tool": "get-automation",
+      "description": "Look up one Cursor automation by its id (UUID). Calls the AutomationsService GetAutomation API as the current run's principal and returns AutomationInfo metadata, enforcing the same read-access rules as the automations dashboard: automation id, name, enabled state, display owner/creator, owner email, and URL when readable; the same metadata fields for a teammate's private automation when only a restricted summary is visible; a not-found error otherwise (including when the automation exists but is not accessible).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The automation's id, a UUID (e.g. 6e0d261c-86a2-4383-89f0-9162c1c10662). Find it in the automation's dashboard URL or in AutomationsService responses."
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      }
+    },
+    {
+      "tool": "get-events",
+      "description": "Return the list of events recorded for the current cloud-agent run — the same events shown on the run's cursor.com dashboard page — ordered oldest first. Events cover run lifecycle and setup outcomes (e.g. setup warnings, follow-up limits) and soft failures such as MCP authentication errors (kind `mcp_auth_error`: an MCP server rejected this run's credentials, so its tool calls failed while the run continued). Each event has publicId, createdAtMs, category (build | agent_setup | agent_run), logLevel (info | warn | error), a stable machine-readable kind, a user-facing title, and optional detail and linkUrl.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      }
+    },
+    {
+      "tool": "get-message-queue",
+      "description": "Return a point-in-time snapshot of THIS run's user-visible pending follow-up message queue — the same queue shown on the dashboard. No arguments; always scoped to this run. The currently executing message is no longer queued. Defer slow testing and verification while queued messages remain, then verify the cumulative result when the queue is empty. Returns hasQueuedMessages, queuedMessageCount, and queued message metadata (followupId, createdAtMs, source, text). Does not include attachments or internal queue entries.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      }
+    },
+    {
+      "tool": "list-cloud-agents",
+      "description": "List cloud agents accessible to the current run's principal in this run's environment (or, for a run without a saved environment, agents on the same repository), ordered by creation time (newest first). Users and service accounts see their own runs. Team admins can additionally browse teammates' runs only when enabled in team MCP settings. Returns basic run metadata plus URLs. Filters: source, lifecycle status, setup status, recency/creation windows, archived, self-hosted, code changes, and pull-request creation. Paging: limit (default 50, max 200) + offset; the response includes returned, offset, limit, hasMore, nextOffset when more accessible agents were found, and totalMatched only when the accessible scan is complete. With many cloud agents, narrow with filters before paging through everything.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "desktop",
+                "web",
+                "mobile",
+                "slack",
+                "linear",
+                "scm",
+                "cli",
+                "sand",
+                "setup",
+                "sdk",
+                "automations",
+                "api",
+                "bugbot_autofix",
+                "qabot_frontend",
+                "local",
+                "internal"
+              ]
+            },
+            "maxItems": 50,
+            "description": "Filter by agent source category, matching the source field returned in results. One or more of: desktop, web, mobile, slack, linear, scm, cli, sand, setup, sdk, automations, api, bugbot_autofix, qabot_frontend, local, internal."
+          },
+          "statuses": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "UNSPECIFIED",
+                "NOT_YET_STARTED",
+                "RUNNING",
+                "IDLE",
+                "ERROR",
+                "ARCHIVED",
+                "EXPIRED",
+                "WAITING_FOR_BACKGROUND_WORK"
+              ]
+            },
+            "maxItems": 50,
+            "description": "Filter by lifecycle status(es), matching the status field returned in results."
+          },
+          "setupStatus": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "INSTALL_STARTED",
+                  "INSTALL_SUCCEEDED",
+                  "INSTALL_FAILED"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Filter by user install setup status. INSTALL_FAILED indicates a confirmed failure, INSTALL_SUCCEEDED indicates a confirmed success, and INSTALL_STARTED indicates that setup started without a recorded outcome. null means no status was recorded and does not establish success or failure. Omit this field to apply no setup-status filter."
+          },
+          "includeArchived": {
+            "type": "boolean",
+            "description": "Include archived/killed agents. Defaults to false."
+          },
+          "activeSince": {
+            "type": "string",
+            "description": "Only include agents with activity at or after this ISO-8601 UTC instant. Omitted by default."
+          },
+          "createdAfter": {
+            "type": "string",
+            "description": "Only include agents created at or after this ISO-8601 UTC instant."
+          },
+          "createdBefore": {
+            "type": "string",
+            "description": "Only include agents created at or before this ISO-8601 UTC instant."
+          },
+          "isSelfHostedWorker": {
+            "type": "boolean",
+            "description": "Filter by where the agent runs: true for self-hosted private-worker agents, false for managed public-cloud agents, omit for both."
+          },
+          "didMakeCodeChanges": {
+            "type": "boolean",
+            "description": "Filter by whether the agent made code changes (committed or not): true for agents with a recorded non-zero diff (files/lines changed), false for agents with no recorded changes, omit for both."
+          },
+          "didCreatePullRequest": {
+            "type": "boolean",
+            "description": "Filter by whether the agent created a pull request: true for agents with a PR, false for agents without one, omit for both."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "description": "Max number of agents to return (default 50, max 200)."
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of matched accessible agents to skip before this page. Use the nextOffset from a previous response to page. Note: not a stable cursor — results are re-fetched and re-sorted each call, so offsets can shift if agents change between calls."
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      }
+    },
+    {
+      "tool": "list-environment-builds",
+      "description": "List this run's environment builds — the prebuilt environment snapshots a cloud agent can boot from instead of running install from scratch — newest first, so build ids can be found for environment-build-logs. Each entry carries buildId, status (IN_PROGRESS, SUCCEEDED, FAILED), failureType, source, triggerType, environmentVersionId, userFacingSnapshotId, createdAtMs, and completedAtMs. Filters: statuses, createdAfter, createdBefore. Paging: limit (default 25, max 100); when hasMore is true, pass the response's opaque nextCursor back as cursor to fetch the next (older) page. Builds exist only for environments that have environment builds enabled; a run with no linked environment returns an empty list.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "statuses": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "IN_PROGRESS",
+                "SUCCEEDED",
+                "FAILED",
+                "CANCELLED",
+                "SKIPPED"
+              ]
+            },
+            "maxItems": 5,
+            "description": "Filter by build outcome. One or more of: IN_PROGRESS, SUCCEEDED, FAILED, CANCELLED, SKIPPED."
+          },
+          "createdAfter": {
+            "type": "string",
+            "description": "Only include builds created at or after this ISO-8601 UTC instant."
+          },
+          "createdBefore": {
+            "type": "string",
+            "description": "Only include builds created strictly before this ISO-8601 UTC instant."
+          },
+          "cursor": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Opaque pagination cursor: pass the previous response's nextCursor to fetch the next (older) page."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "description": "Max builds to return (default 25, max 100)."
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      }
+    },
+    {
+      "tool": "list-self-hosted-workers",
+      "description": "List the self-hosted workers (`cursor worker start` machines) currently connected and accessible to this run's principal, so a cloud agent can pick one to target. A worker only appears while its worker process is running and registered. Access matches the dashboard: personal workers are visible to their owner, and team-pool workers to team admins or to a caller already using them. Each row carries workerId, displayName, machineDisplayName, machineId, repos, labels, isInUse, activeBcId, teamId, and connectedAtMs, plus two derived fields: sharedAssignmentAllowed (the worker multiplexes several agents at once, so targeting it runs concurrently rather than queueing) and eligibleForSubagent (a subagent could be placed on it right now without waiting for a claim — true for shared workers even while busy, false for an in-use exclusive pool worker). When placement approval is enforced each row also carries approved: whether this Project may already place workers there; when false, call RequestAccess with that machine before CreateAgent. Filters: status (all, idle, in_use) and scope (all, team_pool, personal). Paging: limit (default 50, max 100) + offset; the response includes returned, offset, limit, totalCount, hasMore, and nextOffset. There is no OS, arch, CPU, or memory information — a worker's capabilities are expressed only through its labels.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "all",
+              "idle",
+              "in_use"
+            ],
+            "description": "Filter by whether a worker is currently running a cloud agent. Defaults to all."
+          },
+          "scope": {
+            "type": "string",
+            "enum": [
+              "all",
+              "team_pool",
+              "personal"
+            ],
+            "description": "Which workers to return: personal self-hosted machines, the team's Self-Hosted Pool, or both. Defaults to all."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "description": "Max workers to return (default 50, max 100)."
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of workers to skip before returning results. Use with limit to page."
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      }
+    },
+    {
+      "tool": "propose-environment-json",
+      "description": "Propose `environmentJson` for the user to review and edit before saving. Call after setup and end-to-end validation are complete. Always pass buildId when an environment build completed successfully; omit it only when no successful build exists. This lets Portal Save reuse the source snapshot that build validated. Call again with all final values if the proposal or the selected build changes. This tool records a proposal only; it does not modify the VM or save the environment.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "environmentJson": {
+            "type": "object",
+            "properties": {
+              "install": {
+                "type": "string",
+                "description": "Idempotent repository bootstrap command run from /workspace after checkout (and when refreshing dependencies). Must terminate; use for dependency install and source-derived generation, not long-running servers, migrations, or tests. Prefer one command per line rather than chaining with &&."
+              },
+              "start": {
+                "type": "string",
+                "description": "Command run on each container start after install. Use for per-boot service startup with a non-daemonizing process (for example a dev server that stays attached). Do not use for dependency install or one-time setup."
+              }
+            },
+            "additionalProperties": false,
+            "description": "environment.json object for the user to review and edit before saving. Property schema is authoritative (install and/or start only). When a draft build was tested, pass top-level buildId so Save can reuse that build's validated snapshot—do not put snapshot on this object."
+          },
+          "buildId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The successful environment build produced for this run and environment. Always pass this when a successful build exists; omit it only when no environment build completed successfully. Portal Save will reuse the source snapshot that this build validated after revalidating the build server-side."
+          }
+        },
+        "required": [
+          "environmentJson"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      }
+    },
+    {
+      "tool": "request-environment-setup-actions",
+      "description": "Only relevant during the Cloud Agent environment-setup workflow (the `/env-setup` skill). Record structured actions that the user must complete before environment setup can continue. Call after confirming the requested credentials are unavailable and after completing all independent setup work. Supported actions are secrets (including test-login username/password/OTP values), one concrete egress allowlist domain, and unavoidable external actions. You may call it multiple times as new blockers are discovered, then finish the turn with a concise explanation.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "actions": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "add_secrets"
+                    },
+                    "title": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    },
+                    "secrets": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 256
+                          },
+                          "optional": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "name",
+                          "optional"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "minItems": 1,
+                      "maxItems": 50
+                    },
+                    "reason": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 4000
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "secrets"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "add_egress_allowlist_domain"
+                    },
+                    "domain": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    },
+                    "title": {
+                      "$ref": "#/properties/actions/items/anyOf/0/properties/title"
+                    },
+                    "reason": {
+                      "$ref": "#/properties/actions/items/anyOf/0/properties/reason"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "domain"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "external_action"
+                    },
+                    "id": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    },
+                    "title": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    },
+                    "instructions": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 4000
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id",
+                    "title",
+                    "instructions"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 20
+          }
+        },
+        "required": [
+          "actions"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      }
+    },
+    {
+      "tool": "run-info",
+      "description": "Return the current cloud-agent run identity, basic run metadata (including lifecycle and setup status), and the URL where the run is available (https://cursor.com/agents/<bcId>).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      }
+    },
+    {
+      "tool": "set-publish-button-visibility",
+      "description": "The single control for whether Cursor offers the Publish button (and its Add Vercel setup nudge) in this new-repository conversation; both start HIDDEN and only appears after you call this tool with visible=true, and the latest call wins. Call it BEFORE delivering your final message: once at the end of the initial project setup (never end that turn without calling it), and again in any later turn where the answer changes. Pass visible=true when the project is Vercel-deployable: a web app or static site Vercel can build and serve — e.g. Next.js, React (Vite/CRA), Vue/Nuxt, Svelte/SvelteKit, Astro, Remix, Angular, SolidStart, Gatsby, Eleventy, plain HTML/CSS/JS, or an HTTP API (Node.js/Express/Hono, Python Flask/FastAPI) that can run as serverless functions. Pass visible=false whenever clicking Publish would accomplish nothing: (1) the project is not deployable — a native mobile or desktop app, CLI tool, library/package, bot or long-running background worker, or a project that needs Docker, GPUs, or persistent processes/local state Vercel's serverless platform cannot host; (2) the project was already published successfully — call it right after a successful Vercel deploy so the button stops showing; or (3) publishing is blocked until the user provides something in chat (credentials, environment values, a decision). Call it with visible=true again once the blocker is resolved or the project becomes deployable. Pass reconnect=true (implies visible) when Vercel team access is missing: the pill shows Reconnect to Vercel and starts MCP reauth. Omit or pass false to restore Publish. Optionally include a short reason.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "visible": {
+            "type": "boolean",
+            "description": "true to show the Publish button, false to hide it. The latest call wins."
+          },
+          "reconnect": {
+            "type": "boolean",
+            "description": "true to show \"Reconnect to Vercel\" instead of Publish and start Vercel MCP reauth (implies visible). Omit or pass false to restore Publish. The latest call wins."
+          },
+          "reason": {
+            "type": "string",
+            "description": "Brief reason for the change, e.g. \"not deployable: CLI tool\", \"published successfully\", or \"waiting on user to provide STRIPE_API_KEY\"."
+          }
+        },
+        "required": [
+          "visible"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      }
+    },
+    {
+      "tool": "take-environment-snapshot",
+      "description": "Start a disk snapshot of this VM. Call only after the final update script has run successfully and all setup work is complete. Returns a snapshot id immediately while upload continues in the background; use check-environment-snapshot to monitor it. If this run already has a snapshot uploading, returns that snapshot instead of starting another. If the VM changed after that existing snapshot began, wait for it to finish and then call this tool again.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      }
+    },
+    {
+      "tool": "trigger-environment-build",
+      "description": "Start one DRAFT environment build of this run's own environment (fresh git checkout + install script, snapshotted at the end). OK to call during environment setup to validate the config before proposing, or when the user asks to trigger a build. Each build boots a pod and runs the full install for up to a few hours, so do not trigger casually outside setup. By default every repo in the environment builds at its default branch; pass `refs` (per repoUrl) to build specific branches/tags/SHAs — every repoUrl must belong to this run's environment. Note: for db-managed environments, a build created from a non-default ref can be tested but cannot be promoted to active later — only builds from every repo's default branch are promotable, so omit `refs` if you want a promotable build. Pass `environmentJson` to build with a custom config instead of the environment's saved db-backed config. For a greenfield run with no linked environment, `environmentJson` is required and creates a personal transitional draft automatically. The config is recorded durably on the build and never changes active environment settings. `environmentJson` is not supported for repo-file managed environments (those whose config is read from a repository environment.json — see `environmentJsonPath` in environment-info) and is rejected for them; test repo-file environments by building off a branch instead — create a branch, edit its environment.json, and build that branch via `refs`. Draft builds never become the build new agents boot from and skip warm-pool seeding, so they are safe for experiments; they appear in list-environment-builds (source AGENT, trigger MANUAL) and their logs are fetchable with environment-build-logs. Returns the new buildId immediately; the build runs in the background. Limited to a few in-flight builds per environment.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "refs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "repoUrl": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Repository URL matching one of environment-info's top-level `repos` (same strings as environment.repos)."
+                },
+                "ref": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Branch, tag, or commit SHA to build this repo at."
+                }
+              },
+              "required": [
+                "repoUrl",
+                "ref"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Per-repository ref overrides. Every repoUrl must belong to this run's environment; repos left out build at their default branch."
+          },
+          "environmentJson": {
+            "type": "object",
+            "properties": {
+              "install": {
+                "type": "string",
+                "description": "Idempotent repository bootstrap command run from /workspace after checkout (and when refreshing dependencies). Must terminate; use for dependency install and source-derived generation, not long-running servers, migrations, or tests. Prefer one command per line rather than chaining with &&."
+              },
+              "start": {
+                "type": "string",
+                "description": "Command run on each container start after install. Use for per-boot service startup with a non-daemonizing process (for example a dev server that stays attached). Do not use for dependency install or one-time setup."
+              },
+              "snapshot": {
+                "type": "string",
+                "description": "Saved base-environment snapshot ID. One of build, image, or snapshot typically defines the environment base."
+              }
+            },
+            "additionalProperties": false,
+            "description": "environment.json object used instead of the environment's saved db-backed config for this draft build. Property schema is authoritative (install, start, and optional snapshot). The override replaces saved config wholesale for the build, so include snapshot when the build should start from a READY take-environment-snapshot base. Required when this run has no linked environment (creates a personal transitional draft). Recorded on the build only; does not change active environment settings. Not supported for repo-file managed environments (see environmentJsonPath in environment-info)—test those via branch refs instead."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Trigger a draft build for this run's environment. If the current run has no environment returned from environment-info, environmentJson is required.",
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      }
+    }
+  ]
+}

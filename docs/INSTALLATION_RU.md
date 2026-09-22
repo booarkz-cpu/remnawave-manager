@@ -7,30 +7,6 @@
 
 Ниже — заметки по конкретным релизам (хеши, что менять после скачивания старой версии). Для повседневной работы используйте Latest и раздел 10 в GUIDE.
 
-# Установка Remnawave Manager 1.6.3
-
-Кабинет заново читает меню после правок в админке. Форма slug без ложного placeholder. Сначала `self-update`.
-
-jsDelivr: `@v1.6.3` / `695fb25f93e80be3583a1dc002ea01a1a952a30dadf9ec87aecea690b90634e5`.
-
-# Установка Remnawave Manager 1.6.2
-
-Админ-кабинет Material You + Web 3.0. Аудит `/admin/`, X-Frame-Options, WAL. Сначала `self-update`.
-
-jsDelivr: `@v1.6.2` / `64afdec784ba3ff468dcc46e0a982914d4697e2c7cdae05cf671ede775306543`.
-
-# Установка Remnawave Manager 1.6.1
-
-Аудит личного кабинета (пункт **34**): Telegram widget, правка вкладок в админке, `/lk` → `/lk/`. Тест без шлюзов: `remnawave-cabinet-test.sh`. Сначала `self-update`.
-
-jsDelivr: `@v1.6.1` / `0a555fda5111c3bf1ecafdb3f7d9d35a1b8e7ed48516fcc5068660aab18c77fb`.
-
-# Установка Remnawave Manager 1.6.0
-
-Личный кабинет (пункт **34** / `cabinet`) и `remnawave-cabinet-test.sh` без платёжных шлюзов. Сначала `self-update`.
-
-jsDelivr: `@v1.6.0` / `e194c5cfed6efc84361fd00dc4d62492cb06395a452af236e73316cd12791416`.
-
 # Установка Remnawave Manager 1.5.5
 
 Заглушка питомника корги на корне домена подписки (пункт **33** / `sub-stub`). Ссылки `/shortUuid` не ломаются. Сначала `self-update`.

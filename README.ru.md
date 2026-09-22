@@ -6,7 +6,7 @@
 
 Production-установщик [Remnawave](https://docs.rw) на Debian/Ubuntu. Интерактивное меню с описанием каждой функции. Язык: **русский** или **English**.
 
-**Текущая версия:** `1.6.3`
+**Текущая версия:** `1.5.5`
 
 **Лицензия:** [MIT](LICENSE) — можно использовать, копировать, менять и распространять с сохранением копирайта. Оригиналы, которые качает пункт **24**, остаются на условиях их авторов — [CREDITS.md](CREDITS.md).
 
@@ -61,13 +61,13 @@ bash remnawave-manager.sh
 
 Без аргументов сначала **выбор языка** (English / Русский), затем меню. `sudo` в команде писать не нужно — скрипт сам поднимает root. Enter оставляет текущий язык (`RW_LANG` в `/opt/remnawave/manager.env`). Позже — пункт 22; пропуск выбора: `--lang ru|en`.
 
-Фиксированная 1.6.3 через jsDelivr (по желанию):
+Фиксированная 1.5.5 через jsDelivr (по желанию):
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.6.3/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.5.5/remnawave-manager.sh \
   -o remnawave-manager.sh
-# sha256: 695fb25f93e80be3583a1dc002ea01a1a952a30dadf9ec87aecea690b90634e5
+# sha256: 42a912d3f3bdf8a7a0cbc7a30db2a989bd7cdb77094bc72b3267aaf81b9a1635
 ```
 
 По умолчанию включаются все транспорты: Reality, Hysteria2, gRPC и xHTTP.
@@ -322,16 +322,6 @@ Telegram: токен + chat, тест. Healthcheck не чаще раза в ч�
 ### 33. Заглушка подписки
 
 Сайт питомника Corgi Lusi на **https://ДОМЕН_SUB/** (фото и страницы). Ссылки подписки `https://ДОМЕН_SUB/shortUuid` по-прежнему открывают Remnawave. По умолчанию **вкл** после установки/`repair`. CLI: `sub-stub on|off|status|refresh`. Выключить: `--no-sub-stub`.
-
-### 34. Личный кабинет
-
-Кабинет на **https://ДОМЕН_PANEL/lk/**: регистрация и вход по email+паролю, Telegram, VK или Яндекс; тарифы; покупка или пробный период; ссылка подписки; инструкции Android, iOS, ТВ и ПК. Material + Web 3.0. Админ `/lk/admin` правит существующие вкладки меню, тарифы, тексты и OAuth. **Без SDK платёжных шлюзов** — mock-оплата или отметка админом. Локальный тест без Remnawave:
-
-```bash
-bash remnawave-cabinet-test.sh
-```
-
-CLI: `cabinet on|off|status|url`. Выключить: `--no-cabinet`.
 
 ### 0. Выход
 

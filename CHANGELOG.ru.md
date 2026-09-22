@@ -2,34 +2,6 @@
 
 Русская версия. English: [CHANGELOG.md](CHANGELOG.md).
 
-## 1.6.3
-
-Кабинет заново читает меню на каждом экране. Форма вкладок в админке: без ложного placeholder slug, нижний регистр, кнопка «Новая вкладка».
-
-SHA256:
-`695fb25f93e80be3583a1dc002ea01a1a952a30dadf9ec87aecea690b90634e5`
-
-## 1.6.2
-
-Дизайн админ-кабинета: Material You + Web 3.0 (rail, glass, чипы, пустые состояния). Аудит: `/admin/` со слэшем; `X-Frame-Options`; WAL; IntegrityError → 409.
-
-SHA256:
-`64afdec784ba3ff468dcc46e0a982914d4697e2c7cdae05cf671ede775306543`
-
-## 1.6.1
-
-Аудит кабинета: callback виджета Telegram больше не требует OAuth `state`; проверяется `auth_date`. HTML и названия вкладок очищаются; CSP; админ редактирует существующие вкладки и тарифы. `https://PANEL/lk` редиректит на `/lk/`. Неверный id в URL — 400. Удаление тарифа с заказами отключает его (FK). Refresh не переписывает `CABINET_SECRET`. Тест: `bash remnawave-cabinet-test.sh`.
-
-SHA256:
-`0a555fda5111c3bf1ecafdb3f7d9d35a1b8e7ed48516fcc5068660aab18c77fb`
-
-## 1.6.0
-
-Личный кабинет (пункт **34** / `cabinet`) на `https://DOMAIN_PANEL/lk/`: email+пароль, Telegram, VK, Яндекс; тарифы; пробный период; mock/ручная оплата **без SDK платёжных шлюзов**; ссылка подписки; инструкции Android/iOS/ТВ/ПК. Админ правит вкладки меню, страницы, тарифы и OAuth. Тест: `bash remnawave-cabinet-test.sh` (без Remnawave и шлюзов). Выключить: `--no-cabinet`.
-
-SHA256:
-`e194c5cfed6efc84361fd00dc4d62492cb06395a452af236e73316cd12791416`
-
 ## 1.5.5
 
 Заглушка питомника Corgi Lusi на **корне домена подписки** (пункт **33** / `sub-stub`). `https://SUB/` — сайт с фото; `https://SUB/shortUuid` по-прежнему открывает Remnawave. По умолчанию вкл при установке/`repair`. `--no-sub-stub` отключает. Фото: `assets/sub-stub-photos.tgz` (GitHub Latest + jsDelivr); если архива нет — SVG. Точные location nginx, чтобы `/img/` не уходил на `:3010`.

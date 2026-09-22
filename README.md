@@ -6,7 +6,7 @@
 
 Production installer for [Remnawave](https://docs.rw) on Debian/Ubuntu. Interactive menu with a description of every function. UI: **English** or **Russian**.
 
-**Current version:** `1.6.3`
+**Current version:** `1.5.5`
 
 **License:** [MIT](LICENSE) — use, copy, modify, and redistribute with the copyright notice. Original files downloaded by menu **24** stay under their authors’ terms — [CREDITS.md](CREDITS.md).
 
@@ -61,13 +61,13 @@ bash remnawave-manager.sh
 
 No arguments opens a **language picker** (English / Русский), then the menu. Do not type `sudo` — the script raises root itself. Enter keeps the current language (`RW_LANG` in `/opt/remnawave/manager.env`). Switch later with menu item 22 or skip the picker with `--lang en|ru`.
 
-Pinned 1.6.3 via jsDelivr (optional):
+Pinned 1.5.5 via jsDelivr (optional):
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.6.3/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.5.5/remnawave-manager.sh \
   -o remnawave-manager.sh
-# sha256: 695fb25f93e80be3583a1dc002ea01a1a952a30dadf9ec87aecea690b90634e5
+# sha256: 42a912d3f3bdf8a7a0cbc7a30db2a989bd7cdb77094bc72b3267aaf81b9a1635
 ```
 
 By default every transport is enabled: Reality, Hysteria2, gRPC and xHTTP.
@@ -322,16 +322,6 @@ Show UFW, set or clear **ADMIN_IP**, rebuild rules (SSH, 80/443, transport ports
 ### 33. Subscription stub
 
 Corgi Lusi kennel site on **https://DOMAIN_SUB/** (photos + pages). Real subscription links `https://DOMAIN_SUB/shortUuid` still open Remnawave. Default **on** after install/`repair`. CLI: `sub-stub on|off|status|refresh`. Disable: `--no-sub-stub`.
-
-### 34. User cabinet
-
-Personal cabinet at **https://DOMAIN_PANEL/lk/**: register/sign in with email+password, Telegram, VK or Yandex; browse plans; buy or start a trial; get the subscription URL; device setup for Android, iOS, TV and PC. Material + Web 3.0 UI. Admin at `/lk/admin` edits existing menu tabs, adds pages, plans, copy and OAuth. **No payment-gateway SDKs** — mock checkout or manual mark-paid. Local test without Remnawave:
-
-```bash
-bash remnawave-cabinet-test.sh
-```
-
-CLI: `cabinet on|off|status|url`. Disable: `--no-cabinet`.
 
 ### 0. Exit
 
