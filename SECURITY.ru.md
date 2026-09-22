@@ -21,9 +21,9 @@
 
 Пункт **23** / `admin-login SHOW` печатает вход в панель **один раз на TTY**. Пароль **не** пишется в `/var/log/remnawave-manager.log`. Токен Telegram в лог не попадает.
 
-## Личный кабинет (1.6.0)
+## Личный кабинет (1.6.1)
 
-Кабинет `/lk/` хранит аккаунты в SQLite (`/opt/remnawave/cabinet/data`). Пароли — PBKDF2. Cookie сессии HttpOnly. Настройки админа **не** возвращают секреты OAuth и токен Remnawave. Оплата **не** подключает SDK платёжных шлюзов (mock или вручную). Тестовый режим (`remnawave-cabinet-test.sh`) не ходит в настоящие приложения Telegram/VK/Яндекс. Секреты OAuth — только в `.env` кабинета или форме админа, не в issue.
+Кабинет `/lk/` хранит аккаунты в SQLite (`/opt/remnawave/cabinet/data`). Пароли — PBKDF2. Cookie сессии HttpOnly. HTML своих страниц очищается (белый список тегов). Настройки админа **не** возвращают секреты OAuth и токен Remnawave. Оплата **не** подключает SDK платёжных шлюзов (mock или вручную). Вход через Telegram в проде — официальный Login Widget (`auth_date` + HMAC), без OAuth `state`. Тестовый режим (`remnawave-cabinet-test.sh`) не ходит в настоящие приложения Telegram/VK/Яндекс. Секреты OAuth — только в `.env` кабинета или форме админа, не в issue.
 
 ## Кто может менять репозиторий
 

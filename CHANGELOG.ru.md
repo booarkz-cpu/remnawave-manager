@@ -2,6 +2,13 @@
 
 Русская версия. English: [CHANGELOG.md](CHANGELOG.md).
 
+## 1.6.1
+
+Аудит кабинета: callback виджета Telegram больше не требует OAuth `state`; проверяется `auth_date`. HTML и названия вкладок очищаются; CSP; админ редактирует существующие вкладки и тарифы. `https://PANEL/lk` редиректит на `/lk/`. Неверный id в URL — 400. Удаление тарифа с заказами отключает его (FK). Refresh не переписывает `CABINET_SECRET`. Тест: `bash remnawave-cabinet-test.sh`.
+
+SHA256:
+`0a555fda5111c3bf1ecafdb3f7d9d35a1b8e7ed48516fcc5068660aab18c77fb`
+
 ## 1.6.0
 
 Личный кабинет (пункт **34** / `cabinet`) на `https://DOMAIN_PANEL/lk/`: email+пароль, Telegram, VK, Яндекс; тарифы; пробный период; mock/ручная оплата **без SDK платёжных шлюзов**; ссылка подписки; инструкции Android/iOS/ТВ/ПК. Админ правит вкладки меню, страницы, тарифы и OAuth. Тест: `bash remnawave-cabinet-test.sh` (без Remnawave и шлюзов). Выключить: `--no-cabinet`.

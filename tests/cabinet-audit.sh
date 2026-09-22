@@ -77,4 +77,47 @@ curl -fsS -c "$aj" -b "$aj" -H 'Content-Type: application/json' \
 curl -fsS "http://127.0.0.1:${PORT}/api/pages/xss" | grep -Fq safe
 if curl -fsS "http://127.0.0.1:${PORT}/api/pages/xss" | grep -q '<script'; then echo 'FAIL: script not sanitized' >&2; exit 1; fi
 
+python3 - <<PY > "$DATA/xss2.json"
+import json
+print(json.dumps({
+    "slug": "xss2",
+    "title_ru": "<b>bad</b>",
+    "title_en": "x",
+    "kind": "page",
+    "body": '<img src=x onerror=alert(1)><a href="javascript:alert(1)">x</a><p>ok2</p>',
+}))
+PY
+curl -fsS -c "$aj" -b "$aj" -H 'Content-Type: application/json' -d @"$DATA/xss2.json" \
+  "http://127.0.0.1:${PORT}/api/admin/menu" >/dev/null
+page="$(curl -fsS "http://127.0.0.1:${PORT}/api/pages/xss2")"
+echo "$page" | grep -Fq ok2
+if echo "$page" | grep -qi onerror; then echo 'FAIL: onerror survived' >&2; exit 1; fi
+if echo "$page" | grep -qi javascript:; then echo 'FAIL: javascript: survived' >&2; exit 1; fi
+if echo "$page" | grep -Fq '<b>bad</b>'; then echo 'FAIL: title tags not stripped' >&2; exit 1; fi
+
+# edit existing menu tab
+curl -fsS -c "$aj" -b "$aj" -H 'Content-Type: application/json' \
+  -d '{"slug":"faq","title_ru":"FAQ2","title_en":"FAQ2","kind":"page","sort":91}' \
+  "http://127.0.0.1:${PORT}/api/admin/menu" | grep -Fq '"ok":true'
+curl -fsS "http://127.0.0.1:${PORT}/api/menu" | grep -Fq FAQ2
+
+# bad checkout id must not 500
+code="$(curl -sS -o /dev/null -w '%{http_code}' -c "$cj" -b "$cj" -H 'Content-Type: application/json' \
+  -d '{}' "http://127.0.0.1:${PORT}/api/orders/nope/checkout")"
+[[ "$code" == 400 ]]
+
+# telegram widget callback in test skips OAuth state (mock)
+curl -fsS -D - -o /dev/null -c "$DATA/tg2.txt" \
+  "http://127.0.0.1:${PORT}/api/auth/telegram/callback?hash=x" | grep -Fq 'Set-Cookie: lk_sid='
+
+# deleting a used tariff disables instead of 500
+paid_tid="$(python3 - <<PY
+import json,urllib.request
+print(json.load(urllib.request.urlopen('http://127.0.0.1:${PORT}/api/tariffs'))['tariffs'][1]['id'])
+PY
+)"
+curl -fsS -c "$cj" -b "$cj" -H 'Content-Type: application/json' \
+  -d "{\"tariff_id\":$paid_tid}" "http://127.0.0.1:${PORT}/api/orders" >/dev/null
+curl -fsS -c "$aj" -b "$aj" -X DELETE "http://127.0.0.1:${PORT}/api/admin/tariffs/${paid_tid}" | grep -Fq '"ok":true'
+
 echo "CABINET AUDIT OK"

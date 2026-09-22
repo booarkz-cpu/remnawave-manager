@@ -73,17 +73,60 @@ def pbkdf2_ok(password: str, stored: str) -> bool:
     return hmac.compare_digest(probe, stored)
 
 
+ALLOWED_HTML = {"p", "br", "ul", "ol", "li", "strong", "em", "b", "i", "a", "h2", "h3", "code", "pre", "blockquote"}
+
+
+def plain_text(text: str, n: int = 80) -> str:
+    text = re.sub(r"<[^>]*>", "", text or "")
+    return re.sub(r"\s+", " ", text).strip()[:n]
+
+
+def as_int(value, default: int = 0, lo: int = 0, hi: int = 1_000_000_000) -> int:
+    try:
+        n = int(value)
+    except (TypeError, ValueError):
+        n = default
+    return max(lo, min(hi, n))
+
+
 def sanitize_html(text: str) -> str:
     text = text or ""
-    text = re.sub(r"(?i)<script[\s\S]*?</script>", "", text)
-    text = re.sub(r"(?i)<iframe[\s\S]*?</iframe>", "", text)
+    text = re.sub(r"(?i)<(script|iframe|object|embed|svg|link|meta|style|form|base)[\s\S]*?</\1>", "", text)
+    text = re.sub(r"(?i)</?(script|iframe|object|embed|svg|link|meta|style|form|base)[^>]*>", "", text)
     text = re.sub(r"(?i)on\w+\s*=", "", text)
     text = re.sub(r"(?i)javascript:", "", text)
+    text = re.sub(r"(?i)data:", "", text)
+    text = re.sub(r"(?i)vbscript:", "", text)
+
+    def _tag(m):
+        raw = m.group(0)
+        name = re.sub(r"[^a-z0-9]", "", (m.group(1) or "").lower())
+        closing = bool(m.group(0).startswith("</"))
+        if name not in ALLOWED_HTML:
+            return ""
+        if closing or name == "br":
+            return f"</{name}>" if closing else "<br>"
+        if name == "a":
+            href = re.search(r'(?i)\bhref\s*=\s*["\']([^"\']+)["\']', raw)
+            url = href.group(1) if href else ""
+            if not re.match(r"(?i)^(https?:|mailto:|/)", url):
+                return "<a>"
+            return f'<a href="{url}" rel="noopener noreferrer">'
+        return f"<{name}>"
+
+    text = re.sub(r"</?([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>", _tag, text)
     return text[:20000]
 
 
 def rate_ok(ip: str) -> bool:
     t = time.time()
+    if len(_login_hits) > 4000:
+        for key in list(_login_hits):
+            hits = [x for x in _login_hits[key] if t - x < LOGIN_WINDOW]
+            if hits:
+                _login_hits[key] = hits
+            else:
+                _login_hits.pop(key, None)
     bucket = _login_hits.setdefault(ip, [])
     bucket[:] = [x for x in bucket if t - x < LOGIN_WINDOW]
     if len(bucket) >= LOGIN_MAX:
@@ -398,7 +441,7 @@ def user_public(u: dict) -> dict:
 
 
 class Handler(BaseHTTPRequestHandler):
-    server_version = "CorgiCabinet/1.6.0"
+    server_version = "CorgiCabinet/1.6.1"
 
     def log_message(self, fmt, *args):
         path = self.path.split("?")[0]
@@ -440,6 +483,12 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Length", str(len(body)))
         self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("Referrer-Policy", "same-origin")
+        self.send_header(
+            "Content-Security-Policy",
+            "default-src 'self'; script-src 'self' https://telegram.org; "
+            "style-src 'self' 'unsafe-inline'; img-src 'self' data: https://telegram.org; "
+            "connect-src 'self'; frame-src https://oauth.telegram.org; base-uri 'none'",
+        )
         self.send_header("Cache-Control", "no-store" if ctype.startswith("application/json") else "public, max-age=120")
         if extra_headers:
             for k, v in extra_headers:
@@ -501,17 +550,28 @@ class Handler(BaseHTTPRequestHandler):
     def do_OPTIONS(self):
         self._send(204, "text/plain", b"")
 
+    def _fail(self, exc):
+        detail = str(exc)[:200] if MODE == "test" else "error"
+        self._send(*json_bytes({"error": "server", "detail": detail}, 500))
+
+    def _path_int(self, index: int):
+        parts = [x for x in self._path().split("/") if x]
+        try:
+            return int(parts[index])
+        except (IndexError, ValueError, OverflowError):
+            return None
+
     def do_GET(self):
         try:
             self._dispatch_get()
         except Exception as exc:
-            self._send(*json_bytes({"error": "server", "detail": str(exc)[:200]}, 500))
+            self._fail(exc)
 
     def do_POST(self):
         try:
             self._dispatch_post()
         except Exception as exc:
-            self._send(*json_bytes({"error": "server", "detail": str(exc)[:200]}, 500))
+            self._fail(exc)
 
     def do_PUT(self):
         self.do_POST()
@@ -631,7 +691,10 @@ class Handler(BaseHTTPRequestHandler):
         if p == "/api/orders":
             return self._order(body)
         if p.startswith("/api/orders/") and p.endswith("/checkout"):
-            return self._checkout(int(p.split("/")[3]))
+            oid = self._path_int(2)
+            if oid is None:
+                return self._send(*json_bytes({"error": "bad_id"}, 400))
+            return self._checkout(oid)
         if p == "/api/admin/login":
             return self._admin_login(body)
         if p == "/api/admin/logout":
@@ -644,13 +707,22 @@ class Handler(BaseHTTPRequestHandler):
         if p == "/api/admin/menu":
             return self._admin_menu_save(body)
         if p.startswith("/api/admin/menu/") and self.command == "DELETE":
-            return self._admin_menu_del(int(p.split("/")[-1]))
+            mid = self._path_int(-1)
+            if mid is None:
+                return self._send(*json_bytes({"error": "bad_id"}, 400))
+            return self._admin_menu_del(mid)
         if p == "/api/admin/tariffs":
             return self._admin_tariff_save(body)
         if p.startswith("/api/admin/tariffs/") and self.command == "DELETE":
-            return self._admin_tariff_del(int(p.split("/")[-1]))
+            tid = self._path_int(-1)
+            if tid is None:
+                return self._send(*json_bytes({"error": "bad_id"}, 400))
+            return self._admin_tariff_del(tid)
         if p.startswith("/api/admin/orders/") and p.endswith("/paid"):
-            return self._admin_mark_paid(int(p.split("/")[4]))
+            oid = self._path_int(3)
+            if oid is None:
+                return self._send(*json_bytes({"error": "bad_id"}, 400))
+            return self._admin_mark_paid(oid)
         if p == "/api/admin/instructions":
             return self._admin_instructions(body)
         return self._send(*json_bytes({"error": "not_found"}, 404))
@@ -738,10 +810,13 @@ class Handler(BaseHTTPRequestHandler):
         qs = self._qs()
         if MODE == "test":
             return self._oauth_mock(provider)
+        if provider == "telegram":
+            return self._telegram_widget(qs)
         state = qs.get("state", "")
         exp = setting_get(f"oauth_state_{state}")
         if not exp or int(exp or 0) < now():
             return self._send(*json_bytes({"error": "state"}, 400))
+        query("DELETE FROM settings WHERE k=?", (f"oauth_state_{state}",))
         code = qs.get("code", "")
         redirect = public_base(self) + f"/api/auth/{provider}/callback"
         ext_id, email, name = "", "", provider
@@ -785,8 +860,6 @@ class Handler(BaseHTTPRequestHandler):
                 ext_id = str(info.get("id") or "")
                 email = (info.get("default_email") or (info.get("emails") or [f"ya{ext_id}@yandex.local"])[0]).lower()
                 name = info.get("real_name") or info.get("login") or "Yandex"
-            elif provider == "telegram":
-                return self._telegram_widget(qs)
             else:
                 return self._send(*json_bytes({"error": "provider"}, 400))
         except (urllib.error.URLError, TimeoutError, json.JSONDecodeError, KeyError) as exc:
@@ -817,6 +890,12 @@ class Handler(BaseHTTPRequestHandler):
         digest = hmac.new(secret, data_check.encode(), hashlib.sha256).hexdigest()
         if not hmac.compare_digest(digest, check):
             return self._send(*json_bytes({"error": "telegram_hash"}, 401))
+        try:
+            auth_age = abs(now() - int(pairs.get("auth_date") or 0))
+        except ValueError:
+            auth_age = 10**9
+        if auth_age > 86400:
+            return self._send(*json_bytes({"error": "telegram_stale"}, 401))
         ext_id = str(pairs.get("id") or "")
         name = pairs.get("username") or pairs.get("first_name") or "Telegram"
         email = f"tg{ext_id}@telegram.local"
@@ -851,8 +930,14 @@ class Handler(BaseHTTPRequestHandler):
         paid = query("SELECT id FROM orders WHERE user_id=? AND status='paid'", (u["id"],), one=True)
         if paid:
             return self._send(*json_bytes({"error": "already"}, 409))
-        tid = body.get("tariff_id")
-        tariff = query("SELECT * FROM tariffs WHERE enabled=1 AND is_trial=1" + (" AND id=?" if tid else "") + " ORDER BY sort LIMIT 1", ((tid,) if tid else ()), one=True)
+        tid = as_int(body.get("tariff_id"), 0) or None
+        extra = " AND id=?" if tid else ""
+        args = (tid,) if tid else ()
+        tariff = query(
+            f"SELECT * FROM tariffs WHERE enabled=1 AND is_trial=1{extra} ORDER BY sort LIMIT 1",
+            args,
+            one=True,
+        )
         if not tariff:
             return self._send(*json_bytes({"error": "no_trial"}, 400))
         try:
@@ -866,7 +951,7 @@ class Handler(BaseHTTPRequestHandler):
         u = self._user()
         if not u:
             return self._send(*json_bytes({"error": "auth"}, 401))
-        tid = int(body.get("tariff_id") or 0)
+        tid = as_int(body.get("tariff_id"), 0)
         tariff = query("SELECT * FROM tariffs WHERE id=? AND enabled=1", (tid,), one=True)
         if not tariff:
             return self._send(*json_bytes({"error": "tariff"}, 404))
@@ -954,6 +1039,8 @@ class Handler(BaseHTTPRequestHandler):
         for k, v in body.items():
             if k not in allowed:
                 continue
+            if k in ("brand", "tagline_ru", "tagline_en", "tg_bot_name"):
+                v = plain_text(str(v), 200)
             if k == "payment_mode" and str(v) not in ("mock", "manual"):
                 continue
             if k.endswith("token") or k.endswith("secret"):
@@ -977,11 +1064,11 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(*json_bytes({"error": "kind"}, 400))
         fields = (
             slug,
-            str(body.get("title_ru") or slug)[:80],
-            str(body.get("title_en") or slug)[:80],
+            plain_text(str(body.get("title_ru") or slug), 80) or slug,
+            plain_text(str(body.get("title_en") or slug), 80) or slug,
             kind,
             str(body.get("icon") or "")[:32],
-            int(body.get("sort") or 50),
+            as_int(body.get("sort"), 50, 0, 10000),
             1 if body.get("enabled", 1) else 0,
             sanitize_html(str(body.get("body") or "")),
         )
@@ -991,9 +1078,9 @@ class Handler(BaseHTTPRequestHandler):
         if body.get("id"):
             query(
                 "UPDATE menu_items SET slug=?,title_ru=?,title_en=?,kind=?,icon=?,sort=?,enabled=?,body=? WHERE id=?",
-                fields + (int(body["id"]),),
+                fields + (as_int(body["id"]),),
             )
-            mid = int(body["id"])
+            mid = as_int(body["id"])
         else:
             mid = query(
                 "INSERT INTO menu_items(slug,title_ru,title_en,kind,icon,sort,enabled,body) VALUES(?,?,?,?,?,?,?,?)",
@@ -1020,22 +1107,22 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(*json_bytes({"error": "slug"}, 400))
         fields = (
             slug,
-            str(body.get("title_ru") or slug)[:80],
-            str(body.get("title_en") or slug)[:80],
-            max(1, int(body.get("days") or 30)),
-            max(0, int(body.get("traffic_gb") or 0)),
-            max(0, int(body.get("devices") or 0)),
-            max(0, int(body.get("price_rub") or 0)),
+            plain_text(str(body.get("title_ru") or slug), 80) or slug,
+            plain_text(str(body.get("title_en") or slug), 80) or slug,
+            as_int(body.get("days") or 30, 30, 1, 3650),
+            as_int(body.get("traffic_gb"), 0, 0, 1_000_000),
+            as_int(body.get("devices"), 0, 0, 1000),
+            as_int(body.get("price_rub"), 0, 0, 10_000_000),
             1 if body.get("is_trial") else 0,
-            int(body.get("sort") or 50),
+            as_int(body.get("sort"), 50, 0, 10000),
             1 if body.get("enabled", 1) else 0,
         )
         if body.get("id"):
             query(
                 "UPDATE tariffs SET slug=?,title_ru=?,title_en=?,days=?,traffic_gb=?,devices=?,price_rub=?,is_trial=?,sort=?,enabled=? WHERE id=?",
-                fields + (int(body["id"]),),
+                fields + (as_int(body["id"]),),
             )
-            tid = int(body["id"])
+            tid = as_int(body["id"])
         else:
             tid = query(
                 "INSERT INTO tariffs(slug,title_ru,title_en,days,traffic_gb,devices,price_rub,is_trial,sort,enabled) VALUES(?,?,?,?,?,?,?,?,?,?)",
@@ -1046,6 +1133,10 @@ class Handler(BaseHTTPRequestHandler):
     def _admin_tariff_del(self, tid: int):
         if not self._admin():
             return self._send(*json_bytes({"error": "admin"}, 401))
+        used = query("SELECT id FROM orders WHERE tariff_id=? LIMIT 1", (tid,), one=True)
+        if used:
+            query("UPDATE tariffs SET enabled=0 WHERE id=?", (tid,))
+            return self._send(*json_bytes({"ok": True, "disabled": True}))
         query("DELETE FROM tariffs WHERE id=?", (tid,))
         return self._send(*json_bytes({"ok": True}))
 

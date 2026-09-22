@@ -7,6 +7,12 @@
 
 Ниже — заметки по конкретным релизам (хеши, что менять после скачивания старой версии). Для повседневной работы используйте Latest и раздел 10 в GUIDE.
 
+# Установка Remnawave Manager 1.6.1
+
+Аудит личного кабинета (пункт **34**): Telegram widget, правка вкладок в админке, `/lk` → `/lk/`. Тест без шлюзов: `remnawave-cabinet-test.sh`. Сначала `self-update`.
+
+jsDelivr: `@v1.6.1` / `0a555fda5111c3bf1ecafdb3f7d9d35a1b8e7ed48516fcc5068660aab18c77fb`.
+
 # Установка Remnawave Manager 1.6.0
 
 Личный кабинет (пункт **34** / `cabinet`) и `remnawave-cabinet-test.sh` без платёжных шлюзов. Сначала `self-update`.

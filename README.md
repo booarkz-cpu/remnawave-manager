@@ -6,7 +6,7 @@
 
 Production installer for [Remnawave](https://docs.rw) on Debian/Ubuntu. Interactive menu with a description of every function. UI: **English** or **Russian**.
 
-**Current version:** `1.6.0`
+**Current version:** `1.6.1`
 
 **License:** [MIT](LICENSE) — use, copy, modify, and redistribute with the copyright notice. Original files downloaded by menu **24** stay under their authors’ terms — [CREDITS.md](CREDITS.md).
 
@@ -61,13 +61,13 @@ bash remnawave-manager.sh
 
 No arguments opens a **language picker** (English / Русский), then the menu. Do not type `sudo` — the script raises root itself. Enter keeps the current language (`RW_LANG` in `/opt/remnawave/manager.env`). Switch later with menu item 22 or skip the picker with `--lang en|ru`.
 
-Pinned 1.6.0 via jsDelivr (optional):
+Pinned 1.6.1 via jsDelivr (optional):
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.6.0/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.6.1/remnawave-manager.sh \
   -o remnawave-manager.sh
-# sha256: e194c5cfed6efc84361fd00dc4d62492cb06395a452af236e73316cd12791416
+# sha256: 0a555fda5111c3bf1ecafdb3f7d9d35a1b8e7ed48516fcc5068660aab18c77fb
 ```
 
 By default every transport is enabled: Reality, Hysteria2, gRPC and xHTTP.
@@ -325,7 +325,7 @@ Corgi Lusi kennel site on **https://DOMAIN_SUB/** (photos + pages). Real subscri
 
 ### 34. User cabinet
 
-Personal cabinet at **https://DOMAIN_PANEL/lk/**: register/sign in with email+password, Telegram, VK or Yandex; browse plans; buy or start a trial; get the subscription URL; device setup for Android, iOS, TV and PC. Material + Web 3.0 UI. Admin at `/lk/admin` edits menu tabs, plans, copy and OAuth. **No payment-gateway SDKs** — mock checkout or manual mark-paid. Local test without Remnawave:
+Personal cabinet at **https://DOMAIN_PANEL/lk/**: register/sign in with email+password, Telegram, VK or Yandex; browse plans; buy or start a trial; get the subscription URL; device setup for Android, iOS, TV and PC. Material + Web 3.0 UI. Admin at `/lk/admin` edits existing menu tabs, adds pages, plans, copy and OAuth. **No payment-gateway SDKs** — mock checkout or manual mark-paid. Local test without Remnawave:
 
 ```bash
 bash remnawave-cabinet-test.sh

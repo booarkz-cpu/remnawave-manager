@@ -36,8 +36,10 @@ const T = {
 const t = (k) => (T[S.lang] || T.ru)[k] || k;
 const $ = (s) => document.querySelector(s);
 const app = () => $("#app");
-
 const BASE = document.body.getAttribute("data-prefix") || "";
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({
+  "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+}[c]));
 
 async function api(path, opt = {}) {
   const res = await fetch(BASE + path, {
@@ -57,7 +59,8 @@ function title(item) {
 function nav() {
   const n = $("#nav");
   if (!S.cfg) return;
-  n.innerHTML = (S.cfg.menu || []).map((m) => `<a href="#/${m.slug}" data-slug="${m.slug}">${title(m)}</a>`).join("");
+  n.innerHTML = (S.cfg.menu || []).map((m) =>
+    `<a href="#/${esc(m.slug)}" data-slug="${esc(m.slug)}">${esc(title(m))}</a>`).join("");
   $("#brand").textContent = S.cfg.brand || "Corgi Lusi";
   $("#langBtn").textContent = S.lang === "ru" ? "EN" : "RU";
   $("#authBtn").textContent = S.me ? t("logout") : t("login");
@@ -79,24 +82,68 @@ function route() {
 }
 
 function renderHome() {
+  const tag = S.lang === "ru" ? (S.cfg.tagline_ru || "") : (S.cfg.tagline_en || "");
   app().innerHTML = `
     <section class="hero">
       <div>
-        <p class="muted">${S.cfg.tagline_ru && S.lang === "ru" ? S.cfg.tagline_ru : (S.cfg.tagline_en || "")}</p>
+        <p class="muted">${esc(tag)}</p>
         <h1>${t("hero")}</h1>
         <p class="muted">${t("lead")}</p>
         <p><a class="btn" href="#/tariffs">${t("tariffs")}</a></p>
       </div>
-      <article class="card">
-        <h2>${S.me ? S.me.display_name : t("login")}</h2>
+      <article class="card glass">
+        <h2>${esc(S.me ? S.me.display_name : t("login"))}</h2>
         <p class="muted">${S.me && S.me.has_subscription ? t("sub") : t("none")}</p>
       </article>
     </section>`;
 }
 
+function oauthButtons() {
+  const o = S.cfg.oauth || {};
+  const box = $("#oauth");
+  if (!box) return;
+  box.innerHTML = "";
+  const addMock = (provider, label) => {
+    const a = document.createElement("a");
+    a.href = `${BASE}/api/auth/mock/${provider}`;
+    a.textContent = `${label} · ${t("mock")}`;
+    box.appendChild(a);
+  };
+  if (o.telegram && o.mock) addMock("telegram", t("oauth_tg"));
+  else if (o.telegram && o.tg_bot) {
+    const s = document.createElement("script");
+    s.async = true;
+    s.src = "https://telegram.org/js/telegram-widget.js?22";
+    s.setAttribute("data-telegram-login", o.tg_bot);
+    s.setAttribute("data-size", "large");
+    s.setAttribute("data-userpic", "false");
+    s.setAttribute("data-request-access", "write");
+    s.setAttribute("data-auth-url", `${location.origin}${BASE}/api/auth/telegram/callback`);
+    box.appendChild(s);
+  }
+  if (o.vk) {
+    if (o.mock) addMock("vk", t("oauth_vk"));
+    else {
+      const a = document.createElement("a");
+      a.href = `${BASE}/api/auth/vk/start`;
+      a.textContent = t("oauth_vk");
+      box.appendChild(a);
+    }
+  }
+  if (o.yandex) {
+    if (o.mock) addMock("yandex", t("oauth_ya"));
+    else {
+      const a = document.createElement("a");
+      a.href = `${BASE}/api/auth/yandex/start`;
+      a.textContent = t("oauth_ya");
+      box.appendChild(a);
+    }
+  }
+}
+
 function renderAuth(mode) {
   app().innerHTML = `
-    <article class="card" style="max-width:420px;margin:40px auto">
+    <article class="card glass" style="max-width:420px;margin:40px auto">
       <h1>${mode === "login" ? t("login") : t("register")}</h1>
       <form id="f">
         ${mode === "register" ? `<label>${t("name")}</label><input name="name">` : ""}
@@ -108,11 +155,7 @@ function renderAuth(mode) {
       <p><a href="#/${mode === "login" ? "register" : "login"}">${mode === "login" ? t("register") : t("login")}</a></p>
       <div class="oauth" id="oauth"></div>
     </article>`;
-  const o = S.cfg.oauth || {};
-  const box = $("#oauth");
-  if (o.telegram) box.innerHTML += `<a href="${BASE}/api/auth/${o.mock ? "mock/telegram" : "telegram/start"}">${t("oauth_tg")}${o.mock ? " · " + t("mock") : ""}</a>`;
-  if (o.vk) box.innerHTML += `<a href="${BASE}/api/auth/${o.mock ? "mock/vk" : "vk/start"}">${t("oauth_vk")}${o.mock ? " · " + t("mock") : ""}</a>`;
-  if (o.yandex) box.innerHTML += `<a href="${BASE}/api/auth/${o.mock ? "mock/yandex" : "yandex/start"}">${t("oauth_ya")}${o.mock ? " · " + t("mock") : ""}</a>`;
+  oauthButtons();
   $("#f").onsubmit = async (ev) => {
     ev.preventDefault();
     const fd = Object.fromEntries(new FormData(ev.target));
@@ -127,13 +170,13 @@ async function renderTariffs() {
   const { tariffs } = await api("/api/tariffs");
   app().innerHTML = `<h1>${t("tariffs")}</h1><section class="grid" id="g"></section><p class="err" id="e"></p>`;
   $("#g").innerHTML = tariffs.map((x) => `
-    <article class="card">
-      <h2>${title(x)}</h2>
-      <p class="price">${x.price_rub ? x.price_rub + " ₽" : t("trial")}<small> / ${x.days}d</small></p>
-      <p class="muted">${x.traffic_gb ? x.traffic_gb + " GB" : "∞"} · ${x.devices || "∞"} devices</p>
+    <article class="card glass">
+      <h2>${esc(title(x))}</h2>
+      <p class="price">${x.price_rub ? esc(x.price_rub) + " ₽" : t("trial")}<small> / ${esc(x.days)}d</small></p>
+      <p class="muted">${x.traffic_gb ? esc(x.traffic_gb) + " GB" : "∞"} · ${x.devices || "∞"} devices</p>
       <p>${x.is_trial
-        ? `<button class="btn ok" data-trial="${x.id}">${t("trial")}</button>`
-        : `<button class="btn" data-buy="${x.id}">${t("buy")}</button>`}</p>
+        ? `<button class="btn ok" data-trial="${esc(x.id)}">${t("trial")}</button>`
+        : `<button class="btn" data-buy="${esc(x.id)}">${t("buy")}</button>`}</p>
     </article>`).join("");
   app().onclick = async (ev) => {
     const trial = ev.target.getAttribute("data-trial");
@@ -160,11 +203,13 @@ async function renderSub() {
   let data = { has: false };
   try { data = await api("/api/subscription"); } catch (e) { if (e.status === 401) { location.hash = "#/login"; return; } }
   app().innerHTML = `
-    <article class="card">
+    <article class="card glass">
       <h1>${t("sub")}</h1>
-      ${data.has ? `<p class="sub-url" id="url">${data.url}</p><p><button class="btn" id="copy">${t("copy")}</button></p>`
+      ${data.has ? `<p class="sub-url" id="url"></p><p><button class="btn" id="copy">${t("copy")}</button></p>`
                  : `<p class="muted">${t("none")}</p><p><a class="btn" href="#/tariffs">${t("tariffs")}</a></p>`}
     </article>`;
+  const urlEl = $("#url");
+  if (urlEl) urlEl.textContent = data.url || "";
   const b = $("#copy");
   if (b) b.onclick = () => { navigator.clipboard.writeText(data.url); b.textContent = t("copied"); };
 }
@@ -172,15 +217,17 @@ async function renderSub() {
 async function renderHelp() {
   const { devices } = await api("/api/instructions");
   const keys = ["android", "ios", "tv", "pc"];
-  app().innerHTML = `<h1>${t("help")}</h1><div class="tabs">${keys.map((k) => `<button class="chip" data-d="${k}">${t(k)}</button>`).join("")}</div><article class="card"><pre id="txt" style="white-space:pre-wrap;font:inherit"></pre></article>`;
+  app().innerHTML = `<h1>${t("help")}</h1><div class="tabs">${keys.map((k) => `<button class="chip" data-d="${k}">${t(k)}</button>`).join("")}</div><article class="card glass"><pre id="txt" style="white-space:pre-wrap;font:inherit"></pre></article>`;
   const show = (k) => { $("#txt").textContent = (devices[k] && (devices[k][S.lang] || devices[k].ru)) || ""; };
   show("android");
   app().onclick = (ev) => { const d = ev.target.getAttribute("data-d"); if (d) show(d); };
 }
 
 async function renderPage(slug) {
-  const page = await api("/api/pages/" + slug);
-  app().innerHTML = `<article class="card"><h1>${title(page)}</h1><div>${page.body || ""}</div></article>`;
+  const page = await api("/api/pages/" + encodeURIComponent(slug));
+  app().innerHTML = `<article class="card glass"><h1></h1><div id="body"></div></article>`;
+  app().querySelector("h1").textContent = title(page);
+  $("#body").innerHTML = page.body || "";
 }
 
 async function boot() {

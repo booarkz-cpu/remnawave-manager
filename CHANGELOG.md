@@ -2,6 +2,13 @@
 
 English journal. Русский: [CHANGELOG.ru.md](CHANGELOG.ru.md).
 
+## 1.6.1
+
+Cabinet audit: Telegram widget callback no longer requires an OAuth `state`; `auth_date` is checked. HTML/titles sanitized; CSP; admin can edit existing menu tabs and tariffs. `https://PANEL/lk` redirects to `/lk/`. Invalid URL ids return 400. Deleting a used tariff disables it (FK). Refresh keeps `CABINET_SECRET`. Test: `bash remnawave-cabinet-test.sh`.
+
+SHA256:
+`0a555fda5111c3bf1ecafdb3f7d9d35a1b8e7ed48516fcc5068660aab18c77fb`
+
 ## 1.6.0
 
 User cabinet (menu **34** / `cabinet`) at `https://DOMAIN_PANEL/lk/`: email+password, Telegram, VK, Yandex; plans; trial; mock/manual checkout **without payment-gateway SDKs**; subscription URL; Android/iOS/TV/PC instructions. Admin UI edits menu tabs, pages, tariffs and OAuth. Standalone test: `bash remnawave-cabinet-test.sh` (no Remnawave, no gateways). Disable: `--no-cabinet`.
