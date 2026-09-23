@@ -41,9 +41,11 @@ Ubuntu `/etc/os-release` is not sourced (it sets `VERSION=` and would clobber `-
 - Pin upstream image tags when you need a reproducible panel, instead of floating `latest`, if your operations require it.
 - Delete `credentials.txt` after you have stored the secrets somewhere safe.
 
-## Subscription-domain stub (1.5.5)
+## Subscription-domain stub (1.5.5 / 1.5.6)
 
 Menu **33** / `sub-stub` publishes a public kennel site at `https://DOMAIN_SUB/`. Files live in `/var/www/sub-site` (HTML, CSS, JPEG/SVG). That tree has **no tokens or passwords**. Paths that are not stub files — including `/shortUuid` — still proxy to the Remnawave subscription page. Do not put secrets in `/var/www/sub-site`.
+
+1.5.6: do not use `alias` on `location = /` (nginx 1.24 returns HTTP 500). `/img/` does not set `add_header` besides `expires`, so HSTS from the SSL snippet stays on image responses.
 
 ## Menu and API
 

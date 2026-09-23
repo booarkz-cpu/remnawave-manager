@@ -6,7 +6,7 @@
 
 Production installer for [Remnawave](https://docs.rw) on Debian/Ubuntu. Interactive menu with a description of every function. UI: **English** or **Russian**.
 
-**Current version:** `1.5.5`
+**Current version:** `1.5.6`
 
 **License:** [MIT](LICENSE) — use, copy, modify, and redistribute with the copyright notice. Original files downloaded by menu **24** stay under their authors’ terms — [CREDITS.md](CREDITS.md).
 
@@ -61,13 +61,13 @@ bash remnawave-manager.sh
 
 No arguments opens a **language picker** (English / Русский), then the menu. Do not type `sudo` — the script raises root itself. Enter keeps the current language (`RW_LANG` in `/opt/remnawave/manager.env`). Switch later with menu item 22 or skip the picker with `--lang en|ru`.
 
-Pinned 1.5.5 via jsDelivr (optional):
+Pinned 1.5.6 via jsDelivr (optional):
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.5.5/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.5.6/remnawave-manager.sh \
   -o remnawave-manager.sh
-# sha256: 42a912d3f3bdf8a7a0cbc7a30db2a989bd7cdb77094bc72b3267aaf81b9a1635
+# sha256: e27712e9308fbcd8fca62dae9c2549c1cd994068bac6662f8e9a173387e80c23
 ```
 
 By default every transport is enabled: Reality, Hysteria2, gRPC and xHTTP.
@@ -115,6 +115,7 @@ You usually do **not** reinstall Remnawave.
 | Goal | Next step |
 | --- | --- |
 | HTTP 502 | menu **7** / `repair` |
+| HTTP **500** on `https://SUB/` (kennel) | `self-update` to **1.5.6**, then menu **33** → 4 or `sub-stub refresh` (1.5.5 `alias` on `/` broke nginx 1.24) |
 | Rebuild CorgiLusi bind | menu **4** / `protocols` (panel) |
 | Add/remove gRPC, xHTTP, Hysteria2 | menu **25** (panel), then `node-transports apply` on the node |
 | New Remnawave images | menu **14** / `update` |
@@ -321,7 +322,7 @@ Show UFW, set or clear **ADMIN_IP**, rebuild rules (SSH, 80/443, transport ports
 
 ### 33. Subscription stub
 
-Corgi Lusi kennel site on **https://DOMAIN_SUB/** (photos + pages). Real subscription links `https://DOMAIN_SUB/shortUuid` still open Remnawave. Default **on** after install/`repair`. CLI: `sub-stub on|off|status|refresh`. Disable: `--no-sub-stub`.
+Corgi Lusi kennel site on **https://DOMAIN_SUB/** (photos + pages). Real subscription links `https://DOMAIN_SUB/shortUuid` still open Remnawave. Default **on** after install/`repair`. On nginx 1.24 the root must use `try_files`, not `alias` (1.5.5 returned HTTP 500). CLI: `sub-stub on|off|status|refresh`. Disable: `--no-sub-stub`. After `self-update` from 1.5.5 the next root run rewrites the vhost.
 
 ### 0. Exit
 

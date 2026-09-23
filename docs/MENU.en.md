@@ -2,7 +2,7 @@
 
 [English](MENU.en.md) · [Русский](MENU.ru.md) · [README](../README.md) · [Guide](GUIDE.en.md)
 
-Open the menu with no arguments: `bash remnawave-manager.sh`. **Language is asked first** (Enter keeps the current one); item **22** switches later. Do not type `sudo`. Numbers **1–27** stay; **28–32** were added in 1.5.0; **33** is the SUB-domain Corgi stub (1.5.5). **0** / `q` leaves.
+Open the menu with no arguments: `bash remnawave-manager.sh`. **Language is asked first** (Enter keeps the current one); item **22** switches later. Do not type `sudo`. Numbers **1–27** stay; **28–32** were added in 1.5.0; **33** is the SUB-domain Corgi stub (1.5.5, HTTP 500 on `/` fixed in 1.5.6). **0** / `q` leaves.
 
 Two updates that look similar and are not:
 
@@ -410,6 +410,8 @@ Enabled by default on install and `repair`. Menu:
 0. Back
 
 Photos come from `assets/sub-stub-photos.tgz` next to the script, or GitHub Latest / jsDelivr. If the archive is missing, SVG illustrations are used. Enable and refresh both go through `sub_stub_apply`: a node-only VPS prints that there is no SUB domain and does not rewrite panel nginx.
+
+nginx 1.24 must serve `/` with `root` + `try_files /index.html`. `alias` on `location = /` returns **HTTP 500** (`index.htmlindex.html` is not a directory). 1.5.6 rewrites that vhost on the next root run after `self-update`. Status prints the HTTP code of `https://SUB/`.
 
 CLI:
 

@@ -2,6 +2,15 @@
 
 English journal. Русский: [CHANGELOG.ru.md](CHANGELOG.ru.md).
 
+## 1.5.6
+
+**Critical:** the Corgi kennel on `https://SUB/` returned **HTTP 500** on nginx 1.24 (`nginx/1.24.0 (Ubuntu)`). `location = / { alias /var/www/sub-site/index.html; }` made nginx open `index.htmlindex.html` (ENOTDIR). Stub locations now use `root` + `try_files`. `/shortUuid` still proxies to `:3010`. After `self-update` the installer rewrites a leftover 1.5.5 vhost on the next root run (`menu`, `doctor`, `repair`, `sub-stub refresh`).
+
+Also: `sub-stub status` / `doctor` print the HTTP code of `https://SUB/`; `public_https_check` warns on 5xx, not only 502; `nginx_apply` starts nginx if it is inactive; photo fetch uses `--retry-all-errors`; `/img/` no longer sets `add_header Cache-Control` (that dropped HSTS from the SSL snippet).
+
+SHA256:
+`e27712e9308fbcd8fca62dae9c2549c1cd994068bac6662f8e9a173387e80c23`
+
 ## 1.5.5
 
 Corgi Lusi kennel stub on the **subscription domain root** (menu **33** / `sub-stub`). `https://SUB/` shows a kennel site with photos; `https://SUB/shortUuid` still opens Remnawave. Default on for install/`repair`. `--no-sub-stub` skips it. Photos: `assets/sub-stub-photos.tgz` (GitHub Latest + jsDelivr); SVG fallback if the archive is missing. nginx exact locations so `/img/` never hits `:3010`.

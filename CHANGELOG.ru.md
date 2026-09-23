@@ -2,6 +2,15 @@
 
 Русская версия. English: [CHANGELOG.md](CHANGELOG.md).
 
+## 1.5.6
+
+**Критично:** сайт питомника на `https://SUB/` отдавал **HTTP 500** на nginx 1.24 (`nginx/1.24.0 (Ubuntu)`). `location = / { alias /var/www/sub-site/index.html; }` открывал `index.htmlindex.html` (ENOTDIR). Теперь `root` + `try_files`. `/shortUuid` по-прежнему на `:3010`. После `self-update` старый vhost 1.5.5 переписывается при следующем запуске от root (меню, `doctor`, `repair`, `sub-stub refresh`).
+
+Также: `sub-stub status` / `doctor` печатают HTTP-код `https://SUB/`; `public_https_check` ругается на 5xx, не только 502; `nginx_apply` поднимает nginx, если он не запущен; фото качаются с `--retry-all-errors`; `/img/` больше не ставит `add_header Cache-Control` (это сбрасывало HSTS из SSL-сниппета).
+
+SHA256:
+`e27712e9308fbcd8fca62dae9c2549c1cd994068bac6662f8e9a173387e80c23`
+
 ## 1.5.5
 
 Заглушка питомника Corgi Lusi на **корне домена подписки** (пункт **33** / `sub-stub`). `https://SUB/` — сайт с фото; `https://SUB/shortUuid` по-прежнему открывает Remnawave. По умолчанию вкл при установке/`repair`. `--no-sub-stub` отключает. Фото: `assets/sub-stub-photos.tgz` (GitHub Latest + jsDelivr); если архива нет — SVG. Точные location nginx, чтобы `/img/` не уходил на `:3010`.

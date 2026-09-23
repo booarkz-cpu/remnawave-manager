@@ -2,7 +2,7 @@
 
 [English](GUIDE.en.md) · [Русский](GUIDE.ru.md) · [README](../README.ru.md)
 
-Установщик и повседневный менеджер [Remnawave](https://docs.rw) на Debian/Ubuntu. Автор: **Корги Люси (Corgi Lusi)**. Текущая версия скрипта: **1.5.5**.
+Установщик и повседневный менеджер [Remnawave](https://docs.rw) на Debian/Ubuntu. Автор: **Корги Люси (Corgi Lusi)**. Текущая версия скрипта: **1.5.6**.
 
 Это полная инструкция. На GitHub в README — **полный разбор каждого пункта меню** на русском и английском. Журнал обновлений по версиям: [INSTALLATION_RU.md](INSTALLATION_RU.md), [CHANGELOG.md](../CHANGELOG.md) (English) · [CHANGELOG.ru.md](../CHANGELOG.ru.md) (русский). Безопасность: [SECURITY.md](../SECURITY.md) · [SECURITY.ru.md](../SECURITY.ru.md). Лицензия: [MIT](../LICENSE).
 
@@ -92,14 +92,14 @@ grep ' remnawave-manager.sh$' SHA256SUMS
 
 Две суммы должны совпасть. Latest: <https://github.com/booarkz-cpu/remnawave-manager/releases/latest>
 
-Фиксированная копия (пример для 1.5.5):
+Фиксированная копия (пример для 1.5.6):
 
 ```bash
 curl -fL --retry 5 --retry-all-errors \
-  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.5.5/remnawave-manager.sh \
+  https://cdn.jsdelivr.net/gh/booarkz-cpu/remnawave-manager@v1.5.6/remnawave-manager.sh \
   -o remnawave-manager.sh
 sha256sum remnawave-manager.sh
-# 1.5.5: 42a912d3f3bdf8a7a0cbc7a30db2a989bd7cdb77094bc72b3267aaf81b9a1635
+# 1.5.6: e27712e9308fbcd8fca62dae9c2549c1cd994068bac6662f8e9a173387e80c23
 ```
 
 Все суммы версий — в [SHA256SUMS](../SHA256SUMS).
@@ -373,6 +373,7 @@ Remnawave обычно **переустанавливать не нужно**.
 | Цель | Что дальше |
 | --- | --- |
 | 502 панели или подписки | пункт **7** / `repair` |
+| HTTP **500** на `https://SUB/` (питомник) | обновить до **1.5.6**, затем `sub-stub refresh` или открыть меню (переписывает vhost 1.5.5 с `alias`) |
 | Новая привязка / CorgiLusi / отпечаток firefox | пункт **4** / `protocols` на **панели** |
 | Добавить/снять gRPC, xHTTP, Hysteria2 | пункт **25** / `node-transports` (панель, затем `apply` на ноде) |
 | Новые образы контейнеров Remnawave | пункт **14** / `update` (это не обновление скрипта) |
@@ -514,6 +515,7 @@ bash remnawave-manager.sh addon remnawave|remnanode|selfsteal|wtm|netbird|egames
 | Хеш не совпал | Удалите файл, скачайте Latest снова, не запускайте |
 | `"-":0: bad minute` на старом 25.2.2 | Обновите **скрипт** (раздел 10), затем `protocols` — сертификаты Hysteria идут через systemd, не crontab |
 | Корень SUB по-прежнему страница подписки | пункт **33** → 2 или `sub-stub on`, затем `repair` |
+| `https://SUB/` отвечает **500 Internal Server Error** (nginx 1.24) | ошибка 1.5.5 (`alias` на `location = /`). `self-update` до 1.5.6, затем `sub-stub refresh` |
 | На заглушке только SVG, без фото | `sub-stub refresh` (нужен `sub-stub-photos.tgz` из GitHub Latest) |
 
 ---

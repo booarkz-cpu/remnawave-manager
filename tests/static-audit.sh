@@ -3,11 +3,12 @@ set -Eeuo pipefail
 
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
-SCRIPT=remnawave-manager-v1.5.5.sh
+SCRIPT=remnawave-manager-v1.5.6.sh
 
 echo "[1/18] bash -n current + historical"
 bash -n "$SCRIPT"
 bash -n remnawave-manager.sh
+bash -n remnawave-manager-v1.5.6.sh
 bash -n remnawave-manager-v1.5.5.sh
 bash -n remnawave-manager-v1.5.4.sh
 bash -n remnawave-manager-v1.5.3.sh
@@ -272,7 +273,7 @@ grep -Fq 'add-node' /tmp/rw-help-en.txt
 grep -Fq 'users list' /tmp/rw-help-en.txt
 grep -Fq 'admin-login' /tmp/rw-help-en.txt
 grep -Fq 'sub-stub on|off|status|refresh' /tmp/rw-help-en.txt
-bash "$SCRIPT" --version | grep -Fq '1.5.5'
+bash "$SCRIPT" --version | grep -Fq '1.5.6'
 set +e
 bash "$SCRIPT" --lang en nosuchcmd >/tmp/rw-unk.txt 2>&1
 unk_rc=$?
@@ -285,7 +286,7 @@ if grep -Fq 'panel + node on one server' /tmp/rw-unk.txt; then
 fi
 # 1.4.0 self-update restart glued `--lang ru` into one argv because IFS has no space.
 bash "$SCRIPT" '--lang ru' --no-update-check --version >/tmp/rw-lang-glue.txt 2>&1
-grep -Fq '1.5.5' /tmp/rw-lang-glue.txt
+grep -Fq '1.5.6' /tmp/rw-lang-glue.txt
 if grep -Fq 'Unknown command' /tmp/rw-lang-glue.txt; then
   echo 'FAIL: glued --lang ru treated as unknown command' >&2
   exit 1
@@ -336,7 +337,14 @@ grep -Fq 'menu_row 33' "$SCRIPT"
 grep -Fq 'write_sub_stub_site()' "$SCRIPT"
 grep -Fq 'sub_stub_menu()' "$SCRIPT"
 grep -Fq 'SUB_STUB' "$SCRIPT"
-grep -Fq 'alias /var/www/sub-site/img/' "$SCRIPT"
+grep -Fq 'try_files /index.html =404' "$SCRIPT"
+grep -Fq 'try_files $uri =404' "$SCRIPT"
+if awk '/^sub_stub_nginx_locations\(\)/,/^write_panel_vhosts\(\)/' "$SCRIPT" | grep -q 'alias /var/www/sub-site'; then
+  echo 'FAIL: stub nginx locations must not use alias on files (nginx 1.24 HTTP 500)' >&2
+  exit 1
+fi
+grep -Fq 'maybe_fix_sub_stub_nginx()' "$SCRIPT"
+grep -Fq 'sub_stub_alias_broken()' "$SCRIPT"
 test -f assets/sub-stub-photos.tgz
 test -f assets/sub-stub/hero.jpg
 grep -Fq '!assets/sub-stub-photos.tgz' .gitignore
@@ -428,6 +436,7 @@ test -f CHANGELOG.md
 test -f CHANGELOG.ru.md
 test -f RELEASE_NOTES_1.5.4.md
 test -f RELEASE_NOTES_1.5.5.md
+test -f RELEASE_NOTES_1.5.6.md
 grep -Fq '[SECURITY.md](SECURITY.md)' README.md
 grep -Fq '[SECURITY.ru.md](SECURITY.ru.md)' README.ru.md
 grep -Fq 'CHANGELOG.ru.md' README.md README.ru.md
@@ -442,7 +451,7 @@ echo "[14/18] current script copies match"
 cmp -s remnawave-manager.sh "$SCRIPT"
 
 echo "[15/18] VERSION string"
-grep -Fq "VERSION='1.5.5'" "$SCRIPT"
+grep -Fq "VERSION='1.5.6'" "$SCRIPT"
 if grep -nE "^VERSION='[^']*-prod'" remnawave-manager.sh; then
   echo 'FAIL: current VERSION must not use a -prod suffix' >&2
   exit 1
@@ -478,12 +487,12 @@ set -Eeuo pipefail
 . ./kv.inc
 . ./up.inc
 . ./user.inc
-VERSION='1.5.5'
+VERSION='1.5.6'
 PATH_SAVE="$PATH"
 DRY_RUN=0
 printf '%s\n' 'VERSION=9.9.9' 'PATH=/evil' 'DRY_RUN=1' 'ADMIN_PASSWORD=ab\cd$ef' > env.test
 load_kv_file env.test
-[[ "$VERSION" == 1.5.5 ]]
+[[ "$VERSION" == 1.5.6 ]]
 [[ "$PATH" == "$PATH_SAVE" ]]
 [[ "$DRY_RUN" == 0 ]]
 [[ "$ADMIN_PASSWORD" == 'ab\cd$ef' ]]
@@ -524,6 +533,51 @@ write_sub_stub_site
 [[ -f "$SUB_SITE/img/hero.svg" ]]
 grep -Fq '/img/hero.jpg' "$SUB_SITE/index.html"
 grep -Fq 'Corgi Lusi' "$SUB_SITE/index.html"
-awk '/^sub_stub_nginx_locations\(\)/,/^write_panel_vhosts\(\)/' "$SCRIPT" | grep -Fq 'alias /var/www/sub-site/img/'
+awk '/^sub_stub_nginx_locations\(\)/,/^write_panel_vhosts\(\)/' "$SCRIPT" | grep -Fq 'try_files /index.html =404'
+awk '/^sub_stub_nginx_locations\(\)/,/^write_panel_vhosts\(\)/' "$SCRIPT" | grep -Fq 'try_files $uri =404'
+
+echo "[extra] nginx 1.24 SUB stub: GET / is 200, not 500"
+if command -v nginx >/dev/null 2>&1; then
+  ngx="$tmpd/ngx"
+  mkdir -p "$ngx/logs" "$ngx/conf" "$ngx/body" "$ngx/proxy" "$ngx/fastcgi"
+  cat > "$ngx/conf/nginx.conf" <<EOF
+user root;
+worker_processes 1;
+error_log $ngx/logs/error.log;
+pid $ngx/nginx.pid;
+events { worker_connections 32; }
+http {
+  include /etc/nginx/mime.types;
+  client_body_temp_path $ngx/body;
+  proxy_temp_path $ngx/proxy;
+  fastcgi_temp_path $ngx/fastcgi;
+  access_log off;
+  server {
+    listen 127.0.0.1:18083;
+    root $SUB_SITE;
+    location = / { try_files /index.html =404; }
+    location = /index.html { try_files /index.html =404; }
+    location = /about.html { try_files /about.html =404; }
+    location = /styles.css { try_files /styles.css =404; }
+    location ^~ /img/ { try_files \$uri =404; }
+    location / { return 502; }
+  }
+}
+EOF
+  sudo nginx -t -c "$ngx/conf/nginx.conf" -p "$ngx" >/dev/null
+  sudo nginx -c "$ngx/conf/nginx.conf" -p "$ngx"
+  root_code="$(curl -s -o /tmp/rw-stub-root.html -w '%{http_code}' --max-time 4 http://127.0.0.1:18083/ || echo 000)"
+  about_code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 4 http://127.0.0.1:18083/about.html || echo 000)"
+  img_code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 4 http://127.0.0.1:18083/img/hero.jpg || echo 000)"
+  uuid_code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 4 http://127.0.0.1:18083/shortUuid || echo 000)"
+  sudo nginx -s stop -c "$ngx/conf/nginx.conf" -p "$ngx" 2>/dev/null || true
+  [[ "$root_code" == 200 ]] || { echo "FAIL: GET / → $root_code (want 200)" >&2; exit 1; }
+  grep -Fq 'Corgi Lusi' /tmp/rw-stub-root.html
+  [[ "$about_code" == 200 ]]
+  [[ "$img_code" == 200 ]]
+  [[ "$uuid_code" == 502 ]]
+else
+  echo 'skip: nginx not installed'
+fi
 
 echo "STATIC AUDIT OK"
